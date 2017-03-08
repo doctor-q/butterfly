@@ -1,4 +1,4 @@
-package cc.doctor.wiki.search.server.index.store.indices;
+package cc.doctor.wiki.search.server.index.store.indices.indexer;
 
 import cc.doctor.wiki.search.server.index.store.schema.Schema;
 

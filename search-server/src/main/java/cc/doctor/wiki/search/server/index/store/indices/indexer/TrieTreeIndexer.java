@@ -1,4 +1,4 @@
-package cc.doctor.wiki.search.server.index.store.indices;
+package cc.doctor.wiki.search.server.index.store.indices.indexer;
 
 import cc.doctor.wiki.common.Tuple;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
@@ -12,6 +12,7 @@ import java.util.Map;
  * 字符串使用有trie树
  */
 public class TrieTreeIndexer extends AbstractIndexer {
+    //trie树索引,每份索引的每个域包含一个
     private Map<Character, StateNode> stateNodeMap = new HashMap<>();
 
     @Override
@@ -43,7 +44,8 @@ public class TrieTreeIndexer extends AbstractIndexer {
             prev.nexts.put(chars[i], stateNode);
             prev = stateNode;
         }
-        prev.setWordInfo(new WordInfo(0, new String(chars)));
+        //// TODO: 2017/3/8 加入倒排表信息
+        prev.setWordInfo(new WordInfo(new WordInfo.InvertedNode(new String(chars), 0, 0)));
     }
 
     /**
