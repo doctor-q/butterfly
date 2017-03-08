@@ -1,5 +1,6 @@
 package cc.doctor.wiki.search.server.index.store.indices.format;
 
+import cc.doctor.wiki.search.server.index.store.schema.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +15,23 @@ public class DateFormat {
     private static final Logger log = LoggerFactory.getLogger(DateFormat.class);
 
     private static ThreadLocal<SimpleDateFormat> dateFormatThreadLocal = new ThreadLocal<SimpleDateFormat>();
-    enum DatePattern {
+
+    public static Long propeAndTransfer(Schema.Property property, Object word) {
+        for (DatePattern datePattern : DatePattern.values()) {
+            if (datePattern.satisfy(word.toString())) {
+                try {
+                    dateFormatThreadLocal.get().applyPattern(datePattern.pattern);
+                    long time = dateFormatThreadLocal.get().parse(word.toString()).getTime();
+                    property.setType("date");
+                    property.setPattern(datePattern.pattern);
+                    return time;
+                } catch (Exception e) {}
+            }
+        }
+        return null;
+    }
+
+    private enum DatePattern {
         DATETIME("yyyy-MM-dd HH:mm:ss") {
             @Override
             public boolean satisfy(String dateStr) {
