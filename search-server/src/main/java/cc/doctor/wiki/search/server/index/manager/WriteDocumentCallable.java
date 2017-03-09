@@ -1,10 +1,9 @@
-package cc.doctor.wiki.search.server.index.store.indices.writer;
+package cc.doctor.wiki.search.server.index.manager;
 
 import cc.doctor.wiki.index.document.Document;
 import cc.doctor.wiki.index.writer.WriteResult;
 import cc.doctor.wiki.search.server.index.store.indices.indexer.IndexerMediator;
-import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedFile;
-import cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog.CheckPointFile;
+import cc.doctor.wiki.search.server.index.store.schema.Schema;
 import cc.doctor.wiki.search.server.index.store.source.SourceFile;
 
 import java.util.concurrent.Callable;
@@ -15,16 +14,14 @@ import java.util.concurrent.Callable;
 public class WriteDocumentCallable implements Callable {
     private IndexerMediator indexerMediator;
     private SourceFile sourceFile;
-    private CheckPointFile checkPointFile;
     private Document document;
-    private InvertedFile invertedFile;
+    private Schema schema;
 
-    public WriteDocumentCallable(final IndexerMediator indexer, final SourceFile sourceFile, final CheckPointFile checkPointFile, InvertedFile invertedFile, final Document document) {
+    public WriteDocumentCallable(final IndexerMediator indexer, final SourceFile sourceFile, final Document document, final Schema schema) {
         this.indexerMediator = indexer;
         this.sourceFile = sourceFile;
-        this.checkPointFile = checkPointFile;
         this.document = document;
-        this.invertedFile = invertedFile;
+        this.schema = schema;
     }
 
     @Override
@@ -35,7 +32,7 @@ public class WriteDocumentCallable implements Callable {
         int position = sourceFile.appendSource(source);
         sourceFile.setPositionById(document.getId(), position);
         //write index
-        indexerMediator.index(document);
+        indexerMediator.index(document, schema);
 
         return new WriteResult();
     }

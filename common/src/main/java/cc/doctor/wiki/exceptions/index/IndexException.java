@@ -11,4 +11,8 @@ public class IndexException extends ExecuteException {
     public IndexException(Exception e) {
         super(e);
     }
+
+    public IndexException(String message) {
+        super(message);
+    }
 }

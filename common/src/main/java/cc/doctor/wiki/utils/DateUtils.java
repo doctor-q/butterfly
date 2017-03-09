@@ -1,5 +1,6 @@
 package cc.doctor.wiki.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -16,5 +17,15 @@ public class DateUtils {
 
     public static String toYMDHMS(Date date) {
         return format(date, "yyyyMMddHHmmss");
+    }
+
+    public static Date parse(String dateStr, String pattern) {
+        SimpleDateFormat simpleDateFormat = simpleDateFormatThreadLocal.get();
+        simpleDateFormat.applyPattern(pattern);
+        try {
+            return simpleDateFormat.parse(dateStr);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

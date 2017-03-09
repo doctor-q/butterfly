@@ -1,10 +1,8 @@
 package cc.doctor.wiki.search.server.index.store.indices.format;
 
-import cc.doctor.wiki.search.server.index.store.schema.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -16,16 +14,22 @@ public class DateFormat {
 
     private static ThreadLocal<SimpleDateFormat> dateFormatThreadLocal = new ThreadLocal<SimpleDateFormat>();
 
-    public static Long propeAndTransfer(Schema.Property property, Object word) {
+    public static Date proberDate(String word) {
         for (DatePattern datePattern : DatePattern.values()) {
-            if (datePattern.satisfy(word.toString())) {
+            if (datePattern.satisfy(word)) {
                 try {
                     dateFormatThreadLocal.get().applyPattern(datePattern.pattern);
-                    long time = dateFormatThreadLocal.get().parse(word.toString()).getTime();
-                    property.setType("date");
-                    property.setPattern(datePattern.pattern);
-                    return time;
-                } catch (Exception e) {}
+                    return dateFormatThreadLocal.get().parse(word);
+                } catch (Exception ignore) {}
+            }
+        }
+        return null;
+    }
+
+    public static String proberPattern(Object value) {
+        for (DatePattern datePattern : DatePattern.values()) {
+            if (datePattern.satisfy(value.toString())) {
+                return datePattern.pattern;
             }
         }
         return null;
@@ -59,25 +63,5 @@ public class DateFormat {
         public boolean satisfy(String dateStr) {
             return false;
         }
-
-        public Long toLong(String dateStr) {
-            try {
-                dateFormatThreadLocal.get().applyPattern(this.pattern);
-                Date date = dateFormatThreadLocal.get().parse(dateStr);
-                return date.getTime();
-            } catch (ParseException e) {
-                log.error("Parse date error.{}", dateStr);
-                return null;
-            }
-        }
-    }
-
-    public static Long transferDate(String dateStr) {
-        for (DatePattern datePattern : DatePattern.values()) {
-            if (datePattern.satisfy(dateStr)) {
-                return datePattern.toLong(dateStr);
-            }
-        }
-        return null;
     }
 }

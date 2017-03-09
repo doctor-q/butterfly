@@ -1,6 +1,7 @@
 package cc.doctor.wiki.search.server.index.store.indices.indexer;
 
 import cc.doctor.wiki.common.Tuple;
+import cc.doctor.wiki.index.document.Field;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 import cc.doctor.wiki.search.server.index.store.schema.Schema;
 
@@ -21,8 +22,8 @@ public class TrieTreeIndexer extends AbstractIndexer {
     }
 
     @Override
-    public void insertWordInner(Schema schema, String property, Object word) {
-        char[] chars = word.toString().toLowerCase().toCharArray();
+    public void insertWordInner(Schema schema, Field field) {
+        char[] chars = field.getValue().toString().toLowerCase().toCharArray();
         StateNode stateNode = stateNodeMap.get(chars[0]);
         if (stateNode != null) {
             Tuple<Integer, StateNode> last = findLast(stateNode, chars);
@@ -112,7 +113,7 @@ public class TrieTreeIndexer extends AbstractIndexer {
         String[] strings = {"abcdefg", "abcrty"};
         Schema schema = new Schema();
         for (String string : strings) {
-            trieTreeIndexer.insertWordInner(schema, "name", string);
+            trieTreeIndexer.insertWordInner(schema, new Field("name", string));
         }
         System.out.println(trieTreeIndexer);
     }

@@ -3,7 +3,6 @@
  */
 
 /**
- * The parse used format the wiki text to other format, like html, pdf, and so on.
- * We define some rules to parse the wiki which is same to markdown but more customized, in order to satisfy myself.
+ * 索引管理,负责索引创建,索引字段,倒排管理,操作日志管理,索引恢复
  */
 package cc.doctor.wiki.search.server.index;

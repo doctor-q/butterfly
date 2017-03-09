@@ -5,7 +5,7 @@ package cc.doctor.wiki.operation;
  * 操作
  */
 public enum Operation {
-    CREATE_INDEX(1), DELETE_INDEX(2), ADD_DOCUMETN(3), DELETE_DOCUMENT(4), QUERY(5);
+    CREATE_INDEX(1), DELETE_INDEX(2),PUT_SCHEMA(0), ADD_DOCUMENT(3), DELETE_DOCUMENT(4), QUERY(5);
     int code;
 
     Operation(int code) {

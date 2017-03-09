@@ -4,6 +4,8 @@ package cc.doctor.wiki.search.server.index.config;
  * Created by doctor on 2017/3/8.
  */
 public class GlobalConfig {
+    public static final String DEFAULT_SHARDS_NUM = "shards.num.default";
+    public static final int DEFAULT_SHARDS_NUM_DEFAULT = 5;
     //单个Source文件大小
     public static final String SOURCE_FILE_SIZE_NAME = "file.size.source";
     public static final int SOURCE_FILE_SIZE_DEFUALT = 100 * 1024 * 1024;   //默认100M
@@ -29,5 +31,13 @@ public class GlobalConfig {
     public static final int THREAD_NUM_WRITE_DOCUMENT_DEFAULT = 10;
     public static final int THREAD_NUM_WRITE_DOCUMENT_MAX = 20;
     public static final int THREAD_NUM_WRITE_DOCUMENT_MIN = 1;
+    //路径
+    public static final String DATA_PATH = "data.path";
+    public static final String DATA_PATH_DEFAULT = "/tmp/es/data";
+    public static final String OPERATION_LOG_PATH_NAME = "operationlog";
+    public static final String SOURCE_PATH_NAME = "source";
+    public static final String INDEX_PATH_NAME = "index";
+    public static final String CHECKPOINT_FILE_NAME = "checkpoint";
+    public static final String LOG_PATH = "logs";
 
 }

@@ -1,4 +1,4 @@
-package cc.doctor.wiki.search.server.index.store.indices.writer;
+package cc.doctor.wiki.search.server.index.manager;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
