@@ -1,4 +1,4 @@
-package cc.doctor.wiki.annotation;
+package cc.doctor.wiki.schedule;
 
 /**
  * Created by doctor on 2017/3/8.

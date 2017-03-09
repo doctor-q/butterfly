@@ -1,6 +1,6 @@
 package cc.doctor.wiki.search.server.index.store.indices.task;
 
-import cc.doctor.wiki.annotation.Schedule;
+import cc.doctor.wiki.schedule.Schedule;
 import cc.doctor.wiki.schedule.Task;
 
 /**
