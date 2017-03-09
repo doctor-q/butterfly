@@ -8,7 +8,12 @@ import java.util.Date;
  * Created by doctor on 2017/3/8.
  */
 public class DateUtils {
-    static ThreadLocal<SimpleDateFormat> simpleDateFormatThreadLocal = new ThreadLocal<>();
+    static ThreadLocal<SimpleDateFormat> simpleDateFormatThreadLocal = new ThreadLocal<SimpleDateFormat>() {
+        @Override
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat();
+        }
+    };
     public static String format(Date date, String pattern) {
         SimpleDateFormat simpleDateFormat = simpleDateFormatThreadLocal.get();
         simpleDateFormat.applyPattern(pattern);

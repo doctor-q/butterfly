@@ -75,4 +75,12 @@ public class FileUtils {
             return false;
         }
     }
+
+    public static boolean exists(String fileName) {
+        if (fileName == null) {
+            return false;
+        }
+        File file = new File(fileName);
+        return file.exists() && !file.isDirectory();
+    }
 }

@@ -25,6 +25,12 @@ public class MmapFile {
     private static final AtomicLong totalMappedVirtualMemory = new AtomicLong(0);
     private static final AtomicInteger totalMappedFiles = new AtomicInteger(0);
 
+    public MmapFile(String fileName, int size, int position) throws IOException {
+        this(fileName, size);
+        this.position = position;
+        mappedByteBuffer.position(position);
+    }
+
     public int getPosition() {
         return position;
     }
@@ -128,5 +134,15 @@ public class MmapFile {
 
     public boolean canAppend(int size) {
         return position + size <= fileSize;
+    }
+
+    public int readInt(int position) {
+        mappedByteBuffer.position(position);
+        return mappedByteBuffer.getInt();
+    }
+
+    public long readLong(int position) {
+        mappedByteBuffer.position(position);
+        return mappedByteBuffer.getLong();
     }
 }

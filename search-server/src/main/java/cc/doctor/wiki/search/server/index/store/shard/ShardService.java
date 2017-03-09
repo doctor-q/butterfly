@@ -7,10 +7,9 @@ import cc.doctor.wiki.search.server.index.config.PropertyUtils;
 import cc.doctor.wiki.search.server.index.manager.IndexManagerInner;
 import cc.doctor.wiki.search.server.index.manager.WriteDocumentCallable;
 import cc.doctor.wiki.search.server.index.store.indices.indexer.IndexerMediator;
-import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedFile;
-import cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog.CheckPointFile;
+import cc.doctor.wiki.search.server.index.store.indices.recovery.RecoveryService;
 import cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog.OperationLog;
-import cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog.OperationLogFile;
+import cc.doctor.wiki.search.server.index.store.source.MmapSourceFile;
 import cc.doctor.wiki.search.server.index.store.source.SourceFile;
 import cc.doctor.wiki.utils.FileUtils;
 import cc.doctor.wiki.utils.SerializeUtils;
@@ -31,12 +30,14 @@ public class ShardService {
     private String shardRoot;
     private IndexManagerInner indexManagerInner;
     private IndexerMediator indexerMediator;
-    private OperationLogFile operationLogFile;
     private SourceFile sourceFile;
-    private CheckPointFile checkPointFile;
-    private InvertedFile invertedFile;
+    private RecoveryService recoveryService;
     private static final int writeDocumentThreads = PropertyUtils.getProperty(GlobalConfig.THREAD_NUM_WRITE_DOCUMENT, GlobalConfig.THREAD_NUM_WRITE_DOCUMENT_DEFAULT);
     private ExecutorService shardWriteExecutor = Executors.newFixedThreadPool(writeDocumentThreads);
+
+    public String getShardRoot() {
+        return shardRoot;
+    }
 
     public ShardService(IndexManagerInner indexManagerInner, int shard) {
         this.indexManagerInner = indexManagerInner;
@@ -46,9 +47,13 @@ public class ShardService {
         FileUtils.createDirectoryRecursion(shardRoot);
         //操作日志目录
         FileUtils.createDirectoryRecursion(shardRoot + "/" + GlobalConfig.OPERATION_LOG_PATH_NAME);
+        recoveryService = new RecoveryService(this);
         //source目录
         FileUtils.createDirectoryRecursion(shardRoot + "/" + GlobalConfig.SOURCE_PATH_NAME);
-        //索引目录
+        sourceFile = new MmapSourceFile();
+        //索引目录,持久化
+        // 正向:文档-词典
+        // 泛型:序列化的索引,倒排文件
         FileUtils.createDirectoryRecursion(shardRoot + "/" + GlobalConfig.INDEX_PATH_NAME);
     }
     /**
@@ -63,7 +68,7 @@ public class ShardService {
             operationLog.setOperation(Operation.ADD_DOCUMENT);
             operationLog.setSize(bytes.length);
             operationLog.setData(bytes);
-            boolean appendOperationLog = operationLogFile.appendOperationLog(operationLog);
+            boolean appendOperationLog = recoveryService.appendOperationLog(operationLog);
             if (appendOperationLog) {
                 shardWriteExecutor.submit(new WriteDocumentCallable(indexerMediator, sourceFile, document, indexManagerInner.getSchema()));
             }

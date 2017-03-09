@@ -6,6 +6,7 @@ import cc.doctor.wiki.index.document.Field;
 import cc.doctor.wiki.search.server.index.store.indices.format.DateFormat;
 import cc.doctor.wiki.search.server.index.store.indices.format.Format;
 import cc.doctor.wiki.search.server.index.store.indices.format.FormatProber;
+import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedFile;
 import cc.doctor.wiki.search.server.index.store.schema.Schema;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 public class IndexerMediator {
     private JumpTableIndexer jumpTableIndexer;
     private TrieTreeIndexer trieTreeIndexer;
+    private InvertedFile invertedFile;
 
     private IndexerMediator() {
         jumpTableIndexer = new JumpTableIndexer();

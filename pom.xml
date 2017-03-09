@@ -22,6 +22,7 @@
         <ch.qos.logback.version>1.0.6</ch.qos.logback.version>
         <common.version>1.0.0</common.version>
         <junit.version>4.12</junit.version>
+        <zookeeper.version>3.4.9</zookeeper.version>
     </properties>
 
     <dependencyManagement>
@@ -52,6 +53,11 @@
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.zookeeper</groupId>
+                <artifactId>zookeeper</artifactId>
+                <version>${zookeeper.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

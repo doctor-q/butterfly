@@ -37,8 +37,8 @@ public class IndexManagerContainer {
     }
 
     public void writeDocument(Schema schema, Document document) {
-        if (indexManagerInnerMap.get(schema.getIndexName()) != null) {
-            throw new IndexException("Index exists.");
+        if (indexManagerInnerMap.get(schema.getIndexName()) == null) {
+            throw new IndexException("Index doesn't exist.");
         }
         indexManagerInnerMap.get(schema.getIndexName()).writeDocumentInner(document);
     }

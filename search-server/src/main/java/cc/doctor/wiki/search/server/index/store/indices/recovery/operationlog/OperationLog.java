@@ -15,6 +15,13 @@ public class OperationLog implements Serializable {
     private long timestamp;
     private byte[] data;
 
+    public OperationLog(int size, Operation operation, long timestamp, byte[] data) {
+        this.size = size;
+        this.operation = operation;
+        this.timestamp = timestamp;
+        this.data = data;
+    }
+
     public Operation getOperation() {
         return operation;
     }

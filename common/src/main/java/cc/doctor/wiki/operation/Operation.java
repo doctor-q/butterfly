@@ -15,4 +15,13 @@ public enum Operation {
     public int getCode() {
         return code;
     }
+
+    public static Operation getOperation(int code) {
+        for (Operation operation : Operation.values()) {
+            if (operation.getCode() == code) {
+                return operation;
+            }
+        }
+        return null;
+    }
 }

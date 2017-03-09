@@ -1,9 +1,12 @@
 package cc.doctor.wiki.index.document;
 
+import java.io.Serializable;
+
 /**
  * Created by doctor on 2017/3/8.
  */
-public class Field {
+public class Field implements Serializable {
+    private static final long serialVersionUID = -4003242243439671574L;
     private String name;
     private Object value;
 
