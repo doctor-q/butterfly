@@ -1,4 +1,4 @@
-package cc.doctor.wiki.search.server.index.config;
+package cc.doctor.wiki.utils;
 
 import java.util.HashMap;
 import java.util.Map;

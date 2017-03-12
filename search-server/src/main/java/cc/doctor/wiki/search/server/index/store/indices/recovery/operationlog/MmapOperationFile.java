@@ -3,7 +3,7 @@ package cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog;
 import cc.doctor.wiki.exceptions.index.NoCheckPointException;
 import cc.doctor.wiki.operation.Operation;
 import cc.doctor.wiki.search.server.index.config.GlobalConfig;
-import cc.doctor.wiki.search.server.index.config.PropertyUtils;
+import cc.doctor.wiki.utils.PropertyUtils;
 import cc.doctor.wiki.search.server.index.store.indices.recovery.RecoveryService;
 import cc.doctor.wiki.search.server.index.store.mm.MmapFile;
 import cc.doctor.wiki.utils.DateUtils;
