@@ -13,4 +13,9 @@ public interface ZkEventListener {
     void onNodeChildrenChanged(WatchedEvent watchedEvent);
 
     void onNodeDataChanged(WatchedEvent watchedEvent);
+
+    void onZkConnected();
+    void onAuthFailed();
+    void onExpired();
+    void onZkDisconnected();
 }

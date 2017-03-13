@@ -1,5 +1,6 @@
 package cc.doctor.wiki.ha.zk;
 
+import cc.doctor.wiki.utils.PropertyUtils;
 import cc.doctor.wiki.utils.scanner.Scanner;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
@@ -13,11 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ZookeeperWatcher implements Watcher {
     private static final Logger log = LoggerFactory.getLogger(ZookeeperWatcher.class);
-    ConcurrentHashMap<String, ZkEventListener> zkEventListeners = new ConcurrentHashMap<>();
-    private String listenerScanPackage;
+    public static final ZookeeperWatcher zkWatcher = new ZookeeperWatcher();
+    private ConcurrentHashMap<String, ZkEventListener> zkEventListeners = new ConcurrentHashMap<>();
+    private String listenerScanPackage = PropertyUtils.getProperty("zk.listener.scan.package", "cc.doctor.wiki.ha.zk.listener");
 
-    public ZookeeperWatcher(String listenerScanPackage) {
-        this.listenerScanPackage = listenerScanPackage;
+    private ZookeeperWatcher() {
         Scanner scanner = new Scanner(listenerScanPackage);
         scanner.doScan();
         for (Class aClass : scanner.getScanClass().values()) {
@@ -36,18 +37,35 @@ public class ZookeeperWatcher implements Watcher {
     }
 
     @Override
-    public void process(WatchedEvent watchedEvent) {
-        Event.EventType eventType = watchedEvent.getType();
+    public void process(WatchedEvent event) {
+        // 连接状态
+        Event.KeeperState keeperState = event.getState();
+        // 事件类型
+        Event.EventType eventType = event.getType();
+
         for (ZkEventListener zkEventListener : zkEventListeners.values()) {
-            if (eventType.equals(Event.EventType.NodeCreated)) {
-                zkEventListener.onNodeCreate(watchedEvent);
-            } else if (eventType.equals(Event.EventType.NodeDeleted)) {
-                zkEventListener.onNodeDeleted(watchedEvent);
-            } else if (eventType.equals(Event.EventType.NodeChildrenChanged)) {
-                zkEventListener.onNodeChildrenChanged(watchedEvent);
-            } else if (eventType.equals(Event.EventType.NodeDataChanged)) {
-                zkEventListener.onNodeDataChanged(watchedEvent);
+            if (Event.KeeperState.SyncConnected == keeperState) {
+                // 成功连接上ZK服务器
+                if (Event.EventType.None == eventType) {
+                    zkEventListener.onZkConnected();
+                } else if (Event.EventType.NodeCreated == eventType) {
+                    zkEventListener.onNodeCreate(event);
+                } else if (Event.EventType.NodeDataChanged == eventType) {
+                    zkEventListener.onNodeDataChanged(event);
+                } else if (Event.EventType.NodeChildrenChanged == eventType) {
+                    zkEventListener.onNodeChildrenChanged(event);
+                } else if (Event.EventType.NodeDeleted == eventType) {
+                    zkEventListener.onNodeDeleted(event);
+                }
+
+            } else if (Event.KeeperState.Disconnected == keeperState) {
+                zkEventListener.onZkDisconnected();
+            } else if (Event.KeeperState.AuthFailed == keeperState) {
+                zkEventListener.onAuthFailed();
+            } else if (Event.KeeperState.Expired == keeperState) {
+                zkEventListener.onExpired();
             }
+
         }
     }
 }

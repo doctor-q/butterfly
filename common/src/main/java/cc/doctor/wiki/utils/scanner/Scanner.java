@@ -34,6 +34,9 @@ public class Scanner {
             return;
         }
         String[] files = pack.list();
+        if (files == null) {
+            return;
+        }
         for (String file : files) {
             File subFile = new File(packagePath + "/" + file);
             if (subFile.exists()) {

@@ -1,5 +1,6 @@
 package cc.doctor.wiki.utils;
 
+import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,5 +35,15 @@ public class SerializeUtils {
             log.error("", e);
             throw e;
         }
+    }
+
+    public static <T> T jsonToObject(String json, Class<T> tClass) {
+        Gson gson = new Gson();
+        return gson.fromJson(json, tClass);
+    }
+
+    public static <T> String objectToJson(T t) {
+        Gson gson = new Gson();
+        return gson.toJson(t);
     }
 }

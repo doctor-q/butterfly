@@ -1,6 +1,6 @@
 package cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog;
 
-import cc.doctor.wiki.operation.Operation;
+import cc.doctor.wiki.protocol.operation.Operation;
 
 import java.io.Serializable;
 
@@ -14,6 +14,9 @@ public class OperationLog implements Serializable {
     private Operation operation;
     private long timestamp;
     private byte[] data;
+
+    public OperationLog() {
+    }
 
     public OperationLog(int size, Operation operation, long timestamp, byte[] data) {
         this.size = size;

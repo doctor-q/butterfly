@@ -5,7 +5,7 @@ import org.apache.zookeeper.WatchedEvent;
 /**
  * Created by doctor on 2017/3/12.
  */
-public class ZkEventerListenerAdapter implements ZkEventListener {
+public class ZkEventListenerAdapter implements ZkEventListener {
     @Override
     public void onNodeCreate(WatchedEvent watchedEvent) {
 
@@ -23,6 +23,26 @@ public class ZkEventerListenerAdapter implements ZkEventListener {
 
     @Override
     public void onNodeDataChanged(WatchedEvent watchedEvent) {
+
+    }
+
+    @Override
+    public void onZkConnected() {
+
+    }
+
+    @Override
+    public void onAuthFailed() {
+
+    }
+
+    @Override
+    public void onExpired() {
+
+    }
+
+    @Override
+    public void onZkDisconnected() {
 
     }
 }

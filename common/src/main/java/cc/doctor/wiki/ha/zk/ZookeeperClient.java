@@ -1,14 +1,16 @@
 package cc.doctor.wiki.ha.zk;
 
+import cc.doctor.wiki.utils.PropertyUtils;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
+import java.util.Stack;
 
 /**
  * Created by doctor on 2017/3/12.
@@ -16,34 +18,19 @@ import java.util.concurrent.CountDownLatch;
 public class ZookeeperClient {
     private Logger log = LoggerFactory.getLogger(ZookeeperClient.class);
     private static final int SESSION_TIMEOUT = 10000;
-    private static final String CONNECTION_STRING = "127.0.0.1:2181";
-    private static final String ZK_PATH = "/es";
+    private static final String CONNECTION_STRING = PropertyUtils.getProperty("zk.host", "127.0.0.1:2181");
     private ZooKeeper zk = null;
-    private ZookeeperWatcher zookeeperWatcher;
+    private ZookeeperWatcher zookeeperWatcher = ZookeeperWatcher.zkWatcher;
 
-    private CountDownLatch connectedSemaphore = new CountDownLatch(1);
-
-    /**
-     * 创建ZK连接
-     *
-     * @param connectString  ZK服务器地址列表
-     * @param sessionTimeout Session超时时间
-     */
-    public void createConnection(String connectString, int sessionTimeout) {
+    public void createConnection() {
         this.releaseConnection();
         try {
-            zk = new ZooKeeper(connectString, sessionTimeout, zookeeperWatcher);
-            connectedSemaphore.await();
-        } catch (InterruptedException e) {
-            log.error("连接创建失败，发生 InterruptedException");
+            zk = new ZooKeeper(CONNECTION_STRING, SESSION_TIMEOUT, zookeeperWatcher);
         } catch (IOException e) {
-            log.error("连接创建失败，发生 IOException");
+            log.error("", e);
         }
     }
 
-    /**
-     * 关闭ZK连接
-     */
     public void releaseConnection() {
         if (zk != null) {
             try {
@@ -53,72 +40,97 @@ public class ZookeeperClient {
         }
     }
 
-    /**
-     * 创建节点
-     *
-     * @param path 节点path
-     * @param data 初始数据内容
-     * @return
-     */
-    public boolean createPath(String path, String data) {
+    //check and watch path
+    public boolean existsNode(String path) {
         try {
-            this.zk.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
-        } catch (KeeperException e) {
-            log.error("节点创建失败，发生KeeperException");
-        } catch (InterruptedException e) {
-            log.error("节点创建失败，发生 InterruptedException");
-        }
-        return true;
-    }
-
-    /**
-     * 读取指定节点数据内容
-     *
-     * @param path 节点path
-     * @return
-     */
-    public String readData(String path) {
-        try {
-            return new String(this.zk.getData(path, false, null));
-        } catch (KeeperException e) {
-            log.error("读取数据失败，发生KeeperException，path: {}", path);
-            return null;
-        } catch (InterruptedException e) {
-            log.error("读取数据失败，发生 InterruptedException，path: {}", path);
-            return null;
-        }
-    }
-
-    /**
-     * 更新指定节点数据内容
-     *
-     * @param path 节点path
-     * @param data 数据内容
-     * @return
-     */
-    public boolean writeData(String path, String data) {
-        try {
-            this.zk.setData(path, data.getBytes(), -1);
-        } catch (KeeperException e) {
-            log.error("更新数据失败，发生KeeperException，path: {}", path);
-        } catch (InterruptedException e) {
-            log.error("更新数据失败，发生 InterruptedException，path: {}", path);
+            Stat stat = zk.exists(path, true);
+            return stat != null;
+        } catch (KeeperException | InterruptedException e) {
+            log.error("", e);
         }
         return false;
     }
 
     /**
-     * 删除指定节点
-     *
-     * @param path 节点path
+     * CreateMode:
+     * PERSISTENT (持续的，相对于EPHEMERAL，不会随着client的断开而消失)
+     * PERSISTENT_SEQUENTIAL（持久的且带顺序的）
+     * EPHEMERAL (短暂的，生命周期依赖于client session)
+     * EPHEMERAL_SEQUENTIAL  (短暂的，带顺序的)
      */
+    public boolean createPath(String path, String data) {
+        try {
+            this.zk.create(path, data == null ? null : data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+        } catch (KeeperException | InterruptedException e) {
+            log.error("", e);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean createPathRecursion(String path, String data) {
+        Stack<String> stack = new Stack<>();
+        getCreatePathRecursion(stack, path);
+        while (!stack.empty()) {
+            String pop = stack.pop();
+            boolean created;
+            if (pop.equals(path)) {
+                created = createPath(pop, data);
+            } else {
+                created = createPath(pop, null);
+            }
+            if (!created) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void getCreatePathRecursion(Stack<String> paths, String path) {
+        paths.push(path);
+        String parent = getParent(path);
+        if (!existsNode(parent) && parent != null && !parent.equals("")) {
+            getCreatePathRecursion(paths, parent);
+        } else {
+            return;
+        }
+    }
+
+    private String getParent(String path) {
+        if (path == null) {
+            return null;
+        }
+        if (path.equals("/")) {
+            return "/";
+        }
+        return path.substring(0, path.lastIndexOf('/'));
+    }
+
+    //read and watch path
+    public String readData(String path) {
+        try {
+            return new String(this.zk.getData(path, true, null));
+        } catch (KeeperException | InterruptedException e) {
+            log.error("", e);
+        }
+        return null;
+    }
+
+    public boolean writeData(String path, String data) {
+        try {
+            Stat stat = this.zk.setData(path, data.getBytes(), -1);
+            return stat != null;
+        } catch (KeeperException | InterruptedException e) {
+            log.error("", e);
+        }
+        return false;
+    }
+
     public void deleteNode(String path) {
         try {
             this.zk.delete(path, -1);
-        } catch (KeeperException e) {
-            log.error("删除节点失败，发生KeeperException，path: {}", path);
-        } catch (InterruptedException e) {
-            log.error("删除节点失败，发生 InterruptedException，path: {}", path);
+        } catch (KeeperException | InterruptedException e) {
+            log.error("", e);
         }
     }
 }

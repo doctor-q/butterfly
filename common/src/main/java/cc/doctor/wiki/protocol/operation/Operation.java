@@ -1,4 +1,4 @@
-package cc.doctor.wiki.operation;
+package cc.doctor.wiki.protocol.operation;
 
 /**
  * Created by doctor on 2017/3/8.

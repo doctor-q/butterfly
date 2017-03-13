@@ -1,7 +1,7 @@
 package cc.doctor.wiki.search.server.index.store.shard;
 
 import cc.doctor.wiki.index.document.Document;
-import cc.doctor.wiki.operation.Operation;
+import cc.doctor.wiki.protocol.operation.Operation;
 import cc.doctor.wiki.search.server.index.config.GlobalConfig;
 import cc.doctor.wiki.utils.PropertyUtils;
 import cc.doctor.wiki.search.server.index.manager.IndexManagerInner;

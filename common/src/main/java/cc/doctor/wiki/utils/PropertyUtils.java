@@ -21,4 +21,8 @@ public class PropertyUtils {
         T value = (T) properties.get(key);
         return value == null ? defaultValue : value;
     }
+
+    public static void setProperty(String key, Object value) {
+        properties.put(key, value);
+    }
 }
