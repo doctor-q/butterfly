@@ -1,4 +1,4 @@
-package cc.doctor.wiki.search.server.index.config;
+package cc.doctor.wiki.search.server.common.config;
 
 /**
  * Created by doctor on 2017/3/8.
@@ -39,5 +39,8 @@ public class GlobalConfig {
     public static final String INDEX_PATH_NAME = "index";
     public static final String CHECKPOINT_FILE_NAME = "checkpoint";
     public static final String LOG_PATH = "logs";
+    //rpc
+    public static final String NETTY_SERVER_PORT = "netty.server.port";
+    public static final int NETTY_SERVER_PORT_DEFAULT = 1218;
 
 }

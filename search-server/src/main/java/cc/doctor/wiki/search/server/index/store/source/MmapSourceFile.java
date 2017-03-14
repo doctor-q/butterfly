@@ -1,6 +1,6 @@
 package cc.doctor.wiki.search.server.index.store.source;
 
-import cc.doctor.wiki.search.server.index.config.GlobalConfig;
+import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.utils.PropertyUtils;
 import cc.doctor.wiki.search.server.index.store.mm.MmapFile;
 import cc.doctor.wiki.utils.DateUtils;

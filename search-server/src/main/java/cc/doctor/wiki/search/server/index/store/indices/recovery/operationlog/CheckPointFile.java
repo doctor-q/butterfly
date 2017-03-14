@@ -1,6 +1,6 @@
 package cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog;
 
-import cc.doctor.wiki.search.server.index.config.GlobalConfig;
+import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.search.server.index.store.indices.recovery.RecoveryService;
 import cc.doctor.wiki.search.server.index.store.mm.MmapFile;
 import cc.doctor.wiki.utils.DateUtils;
