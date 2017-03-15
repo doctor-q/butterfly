@@ -31,6 +31,7 @@ public class InvertedTable implements Serializable {
         this.invertedDocs = invertedDocs;
     }
 
+    //文档id
     public static class InvertedDoc {
         long docId;     //文档id
         long docFrequency;   //文档频率

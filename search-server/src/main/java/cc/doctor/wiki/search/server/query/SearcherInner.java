@@ -1,10 +1,13 @@
 package cc.doctor.wiki.search.server.query;
 
 import cc.doctor.wiki.search.client.query.QueryBuilder;
+import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 import cc.doctor.wiki.search.server.index.store.shard.ShardService;
 import cc.doctor.wiki.search.server.query.grammar.GrammarParser;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import static cc.doctor.wiki.search.server.query.grammar.GrammarParser.grammarParser;
@@ -28,11 +31,17 @@ public class SearcherInner {
 
     public void query(GrammarParser.ConnectNode connectNode) {
         if (connectNode.isAllQueryNode()) {
-
+            //connect the two
         }
     }
 
     public void query(GrammarParser.QueryNode queryNode) {
-
+        List<WordInfo> allWordInfos = new LinkedList<>();
+        for (ShardService shardService : shardServiceMap.values()) {
+            Iterable<WordInfo> wordInfos = shardService.searchInvertedDocs(queryNode);
+            for (WordInfo wordInfo : wordInfos) {
+                allWordInfos.add(wordInfo);
+            }
+        }
     }
 }

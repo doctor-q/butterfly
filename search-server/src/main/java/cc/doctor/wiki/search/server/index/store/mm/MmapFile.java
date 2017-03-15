@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Created by doctor on 2017/3/7.
  * MMap文件操作
+ * todo 封装一个逻辑文件层,逻辑上是多个文件,其实是多个小文件的列表
  */
 public class MmapFile {
     private static final Logger log = LoggerFactory.getLogger(MmapFile.class);

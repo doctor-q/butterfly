@@ -1,8 +1,12 @@
 package cc.doctor.wiki.search.server.index.store.shard;
 
+import cc.doctor.wiki.exceptions.query.QueryGrammarException;
 import cc.doctor.wiki.index.document.Document;
+import cc.doctor.wiki.search.client.query.grammar.Predication;
 import cc.doctor.wiki.search.client.rpc.operation.Operation;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
+import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
+import cc.doctor.wiki.search.server.query.grammar.GrammarParser;
 import cc.doctor.wiki.utils.PropertyUtils;
 import cc.doctor.wiki.search.server.index.manager.IndexManagerInner;
 import cc.doctor.wiki.search.server.index.manager.WriteDocumentCallable;
@@ -56,6 +60,7 @@ public class ShardService {
         // 泛型:序列化的索引,倒排文件
         FileUtils.createDirectoryRecursion(shardRoot + "/" + GlobalConfig.INDEX_PATH_NAME);
     }
+
     /**
      * 写文档,同步写操作日志,异步建索引,源
      *
@@ -77,6 +82,27 @@ public class ShardService {
             log.error("", e);
             return false;
         }
+    }
+
+    public Iterable<WordInfo> searchInvertedDocs(GrammarParser.QueryNode queryNode) {
+        Predication predication = queryNode.getPredication();
+        switch (predication) {
+            case EQUAL:
+                return indexerMediator.equalSearch(queryNode.getField(), queryNode.getValue());
+            case GREAT_THAN:
+                return indexerMediator.greatThanSearch(queryNode.getField(), queryNode.getValue());
+            case GREAT_THAN_EQUAL:
+                return indexerMediator.greatThanEqualSearch(queryNode.getField(), queryNode.getValue());
+            case LESS_THAN:
+                return indexerMediator.lessThanSearch(queryNode.getField(), queryNode.getValue());
+            case LESS_THAN_EQUAL:
+                return indexerMediator.lessThanEqualSearch(queryNode.getField(), queryNode.getValue());
+            case PREFIX:
+                return indexerMediator.prefixSearch(queryNode.getField(), queryNode.getValue());
+            case MATCH:
+                return indexerMediator.matchSearch(queryNode.getField(), queryNode.getValue());
+        }
+        throw new QueryGrammarException("UnSupported predication exception.");
     }
 
 }

@@ -8,6 +8,7 @@ import cc.doctor.wiki.search.server.index.store.indices.format.Format;
 import cc.doctor.wiki.search.server.index.store.indices.format.FormatProber;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedFile;
 import cc.doctor.wiki.search.client.index.schema.Schema;
+import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 
 import java.util.List;
 
@@ -72,5 +73,33 @@ public class IndexerMediator {
                 break;
         }
         return true;
+    }
+
+    public Iterable<WordInfo> equalSearch(String field, String value) {
+        return null;
+    }
+
+    public Iterable<WordInfo> greatThanSearch(String field, String value) {
+        return null;
+    }
+
+    public Iterable<WordInfo> greatThanEqualSearch(String field, String value) {
+        return null;
+    }
+
+    public Iterable<WordInfo> lessThanSearch(String field, String value) {
+        return null;
+    }
+
+    public Iterable<WordInfo> lessThanEqualSearch(String field, String value) {
+        return null;
+    }
+
+    public Iterable<WordInfo> prefixSearch(String field, String value) {
+        return null;
+    }
+
+    public Iterable<WordInfo> matchSearch(String field, String value) {
+        return null;
     }
 }

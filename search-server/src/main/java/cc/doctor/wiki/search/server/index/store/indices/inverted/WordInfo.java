@@ -18,7 +18,7 @@ public class WordInfo {
     public static class InvertedNode {
         private Object data;    //索引字段保存在内存
         private long version;   //当前倒排链的版本号
-        private int position;   //倒排链的文件位置的其实位置
+        private int position;   //倒排链的文件位置的起始位置
         private int size;       //倒排链的数据大小
         private int free;       //空余空间
 
