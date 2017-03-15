@@ -1,7 +1,7 @@
 package cc.doctor.wiki.search.server.index.store.shard;
 
 import cc.doctor.wiki.index.document.Document;
-import cc.doctor.wiki.protocol.operation.Operation;
+import cc.doctor.wiki.search.client.rpc.operation.Operation;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.utils.PropertyUtils;
 import cc.doctor.wiki.search.server.index.manager.IndexManagerInner;
@@ -9,8 +9,8 @@ import cc.doctor.wiki.search.server.index.manager.WriteDocumentCallable;
 import cc.doctor.wiki.search.server.index.store.indices.indexer.IndexerMediator;
 import cc.doctor.wiki.search.server.index.store.indices.recovery.RecoveryService;
 import cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog.OperationLog;
-import cc.doctor.wiki.search.server.index.store.source.MmapSourceFile;
-import cc.doctor.wiki.search.server.index.store.source.SourceFile;
+import cc.doctor.wiki.search.server.index.store.mm.source.MmapSourceFile;
+import cc.doctor.wiki.search.server.index.store.mm.source.SourceFile;
 import cc.doctor.wiki.utils.FileUtils;
 import cc.doctor.wiki.utils.SerializeUtils;
 import org.slf4j.Logger;

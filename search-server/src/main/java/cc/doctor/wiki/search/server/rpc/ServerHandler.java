@@ -8,6 +8,8 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
+import static cc.doctor.wiki.search.server.rpc.OperationController.operationController;
+
 /**
  * Created by doctor on 2017/3/14.
  * register->active->read->readComplete->inactive->unregister
@@ -46,8 +48,9 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
         byte[] bytes = new byte[readableBytes];
         byteBuf.readBytes(bytes);
         Message message = SerializeUtils.deserialize(bytes);
-        OperationHandler operationHandler = OperationHandlerFactory.getOperationHandler(message.getOperation());
-        RpcResult rpcResult = operationHandler.handlerOperation(message.getData());
+
+        RpcResult rpcResult = operationController.handlerOperation(message);
+        rpcResult.setTimestamp(message.getTimestamp()); //return the message key to client
         byte[] serialize = SerializeUtils.serialize(rpcResult);
         ByteBuf buffer = ctx.alloc().buffer();
         buffer.writeBytes(serialize);

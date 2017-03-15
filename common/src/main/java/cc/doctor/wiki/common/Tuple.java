@@ -1,9 +1,12 @@
 package cc.doctor.wiki.common;
 
+import java.io.Serializable;
+
 /**
  * Created by doctor on 2017/3/7.
  */
-public class Tuple<T1, T2> {
+public class Tuple<T1, T2> implements Serializable{
+    private static final long serialVersionUID = 8794286401825326323L;
     private T1 t1;
     private T2 t2;
 

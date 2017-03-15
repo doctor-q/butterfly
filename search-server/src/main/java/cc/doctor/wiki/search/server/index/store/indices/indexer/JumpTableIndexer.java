@@ -3,7 +3,7 @@ package cc.doctor.wiki.search.server.index.store.indices.indexer;
 import cc.doctor.wiki.exceptions.schema.SchemaException;
 import cc.doctor.wiki.index.document.Field;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
-import cc.doctor.wiki.search.server.index.store.schema.Schema;
+import cc.doctor.wiki.search.client.index.schema.Schema;
 import cc.doctor.wiki.utils.DateUtils;
 
 import java.util.Date;

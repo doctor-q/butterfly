@@ -1,6 +1,6 @@
 package cc.doctor.wiki.search.client.rpc;
 
-import cc.doctor.wiki.protocol.operation.Operation;
+import cc.doctor.wiki.search.client.rpc.operation.Operation;
 import cc.doctor.wiki.utils.SerializeUtils;
 
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.util.Date;
 /**
  * Created by doctor on 2017/3/14.
  */
-public class Message implements Serializable{
+public class Message implements Serializable {
     private static final long serialVersionUID = 3680058789136640175L;
     private long timestamp;
     private String host;
@@ -52,18 +52,9 @@ public class Message implements Serializable{
         return this;
     }
 
-    public Message data(byte[] data) {
+    public <T extends Serializable> Message data(T data) {
         this.data = data;
         return this;
-    }
-
-    public <T extends Serializable> Message data(T data) {
-        try {
-            byte[] bytes = SerializeUtils.serialize(data);
-            return data(bytes);
-        } catch (IOException e) {
-            return this;
-        }
     }
 
     public static Message newMessage() {

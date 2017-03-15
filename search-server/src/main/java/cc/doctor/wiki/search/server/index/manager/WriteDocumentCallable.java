@@ -3,8 +3,8 @@ package cc.doctor.wiki.search.server.index.manager;
 import cc.doctor.wiki.index.document.Document;
 import cc.doctor.wiki.index.writer.WriteResult;
 import cc.doctor.wiki.search.server.index.store.indices.indexer.IndexerMediator;
-import cc.doctor.wiki.search.server.index.store.schema.Schema;
-import cc.doctor.wiki.search.server.index.store.source.SourceFile;
+import cc.doctor.wiki.search.client.index.schema.Schema;
+import cc.doctor.wiki.search.server.index.store.mm.source.SourceFile;
 
 import java.util.concurrent.Callable;
 

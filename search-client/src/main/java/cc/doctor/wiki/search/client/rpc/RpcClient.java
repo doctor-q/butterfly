@@ -1,18 +1,51 @@
 package cc.doctor.wiki.search.client.rpc;
 
+import cc.doctor.wiki.common.Tuple;
 import cc.doctor.wiki.index.document.Document;
-import cc.doctor.wiki.protocol.operation.Operation;
+import cc.doctor.wiki.search.client.rpc.operation.Operation;
 import cc.doctor.wiki.search.client.query.QueryBuilder;
 import cc.doctor.wiki.search.client.rpc.result.*;
 
+import java.util.LinkedList;
+
 /**
  * Created by doctor on 2017/3/14.
+ * netty客户端,目前单协调者
  */
 public class RpcClient implements Client {
     private NettyClient nettyClient;
 
     public RpcClient() {
         nettyClient = new NettyClient();
+    }
+
+    public void connect(String address) {
+        nettyClient.release();
+        nettyClient = new NettyClient(address);
+    }
+
+    @Override
+    public IndexResult createIndex(String indexName) {
+        Message message = normalMessage().operation(Operation.CREATE_INDEX).data(indexName);
+        return (IndexResult) nettyClient.sendMessage(message);
+    }
+
+    @Override
+    public IndexResult dropIndex(String indexName) {
+        Message message = normalMessage().operation(Operation.DROP_INDEX).data(indexName);
+        return (IndexResult) nettyClient.sendMessage(message);
+    }
+
+    @Override
+    public IndexResult putAlias(String indexName, String alias) {
+        Message message = normalMessage().operation(Operation.PUT_ALIAS).data(new Tuple<>(indexName, alias));
+        return (IndexResult) nettyClient.sendMessage(message);
+    }
+
+    @Override
+    public IndexResult dropAlias(String indexName, String alias) {
+        Message message = normalMessage().operation(Operation.DROP_ALIAS).data(new Tuple<>(indexName, alias));
+        return (IndexResult) nettyClient.sendMessage(message);
     }
 
     private Message normalMessage() {
@@ -27,27 +60,45 @@ public class RpcClient implements Client {
 
     @Override
     public InsertResult insert(Document document) {
-        return null;
+        Message message = normalMessage().operation(Operation.ADD_DOCUMENT).data(document);
+        return (InsertResult) nettyClient.sendMessage(message);
     }
 
     @Override
     public DeleteResult delete(long docId) {
-        return null;
+        Message message = normalMessage().operation(Operation.DELETE_DOCUMENT).data(docId);
+        return (DeleteResult) nettyClient.sendMessage(message);
     }
 
     @Override
     public BulkResult bulkInsert(Iterable<Document> documents) {
-        return null;
+        LinkedList<Document> docList = new LinkedList<>();
+        for (Document document : documents) {
+            docList.add(document);
+        }
+        Message message = normalMessage().operation(Operation.BULK_INSERT).data(docList);
+        return (BulkResult) nettyClient.sendMessage(message);
     }
 
     @Override
     public BulkResult bulkDelete(Iterable<Long> ids) {
-        return null;
+        LinkedList<Long> docIdList = new LinkedList<>();
+        for (Long id : ids) {
+            docIdList.add(id);
+        }
+        Message message = normalMessage().operation(Operation.BULK_DELETE).data(docIdList);
+        return (BulkResult) nettyClient.sendMessage(message);
     }
 
     @Override
     public BulkResult bulkDeleteByQuery(QueryBuilder queryBuilder) {
-        return null;
+        Message message = normalMessage().operation(Operation.DELETE_BY_QUERY).data(queryBuilder);
+        return (BulkResult) nettyClient.sendMessage(message);
+    }
+
+    @Override
+    public RpcResult sendMessage(Message message) {
+        return nettyClient.sendMessage(message);
     }
 
     public static void main(String[] args) {

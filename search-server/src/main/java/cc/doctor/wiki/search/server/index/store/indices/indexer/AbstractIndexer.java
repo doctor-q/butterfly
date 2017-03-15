@@ -1,7 +1,7 @@
 package cc.doctor.wiki.search.server.index.store.indices.indexer;
 
 import cc.doctor.wiki.index.document.Field;
-import cc.doctor.wiki.search.server.index.store.schema.Schema;
+import cc.doctor.wiki.search.client.index.schema.Schema;
 
 /**
  * Created by doctor on 2017/3/3.

@@ -119,6 +119,10 @@ public class GrammarParser {
         public void setGrammarNodeTuple(Tuple<GrammarNode, GrammarNode> grammarNodeTuple) {
             this.grammarNodeTuple = grammarNodeTuple;
         }
+
+        public boolean isAllQueryNode() {
+            return (grammarNodeTuple.getT1() instanceof QueryNode) && (grammarNodeTuple.getT2() instanceof QueryNode);
+        }
     }
 
     public class QueryNode implements GrammarNode {

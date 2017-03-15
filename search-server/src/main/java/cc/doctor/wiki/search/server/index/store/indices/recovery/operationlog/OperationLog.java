@@ -1,6 +1,6 @@
 package cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog;
 
-import cc.doctor.wiki.protocol.operation.Operation;
+import cc.doctor.wiki.search.client.rpc.operation.Operation;
 
 import java.io.Serializable;
 

@@ -7,7 +7,7 @@ import cc.doctor.wiki.search.server.index.store.indices.format.DateFormat;
 import cc.doctor.wiki.search.server.index.store.indices.format.Format;
 import cc.doctor.wiki.search.server.index.store.indices.format.FormatProber;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedFile;
-import cc.doctor.wiki.search.server.index.store.schema.Schema;
+import cc.doctor.wiki.search.client.index.schema.Schema;
 
 import java.util.List;
 

@@ -13,19 +13,6 @@
         <version>1.0.0</version>
     </parent>
 
-    <properties>
-        <dom4j.version>1.6.1</dom4j.version>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>dom4j</groupId>
-                <artifactId>dom4j</artifactId>
-                <version>${dom4j.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>

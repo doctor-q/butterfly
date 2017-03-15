@@ -3,7 +3,7 @@ package cc.doctor.wiki.search.server.index.manager;
 import cc.doctor.wiki.index.document.Document;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.utils.PropertyUtils;
-import cc.doctor.wiki.search.server.index.store.schema.Schema;
+import cc.doctor.wiki.search.client.index.schema.Schema;
 import cc.doctor.wiki.search.server.index.store.shard.ShardService;
 import cc.doctor.wiki.utils.FileUtils;
 import org.slf4j.Logger;
@@ -34,6 +34,9 @@ public class IndexManagerInner {
         return indexRoot;
     }
 
+    /**
+     * 创建索引相关的目录
+     */
     public boolean createIndexInner() {
         if (schema.getIndexName() == null) {
             return false;
