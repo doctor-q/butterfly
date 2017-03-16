@@ -36,6 +36,10 @@ public class MmapFile {
         return position;
     }
 
+    public File getFile() {
+        return file;
+    }
+
     public MmapFile(String file, long fileSize) throws IOException {
         this.file = new File(file);
         this.fileSize = fileSize;
@@ -127,10 +131,12 @@ public class MmapFile {
 
     public void appendInt(int aInt) {
         mappedByteBuffer.putInt(aInt);
+        position += 4;
     }
 
     public void appendLong(long aLong) {
         mappedByteBuffer.putLong(aLong);
+        position += 8;
     }
 
     public boolean canAppend(int size) {

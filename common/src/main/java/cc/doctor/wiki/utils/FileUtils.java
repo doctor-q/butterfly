@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by doctor on 2017/3/9.
@@ -82,5 +84,25 @@ public class FileUtils {
         }
         File file = new File(fileName);
         return file.exists() && !file.isDirectory();
+    }
+
+    public static List<String> list(String dir, String except) {
+        LinkedList<String> list = new LinkedList<>();
+        if (dir == null) {
+            return new LinkedList<>();
+        }
+        File file = new File(dir);
+        if (file.exists() && file.isDirectory()) {
+            String[] files = file.list();
+            if (files != null) {
+                for (String fileName : files) {
+                    if (!fileName.equals(except)) {
+                        list.add(fileName);
+                    }
+                }
+                return list;
+            }
+        }
+        return list;
     }
 }

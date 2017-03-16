@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by doctor on 2017/3/8.
+ * TODO 加入副本计算
  */
 public class DocIdGenerator {
     public static final DocIdGenerator docIdGenerator = new DocIdGenerator();

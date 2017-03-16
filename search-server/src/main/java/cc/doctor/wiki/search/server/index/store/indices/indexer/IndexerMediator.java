@@ -3,13 +3,13 @@ package cc.doctor.wiki.search.server.index.store.indices.indexer;
 import cc.doctor.wiki.exceptions.schema.SchemaException;
 import cc.doctor.wiki.index.document.Document;
 import cc.doctor.wiki.index.document.Field;
+import cc.doctor.wiki.search.client.index.schema.Schema;
+import cc.doctor.wiki.search.server.index.shard.ShardService;
 import cc.doctor.wiki.search.server.index.store.indices.format.DateFormat;
 import cc.doctor.wiki.search.server.index.store.indices.format.Format;
 import cc.doctor.wiki.search.server.index.store.indices.format.FormatProber;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedFile;
-import cc.doctor.wiki.search.client.index.schema.Schema;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
-import cc.doctor.wiki.search.server.index.store.shard.ShardService;
 
 import java.util.LinkedList;
 import java.util.List;

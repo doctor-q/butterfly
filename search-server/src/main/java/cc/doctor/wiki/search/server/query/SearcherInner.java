@@ -4,7 +4,7 @@ import cc.doctor.wiki.search.client.query.QueryBuilder;
 import cc.doctor.wiki.search.client.query.grammar.Relation;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedTable;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
-import cc.doctor.wiki.search.server.index.store.shard.ShardService;
+import cc.doctor.wiki.search.server.index.shard.ShardService;
 import cc.doctor.wiki.search.server.query.grammar.GrammarParser;
 import cc.doctor.wiki.utils.CollectionUtils;
 

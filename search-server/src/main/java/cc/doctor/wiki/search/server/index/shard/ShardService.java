@@ -1,27 +1,25 @@
-package cc.doctor.wiki.search.server.index.store.shard;
+package cc.doctor.wiki.search.server.index.shard;
 
 import cc.doctor.wiki.exceptions.query.QueryGrammarException;
 import cc.doctor.wiki.index.document.Document;
 import cc.doctor.wiki.search.client.query.grammar.Predication;
 import cc.doctor.wiki.search.client.rpc.operation.Operation;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
-import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedTable;
-import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
-import cc.doctor.wiki.search.server.query.grammar.GrammarParser;
-import cc.doctor.wiki.utils.PropertyUtils;
 import cc.doctor.wiki.search.server.index.manager.IndexManagerInner;
 import cc.doctor.wiki.search.server.index.manager.WriteDocumentCallable;
 import cc.doctor.wiki.search.server.index.store.indices.indexer.IndexerMediator;
+import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedTable;
+import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 import cc.doctor.wiki.search.server.index.store.indices.recovery.RecoveryService;
 import cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog.OperationLog;
 import cc.doctor.wiki.search.server.index.store.mm.source.MmapSourceFile;
 import cc.doctor.wiki.search.server.index.store.mm.source.SourceFile;
+import cc.doctor.wiki.search.server.query.grammar.GrammarParser;
 import cc.doctor.wiki.utils.FileUtils;
-import cc.doctor.wiki.utils.SerializeUtils;
+import cc.doctor.wiki.utils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -72,21 +70,14 @@ public class ShardService {
      * @param document 文档
      */
     public boolean writeDocumentInner(Document document) {
-        try {
-            byte[] bytes = SerializeUtils.serialize(document);
-            OperationLog operationLog = new OperationLog();
-            operationLog.setOperation(Operation.ADD_DOCUMENT);
-            operationLog.setSize(bytes.length);
-            operationLog.setData(bytes);
-            boolean appendOperationLog = recoveryService.appendOperationLog(operationLog);
-            if (appendOperationLog) {
-                shardWriteExecutor.submit(new WriteDocumentCallable(indexerMediator, sourceFile, document, indexManagerInner.getSchema()));
-            }
-            return appendOperationLog;
-        } catch (IOException e) {
-            log.error("", e);
-            return false;
+        OperationLog operationLog = new OperationLog();
+        operationLog.setOperation(Operation.ADD_DOCUMENT);
+        operationLog.setData(document);
+        boolean appendOperationLog = recoveryService.appendOperationLog(operationLog);
+        if (appendOperationLog) {
+            shardWriteExecutor.submit(new WriteDocumentCallable(indexerMediator, sourceFile, document, indexManagerInner.getSchema()));
         }
+        return appendOperationLog;
     }
 
     public Iterable<WordInfo> searchInvertedDocs(GrammarParser.QueryNode queryNode) {

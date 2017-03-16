@@ -8,9 +8,9 @@ public class GlobalConfig {
     public static final int DEFAULT_SHARDS_NUM_DEFAULT = 5;
     //单个Source文件大小
     public static final String SOURCE_FILE_SIZE_NAME = "file.size.source";
-    public static final int SOURCE_FILE_SIZE_DEFUALT = 100 * 1024 * 1024;   //默认100M
-    public static final int SOURCE_FILE_SIZE_MAX = 800 * 1024 * 1024;   //最大800M
-    public static final int SOURCE_FILE_SIZE_MIN = 10 * 1024 * 1024;   //最大10M
+    public static final int SOURCE_FILE_SIZE_DEFUALT = 10 * 1024 * 1024;   //默认10M
+    public static final int SOURCE_FILE_SIZE_MAX = 100 * 1024 * 1024;   //最大800M
+    public static final int SOURCE_FILE_SIZE_MIN = 1024 * 1024;   //最小1M
 
     //单个倒排文件大小
     public static final String INVERTED_FILE_SIZE_NAME = "file.size.source";

@@ -11,10 +11,6 @@ public class InvertedTable implements Serializable {
     private WordInfo.InvertedNode invertedNode;
     private Iterable<InvertedDoc> invertedDocs;
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
-
     public WordInfo.InvertedNode getInvertedNode() {
         return invertedNode;
     }

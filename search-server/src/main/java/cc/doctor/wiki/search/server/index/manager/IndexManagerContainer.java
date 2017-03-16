@@ -83,6 +83,7 @@ public class IndexManagerContainer {
     public void query(String indexName, QueryBuilder queryBuilder) {
         SearcherInner searcherInner = searcherInnerMap.get(indexName);
         searcherInner.query(queryBuilder);
+        //// TODO: 2017/3/16 算分
     }
 
 }

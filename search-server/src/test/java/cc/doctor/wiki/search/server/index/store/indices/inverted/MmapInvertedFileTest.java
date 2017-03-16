@@ -32,8 +32,6 @@ public class MmapInvertedFileTest {
             lists.add(invertedDocs);
         }
 
-        Iterable<InvertedTable.InvertedDoc> invertedDocs = mmapInvertedFile.mergeDocs(lists);
-        System.out.println(invertedDocs);
     }
 
 }

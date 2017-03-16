@@ -5,7 +5,7 @@ import cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog.Ch
 import cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog.MmapOperationFile;
 import cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog.OperationLog;
 import cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog.OperationLogFile;
-import cc.doctor.wiki.search.server.index.store.shard.ShardService;
+import cc.doctor.wiki.search.server.index.shard.ShardService;
 
 import java.io.IOException;
 
@@ -17,16 +17,14 @@ public class RecoveryService {
     private ShardService shardService;
     private OperationLogFile operationLogFile;  //操作日志目录
     private CheckPointFile checkPointFile;
-    private CheckPointFile.CheckPoint checkPoint;
     private String operationLogPath;
 
     public RecoveryService(ShardService shardService) {
         this.shardService = shardService;
         operationLogPath = shardService.getShardRoot() + "/" + GlobalConfig.OPERATION_LOG_PATH_NAME;
-        checkPointFile = new CheckPointFile(this);
-        checkPoint = checkPointFile.getCheckPoint();
+        checkPointFile = new CheckPointFile();
         try {
-            operationLogFile = new MmapOperationFile(this);
+            operationLogFile = new MmapOperationFile(checkPointFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -36,19 +34,15 @@ public class RecoveryService {
         return operationLogPath;
     }
 
-    public CheckPointFile.CheckPoint getCheckPoint() {
-        return checkPoint;
-    }
-
-    public void setCheckPoint(CheckPointFile.CheckPoint checkPoint) {
-        this.checkPoint = checkPoint;
-    }
-
     public CheckPointFile getCheckPointFile() {
         return checkPointFile;
     }
 
     public boolean appendOperationLog(OperationLog operationLog) {
         return operationLogFile.appendOperationLog(operationLog);
+    }
+
+    public Long getCheckPoint() {
+        return checkPointFile.getCheckPoint();
     }
 }

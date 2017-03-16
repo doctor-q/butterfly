@@ -8,18 +8,16 @@ import java.io.Serializable;
  * Created by doctor on 2017/3/8.
  * 操作日志,用于恢复数据
  */
-public class OperationLog implements Serializable {
+public class OperationLog<T extends Serializable> implements Serializable {
     private static final long serialVersionUID = -4036212834718562926L;
-    private int size;
     private Operation operation;
     private long timestamp;
-    private byte[] data;
+    private T data;
 
     public OperationLog() {
     }
 
-    public OperationLog(int size, Operation operation, long timestamp, byte[] data) {
-        this.size = size;
+    public OperationLog(Operation operation, long timestamp, T data) {
         this.operation = operation;
         this.timestamp = timestamp;
         this.data = data;
@@ -41,19 +39,19 @@ public class OperationLog implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    public byte[] getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(byte[] data) {
+    public void setData(T data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "OperationLog{" +
+                "operation=" + operation +
+                ", timestamp=" + timestamp +
+                '}';
     }
 }

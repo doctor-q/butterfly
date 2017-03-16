@@ -4,7 +4,7 @@ import cc.doctor.wiki.index.document.Document;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.utils.PropertyUtils;
 import cc.doctor.wiki.search.client.index.schema.Schema;
-import cc.doctor.wiki.search.server.index.store.shard.ShardService;
+import cc.doctor.wiki.search.server.index.shard.ShardService;
 import cc.doctor.wiki.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
