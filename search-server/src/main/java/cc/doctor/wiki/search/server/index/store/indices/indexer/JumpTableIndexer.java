@@ -8,6 +8,7 @@ import cc.doctor.wiki.utils.DateUtils;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 
@@ -58,6 +59,41 @@ public class JumpTableIndexer extends AbstractIndexer {
     @Override
     public void deleteWord(Schema schema, String property, Object word) {
 
+    }
+
+    @Override
+    public WordInfo getWordInfoInner(String field, Object value) {
+        return null;
+    }
+
+    @Override
+    public List<WordInfo> getWordInfoGreatThanInner(String field, String value) {
+        return null;
+    }
+
+    @Override
+    public List<WordInfo> getWordInfoGreatThanEqualInner(String field, String value) {
+        return null;
+    }
+
+    @Override
+    public List<WordInfo> getWordInfoLessThanInner(String field, String value) {
+        return null;
+    }
+
+    @Override
+    public List<WordInfo> getWordInfoLessThanEqualInner(String field, String value) {
+        return null;
+    }
+
+    @Override
+    public List<WordInfo> getWordInfoPrefixInner(String field, String value) {
+        return null;
+    }
+
+    @Override
+    public List<WordInfo> getWordInfoMatchInner(String field, String value) {
+        return null;
     }
 
     public static void main(String[] args) {

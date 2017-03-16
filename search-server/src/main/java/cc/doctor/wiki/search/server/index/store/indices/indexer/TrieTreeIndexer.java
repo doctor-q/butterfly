@@ -6,6 +6,7 @@ import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 import cc.doctor.wiki.search.client.index.schema.Schema;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -76,6 +77,41 @@ public class TrieTreeIndexer extends AbstractIndexer {
     @Override
     public void deleteWord(Schema schema, String property, Object word) {
 
+    }
+
+    @Override
+    public WordInfo getWordInfoInner(String field, Object value) {
+        return null;
+    }
+
+    @Override
+    public List<WordInfo> getWordInfoGreatThanInner(String field, String value) {
+        return null;
+    }
+
+    @Override
+    public List<WordInfo> getWordInfoGreatThanEqualInner(String field, String value) {
+        return null;
+    }
+
+    @Override
+    public List<WordInfo> getWordInfoLessThanInner(String field, String value) {
+        return null;
+    }
+
+    @Override
+    public List<WordInfo> getWordInfoLessThanEqualInner(String field, String value) {
+        return null;
+    }
+
+    @Override
+    public List<WordInfo> getWordInfoPrefixInner(String field, String value) {
+        return null;
+    }
+
+    @Override
+    public List<WordInfo> getWordInfoMatchInner(String field, String value) {
+        return null;
     }
 
     public static class StateNode {

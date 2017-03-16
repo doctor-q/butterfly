@@ -6,10 +6,19 @@ package cc.doctor.wiki.search.server.index.store.indices.inverted;
  */
 public class WordInfo {
     private InvertedNode invertedNode;  //记录倒排链信息的节点
-    long frequency; //词频
+    private long frequency; //词频
 
     public WordInfo(InvertedNode invertedNode) {
         this.invertedNode = invertedNode;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof WordInfo) {
+            WordInfo wordInfo = (WordInfo) obj;
+            return wordInfo.invertedNode.position == this.invertedNode.position;
+        }
+        return false;
     }
 
     /**

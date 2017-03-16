@@ -40,5 +40,13 @@ public class InvertedTable implements Serializable {
             this.docId = docId;
             this.docFrequency = docFrequency;
         }
+
+        public long getDocId() {
+            return docId;
+        }
+
+        public long getDocFrequency() {
+            return docFrequency;
+        }
     }
 }

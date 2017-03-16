@@ -5,6 +5,7 @@ import cc.doctor.wiki.index.document.Document;
 import cc.doctor.wiki.search.client.query.grammar.Predication;
 import cc.doctor.wiki.search.client.rpc.operation.Operation;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
+import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedTable;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 import cc.doctor.wiki.search.server.query.grammar.GrammarParser;
 import cc.doctor.wiki.utils.PropertyUtils;
@@ -41,6 +42,10 @@ public class ShardService {
 
     public String getShardRoot() {
         return shardRoot;
+    }
+
+    public int getShard() {
+        return shard;
     }
 
     public ShardService(IndexManagerInner indexManagerInner, int shard) {
@@ -105,4 +110,7 @@ public class ShardService {
         throw new QueryGrammarException("UnSupported predication exception.");
     }
 
+    public Iterable<InvertedTable> getInvertedTables(Iterable<WordInfo> wordInfos) {
+        return null;
+    }
 }

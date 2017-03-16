@@ -9,7 +9,9 @@ import cc.doctor.wiki.search.server.index.store.indices.format.FormatProber;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedFile;
 import cc.doctor.wiki.search.client.index.schema.Schema;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
+import cc.doctor.wiki.search.server.index.store.shard.ShardService;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -20,6 +22,8 @@ public class IndexerMediator {
     private JumpTableIndexer jumpTableIndexer;
     private TrieTreeIndexer trieTreeIndexer;
     private InvertedFile invertedFile;
+    private ShardService shardService;
+    private Schema schema;
 
     private IndexerMediator() {
         jumpTableIndexer = new JumpTableIndexer();
@@ -61,7 +65,7 @@ public class IndexerMediator {
         return format;
     }
 
-    private boolean insertWord(Schema schema,Format format, Field field) {
+    private boolean insertWord(Schema schema, Format format, Field field) {
         switch (format) {
             case STRING:
                 trieTreeIndexer.insertWord(schema, field);
@@ -75,31 +79,133 @@ public class IndexerMediator {
         return true;
     }
 
+    private Format getFormat(String field) {
+        Schema.Property propertyByName = schema.getPropertyByName(field);
+        if (propertyByName == null || propertyByName.getType() == null) {
+            return null;
+        }
+        String type = propertyByName.getType();
+        Format format = Format.getFormat(type);
+        if (format == null) {
+            throw new SchemaException("UnSupport field type.");
+        }
+        return format;
+    }
+
     public Iterable<WordInfo> equalSearch(String field, String value) {
-        return null;
+        Format format = getFormat(field);
+        WordInfo wordInfo = null;
+        switch (format) {
+            case STRING:
+                wordInfo = trieTreeIndexer.getWordInfoInner(field, value);
+                break;
+            case LONG:
+            case DATE:
+            case DOUBLE:
+                wordInfo = jumpTableIndexer.getWordInfoInner(field, value);
+                break;
+        }
+        if (wordInfo == null) {
+            return null;
+        }
+        List<WordInfo> wordInfos = new LinkedList<>();
+        wordInfos.add(wordInfo);
+        return wordInfos;
     }
 
     public Iterable<WordInfo> greatThanSearch(String field, String value) {
-        return null;
+        Format format = getFormat(field);
+        List<WordInfo> wordInfos = new LinkedList<>();
+        switch (format) {
+            case STRING:
+                throw new SchemaException("Great than predication not support.");
+            case LONG:
+            case DATE:
+            case DOUBLE:
+                wordInfos = jumpTableIndexer.getWordInfoGreatThanInner(field, value);
+                break;
+        }
+        return wordInfos;
     }
 
     public Iterable<WordInfo> greatThanEqualSearch(String field, String value) {
-        return null;
+        Format format = getFormat(field);
+        List<WordInfo> wordInfos = new LinkedList<>();
+        switch (format) {
+            case STRING:
+                throw new SchemaException("Great than predication not support.");
+            case LONG:
+            case DATE:
+            case DOUBLE:
+                wordInfos = jumpTableIndexer.getWordInfoGreatThanEqualInner(field, value);
+                break;
+        }
+        return wordInfos;
     }
 
     public Iterable<WordInfo> lessThanSearch(String field, String value) {
-        return null;
+        Format format = getFormat(field);
+        List<WordInfo> wordInfos = new LinkedList<>();
+        switch (format) {
+            case STRING:
+                throw new SchemaException("Great than predication not support.");
+            case LONG:
+            case DATE:
+            case DOUBLE:
+                wordInfos = jumpTableIndexer.getWordInfoLessThanInner(field, value);
+                break;
+        }
+        return wordInfos;
     }
 
     public Iterable<WordInfo> lessThanEqualSearch(String field, String value) {
-        return null;
+        Format format = getFormat(field);
+        List<WordInfo> wordInfos = new LinkedList<>();
+        switch (format) {
+            case STRING:
+                throw new SchemaException("Great than predication not support.");
+            case LONG:
+            case DATE:
+            case DOUBLE:
+                wordInfos = jumpTableIndexer.getWordInfoLessThanEqualInner(field, value);
+                break;
+        }
+        return wordInfos;
     }
 
     public Iterable<WordInfo> prefixSearch(String field, String value) {
-        return null;
+        Format format = getFormat(field);
+        List<WordInfo> wordInfos = new LinkedList<>();
+        switch (format) {
+            case STRING:
+                wordInfos = trieTreeIndexer.getWordInfoPrefixInner(field, value);
+                break;
+            case LONG:
+            case DATE:
+            case DOUBLE:
+                throw new SchemaException("Prefix prediction not support.");
+        }
+        return wordInfos;
     }
 
     public Iterable<WordInfo> matchSearch(String field, String value) {
-        return null;
+        Format format = getFormat(field);
+        List<WordInfo> wordInfos = new LinkedList<>();
+        switch (format) {
+            case STRING:
+                wordInfos = trieTreeIndexer.getWordInfoMatchInner(field, value);
+                break;
+            case LONG:
+            case DATE:
+            case DOUBLE:
+                WordInfo wordInfo = jumpTableIndexer.getWordInfoInner(field, value);
+                if (wordInfo != null) {
+                    wordInfos.add(wordInfo);
+                } else {
+                    return null;
+                }
+                break;
+        }
+        return wordInfos;
     }
 }
