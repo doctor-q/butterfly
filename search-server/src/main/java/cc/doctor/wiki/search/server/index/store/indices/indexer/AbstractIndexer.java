@@ -1,7 +1,7 @@
 package cc.doctor.wiki.search.server.index.store.indices.indexer;
 
-import cc.doctor.wiki.index.document.Field;
 import cc.doctor.wiki.search.client.index.schema.Schema;
+import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedFile;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 
 import java.util.List;
@@ -10,20 +10,16 @@ import java.util.List;
  * Created by doctor on 2017/3/3.
  */
 public abstract class AbstractIndexer {
-    //加载schema
-    public void loadSchema() {
-
-    }
-    //加载索引
-    public abstract void loadIndexes(Schema schema);
-    public void insertWord(Schema schema, Field field) {
-        if (field.getName() == null || field.getValue() == null) {
+    protected Schema schema;
+    private InvertedFile invertedFile;
+    public void insertWord(String field, Object value) {
+        if (field == null || value == null) {
             return;
         }
-        insertWordInner(schema, field);
+        insertWordInner(field, value);
     }
     //在索引增加一个词
-    public abstract void insertWordInner(Schema schema, Field field);
+    public abstract void insertWordInner(String field, Object value);
     //从索引删除一个词
     public abstract void deleteWord(Schema schema, String property, Object word);
 

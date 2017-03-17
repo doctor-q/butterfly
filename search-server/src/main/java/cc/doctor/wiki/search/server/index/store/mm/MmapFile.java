@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class MmapFile {
     private static final Logger log = LoggerFactory.getLogger(MmapFile.class);
-    private long fileSize;
+    private int fileSize;
     private MappedByteBuffer mappedByteBuffer;
     private FileChannel fileChannel;
     private File file;
@@ -40,7 +40,7 @@ public class MmapFile {
         return file;
     }
 
-    public MmapFile(String file, long fileSize) throws IOException {
+    public MmapFile(String file, int fileSize) throws IOException {
         this.file = new File(file);
         this.fileSize = fileSize;
         if (this.file.exists()) {
@@ -95,17 +95,6 @@ public class MmapFile {
         } catch (IOException e) {
             log.error("", e);
         }
-    }
-
-    public static void main(String[] args) throws IOException {
-        MmapFile mmapFile = new MmapFile("/tmp/test.txt", 20);
-        mmapFile.appendBytes("abcdefghijklmn".getBytes());
-        mmapFile.commit();
-        byte[] bytes = mmapFile.readBytes(10, 10);
-        System.out.println(new String(bytes));
-        mmapFile.appendBytes("opqrst".getBytes());
-        mmapFile.commit();
-        mmapFile.clean();
     }
 
     public <T extends Serializable> int writeObject(T serializable) {

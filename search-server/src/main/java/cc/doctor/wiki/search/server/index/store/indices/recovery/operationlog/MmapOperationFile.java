@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Iterator;
 
+import static cc.doctor.wiki.search.server.index.store.mm.ScrollFile.AutoIncrementScrollFileNameStrategy.autoIncrementScrollFileNameStrategy;
+
 /**
  * Created by doctor on 2017/3/8.
  */
@@ -26,18 +28,7 @@ public class MmapOperationFile extends OperationLogFile {
         if (checkPoint == null) {
             throw new NoCheckPointException("Checkpoint file miss.");
         }
-        scrollFile = new MmapScrollFile(operationRoot, operationLogSize, new ScrollFile.ScrollFileNameStrategy() {
-
-            @Override
-            public String first() {
-                return "1";
-            }
-
-            @Override
-            public String next(String current) {
-                return String.valueOf(Integer.parseInt(current) + 1);
-            }
-        }, checkPoint);
+        scrollFile = new MmapScrollFile(operationRoot, operationLogSize, autoIncrementScrollFileNameStrategy, checkPoint);
     }
 
     @Override
@@ -54,17 +45,23 @@ public class MmapOperationFile extends OperationLogFile {
             public Iterator<OperationLog> iterator() {
                 return new Iterator<OperationLog>() {
                     long pos = position;
+                    OperationLog operationLog;
 
                     @Override
                     public boolean hasNext() {
-                        return pos >= 0;
+                        Tuple<Long, OperationLog> operationLogTuple = scrollFile.readSerializable(pos);
+                        if (operationLogTuple == null) {
+                            return false;
+                        } else {
+                            pos = operationLogTuple.getT1();
+                            operationLog = operationLogTuple.getT2();
+                            return true;
+                        }
                     }
 
                     @Override
                     public OperationLog next() {
-                        Tuple<Long, OperationLog> operationLogTuple = scrollFile.readSerializable(pos);
-                        pos = operationLogTuple.getT1();
-                        return operationLogTuple.getT2();
+                        return operationLog;
                     }
 
                     @Override

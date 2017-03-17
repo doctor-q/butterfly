@@ -54,7 +54,7 @@ public class FileUtils {
     }
 
     public static void main(String[] args) {
-        FileUtils.dropDirectory("/tmp/es/data/order");
+        FileUtils.move("/tmp/test/1", "/tmp/2");
     }
 
     public static boolean dropDirectory(String directory) {
@@ -104,5 +104,28 @@ public class FileUtils {
             }
         }
         return list;
+    }
+
+    public static boolean removeFile(String fileName) {
+        if (fileName == null) {
+            return true;
+        }
+        File file = new File(fileName);
+        if (!file.exists()) {
+            return true;
+        }
+        return file.delete();
+    }
+
+    public static boolean move(String from, String to) {
+        if (from == null || to == null) {
+            return false;
+        }
+        File fileFrom = new File(from);
+        if (!fileFrom.exists()) {
+            return false;
+        }
+        File fileTo = new File(to);
+        return fileFrom.renameTo(fileTo);
     }
 }

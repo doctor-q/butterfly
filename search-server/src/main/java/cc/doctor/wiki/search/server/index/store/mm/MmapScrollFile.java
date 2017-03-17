@@ -1,7 +1,7 @@
 package cc.doctor.wiki.search.server.index.store.mm;
 
 import cc.doctor.wiki.common.Tuple;
-import cc.doctor.wiki.exceptions.file.FileException;
+import cc.doctor.wiki.exceptions.file.MmapFileException;
 import cc.doctor.wiki.utils.FileUtils;
 import cc.doctor.wiki.utils.SerializeUtils;
 import org.slf4j.Logger;
@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-import static cc.doctor.wiki.search.server.index.store.mm.ScrollFile.DateScrollFileNameStrategy.dateScrollFileNameStrategy;
+import static cc.doctor.wiki.search.server.index.store.mm.ScrollFile.AutoIncrementScrollFileNameStrategy.autoIncrementScrollFileNameStrategy;
 
 /**
  * Created by doctor on 2017/3/16.
@@ -30,7 +30,7 @@ public class MmapScrollFile implements ScrollFile {
     private ScrollFileNameStrategy scrollFileNameStrategy;
 
     public MmapScrollFile(String root, int scrollSize) {
-        this(root, scrollSize, dateScrollFileNameStrategy);
+        this(root, scrollSize, autoIncrementScrollFileNameStrategy);
     }
 
     public MmapScrollFile(String root, int scrollSize, ScrollFileNameStrategy scrollFileNameStrategy) {
@@ -51,14 +51,25 @@ public class MmapScrollFile implements ScrollFile {
                 if (!FileUtils.exists(currentFileAbsolute)) {
                     FileUtils.createFileRecursion(currentFileAbsolute);
                 }
-                readFile = mmapFile = new MmapFile(currentFileAbsolute, scrollSize);
+                mmapFile = new MmapFile(currentFileAbsolute, scrollSize);
             } else {
                 int filePosition = (int) (position % scrollSize);
                 mmapFile = new MmapFile(root + "/" + current, scrollSize, filePosition);
             }
+            readFile = mmapFile;
         } catch (IOException e) {
             log.error("", e);
         }
+    }
+
+    @Override
+    public String root() {
+        return root;
+    }
+
+    @Override
+    public int scrollSize() {
+        return scrollSize;
     }
 
     @Override
@@ -121,25 +132,34 @@ public class MmapScrollFile implements ScrollFile {
     @Override
     public <T extends Serializable> Tuple<Long, T> readSerializable(long position) {
         int positionInFile = (int) (position % scrollSize);
+        int index = (int)(position/scrollSize);
         String file = getFile(position);
         if (file == null) {
-            throw new FileException("Position over limit.");
+            return null;
         }
-        MmapFile rFile;
-        //不在当前写文件里,则去读文件里查找
-        if (!file.equals(current)) {
-            if (!readFile.getFile().getName().equals(file)) {
-                try {
-                    readFile = new MmapFile(root + "/" + file, scrollSize);
-                } catch (IOException e) {
-                    log.error("", e);
-                }
+        if (!file.equals(readFile.getFile().getName())) {
+            try {
+                readFile = new MmapFile(root + "/" + file, scrollSize, positionInFile);
+            } catch (IOException e) {
+                log.error("", e);
+                throw new MmapFileException("Create mmap file error.");
             }
-            rFile = readFile;
-        } else {
-            rFile = mmapFile;
         }
-        int size = rFile.readInt(positionInFile);
-        return new Tuple<>(position + 4 + size, rFile.<T>readObject(positionInFile + 4, size));
+        int size = readFile.readInt(positionInFile);
+        if (size == 0) {
+            return readSerializable((index + 1) * scrollSize);
+        }
+        long nextPos = index * scrollSize + positionInFile + 4 + size;
+        return new Tuple<>(nextPos, readFile.<T>readObject(positionInFile + 4, size));
+    }
+
+    @Override
+    public void writeLock() {
+
+    }
+
+    @Override
+    public void readLock() {
+
     }
 }

@@ -37,4 +37,16 @@ public class CollectionUtils {
     public static <T> Collection<T> or(Iterable<T> iterable1, Iterable<T> iterable2) {
         return or(iterableToList(iterable1), iterableToList(iterable2));
     }
+
+    public static <F, T> List<T> transfer(List<F> fromList, Function<F, T> function) {
+        List<T> toList = new LinkedList<>();
+        for (F from : fromList) {
+            toList.add(function.transfer(from));
+        }
+        return toList;
+    }
+
+    public interface Function<F, T> {
+        T transfer(F from);
+    }
 }

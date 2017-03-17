@@ -1,9 +1,8 @@
 package cc.doctor.wiki.search.server.index.store.indices.indexer;
 
 import cc.doctor.wiki.exceptions.schema.SchemaException;
-import cc.doctor.wiki.index.document.Field;
-import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 import cc.doctor.wiki.search.client.index.schema.Schema;
+import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 import cc.doctor.wiki.utils.DateUtils;
 
 import java.util.Date;
@@ -20,22 +19,17 @@ public class JumpTableIndexer extends AbstractIndexer {
     //数字跳表,每份索引的每个域包含一个
     private Map<String, ConcurrentSkipListMap<Number, WordInfo>> concurrentSkipListMap = new HashMap<>();
 
-    @Override
-    public void loadIndexes(Schema schema) {
-
-    }
-
     /**
      * 此处的property必须有且完整
      */
     @Override
-    public void insertWordInner(Schema schema, Field field) {
-        ConcurrentSkipListMap<Number, WordInfo> skipList = concurrentSkipListMap.get(field.getName());
+    public void insertWordInner(String field, Object value) {
+        ConcurrentSkipListMap<Number, WordInfo> skipList = concurrentSkipListMap.get(field);
         if (skipList == null) {
             skipList = new ConcurrentSkipListMap<>();
-            concurrentSkipListMap.put(field.getName(), skipList);
+            concurrentSkipListMap.put(field, skipList);
         }
-        Schema.Property wordProperty = schema.getPropertyByName(field.getName());
+        Schema.Property wordProperty = schema.getPropertyByName(field);
         if (wordProperty == null || wordProperty.getType() == null) {
             throw new SchemaException("Property error.");
         }
@@ -44,15 +38,15 @@ public class JumpTableIndexer extends AbstractIndexer {
         if (wordProperty.getType().equals("date")) {
             String pattern = wordProperty.getPattern();
             if (pattern != null) {
-                Date date = DateUtils.parse(field.getValue().toString(), pattern);
+                Date date = DateUtils.parse(field, pattern);
                 if (date != null) {
-                    skipList.put(date.getTime(), new WordInfo(new WordInfo.InvertedNode(field.getValue(), 0, 0)));
+                    skipList.put(date.getTime(), new WordInfo(new WordInfo.InvertedNode(value, 0, 0)));
                 }
             }
         } else if (wordProperty.getType().equals("double")) {
-            skipList.put(Double.parseDouble(field.getValue().toString()), new WordInfo(new WordInfo.InvertedNode(field.getValue(), 0, 0)));
+            skipList.put(Double.parseDouble(value.toString()), new WordInfo(new WordInfo.InvertedNode(value, 0, 0)));
         } else if (wordProperty.getType().equals("long")) {
-            skipList.put(Long.parseLong(field.getValue().toString()), new WordInfo(new WordInfo.InvertedNode(field.getValue(), 0, 0)));
+            skipList.put(Long.parseLong(value.toString()), new WordInfo(new WordInfo.InvertedNode(value, 0, 0)));
         }
     }
 
@@ -94,15 +88,5 @@ public class JumpTableIndexer extends AbstractIndexer {
     @Override
     public List<WordInfo> getWordInfoMatchInner(String field, String value) {
         return null;
-    }
-
-    public static void main(String[] args) {
-        JumpTableIndexer jumpTableIndexer = new JumpTableIndexer();
-        Schema schema = new Schema();
-        jumpTableIndexer.insertWord(schema, new Field("id", 1));
-        jumpTableIndexer.insertWord(schema, new Field("name", "cz"));
-        jumpTableIndexer.insertWord(schema, new Field("id", "2"));
-        System.out.println(jumpTableIndexer.concurrentSkipListMap);
-        System.out.println(schema);
     }
 }
