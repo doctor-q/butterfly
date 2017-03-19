@@ -1,6 +1,8 @@
 package cc.doctor.wiki.search.server.cluster.routing;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by doctor on 2017/3/13.
@@ -11,7 +13,7 @@ public class RoutingNode {
     private String nodeId;
     private String nodeName;
     private NodeState nodeState;
-    private List<RoutingShard> routingShards;
+    private Map<String, List<RoutingShard>> routingShards;
 
     public boolean isMaster() {
         return master;
@@ -45,11 +47,20 @@ public class RoutingNode {
         this.nodeState = nodeState;
     }
 
-    public List<RoutingShard> getRoutingShards() {
+    public Map<String, List<RoutingShard>> getRoutingShards() {
         return routingShards;
     }
 
-    public void setRoutingShards(List<RoutingShard> routingShards) {
+    public void setRoutingShards(Map<String, List<RoutingShard>> routingShards) {
         this.routingShards = routingShards;
+    }
+
+    public void addRoutingShard(RoutingShard routingShard) {
+        List<RoutingShard> routingShards = this.routingShards.get(routingShard.getIndexName());
+        if (routingShards == null) {
+            routingShards = new LinkedList<>();
+            this.routingShards.put(routingShard.getIndexName(), routingShards);
+        }
+        routingShards.add(routingShard);
     }
 }

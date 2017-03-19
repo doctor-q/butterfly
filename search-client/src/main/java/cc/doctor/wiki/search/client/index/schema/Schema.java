@@ -11,7 +11,8 @@ import java.util.Map;
 public class Schema {
     private String indexName;   //索引名
     private String alias;       //别名,通过索引名别名任意一个均可以访问
-    private String shards;      //分片数目
+    private int replicate;      //副本数目
+    private int shards;      //分片数目
     private String dynamic;  //是否自动探测格式
     private List<Property> properties = new LinkedList<>();//字段
     private Map<String, Property> propertyMap = new HashMap<>();
@@ -35,11 +36,19 @@ public class Schema {
         this.alias = alias;
     }
 
-    public String getShards() {
+    public int getReplicate() {
+        return replicate;
+    }
+
+    public void setReplicate(int replicate) {
+        this.replicate = replicate;
+    }
+
+    public int getShards() {
         return shards;
     }
 
-    public void setShards(String shards) {
+    public void setShards(int shards) {
         this.shards = shards;
     }
 

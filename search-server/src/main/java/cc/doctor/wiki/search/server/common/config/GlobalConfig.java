@@ -43,4 +43,9 @@ public class GlobalConfig {
     public static final String NETTY_SERVER_PORT = "netty.server.port";
     public static final int NETTY_SERVER_PORT_DEFAULT = 1218;
 
+    //zk
+    public static final String ZOOKEEPER_CONN_STRING = "zookeeper.conn.string";
+    public static final String ZOOKEEPER_CONN_STRING_DEFUALT = "127.0.0.1:2181";
+
+    public static final String NODE_NAME = "node.name";
 }

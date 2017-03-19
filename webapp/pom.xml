@@ -4,9 +4,38 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cc.doctor.wiki</groupId>
+    <parent>
+        <groupId>cc.doctor.wiki</groupId>
+        <artifactId>wiki</artifactId>
+        <relativePath>../pom.xml</relativePath>
+        <version>1.0.0</version>
+    </parent>
     <artifactId>webapp</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <hostName>localhost</hostName>    <!--   Default: localhost -->
+                    <port>8080</port>    <!-- 启动端口 Default:8080 -->
+                    <path>/</path>    <!-- 访问应用路径  Default: /${project.artifactId}-->
+                    <uriEncoding>UTF-8</uriEncoding>      <!-- uri编码 Default: ISO-8859-1 -->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

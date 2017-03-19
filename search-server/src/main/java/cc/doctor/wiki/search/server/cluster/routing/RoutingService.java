@@ -1,5 +1,6 @@
 package cc.doctor.wiki.search.server.cluster.routing;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -7,8 +8,23 @@ import java.util.List;
  * 路由服务,根据索引获取对应的节点
  */
 public class RoutingService {
-    public List<NodeInfo> getNodeInfos(String indexName) {
-        return null;
+    private List<RoutingNode> routingNodes;
+
+    public List<RoutingNode> getIndexRoutingNodes(String indexName) {
+        List<RoutingNode> indexRoutingNodes = new LinkedList<>();
+        if (indexName == null) {
+            return indexRoutingNodes;
+        }
+        for (RoutingNode routingNode : routingNodes) {
+            if (routingNode.getRoutingShards().containsKey(indexName)) {
+                indexRoutingNodes.add(routingNode);
+            }
+        }
+        return indexRoutingNodes;
+    }
+
+    public List<RoutingNode> getRoutingNodes() {
+        return routingNodes;
     }
 
     public class NodeInfo {

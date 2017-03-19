@@ -9,5 +9,5 @@ package cc.doctor.wiki.search.server.cluster.routing;
  *
  */
 public enum NodeState {
-    RUNNING,BLOCKED,MISSING,STOP;
+    STARTING,RUNNING,BLOCKED,MISSING,STOP;
 }

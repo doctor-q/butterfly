@@ -5,4 +5,13 @@
          http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
     <display-name>search</display-name>
+
+    <servlet>
+        <servlet-name>dispatch</servlet-name>
+        <servlet-class>cc.doctor.wiki.web.servlet.DispatchServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>dispatch</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 </web-app>

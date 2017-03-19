@@ -1,6 +1,7 @@
 package cc.doctor.wiki.search.server.cluster.replicate;
 
 import cc.doctor.wiki.common.Tuple;
+import cc.doctor.wiki.ha.zk.ZookeeperClient;
 import cc.doctor.wiki.index.document.Document;
 import cc.doctor.wiki.search.client.index.schema.Schema;
 import cc.doctor.wiki.search.client.rpc.Client;
@@ -8,6 +9,8 @@ import cc.doctor.wiki.search.client.rpc.Message;
 import cc.doctor.wiki.search.client.rpc.request.*;
 import cc.doctor.wiki.search.client.rpc.result.IndexResult;
 import cc.doctor.wiki.search.client.rpc.result.RpcResult;
+import cc.doctor.wiki.search.server.cluster.node.Node;
+import cc.doctor.wiki.search.server.cluster.routing.RoutingNode;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingService;
 
 import java.util.List;
@@ -28,12 +31,27 @@ public class ReplicateService {
     private Map<String, Client> nodeClients = new ConcurrentHashMap<>();
     private RoutingService routingService;
     private ExecutorService executorService = Executors.newCachedThreadPool();
+    private NodeAllocator nodeAllocator;
+    private Node node;
+
+    public ReplicateService() {
+        routingService = new RoutingService();
+        nodeAllocator = new NodeAllocator(routingService, ZookeeperClient.getClient(Node.ZK_CONNECTION_STRING));
+    }
+
+    interface Action {
+        void doAction();
+    }
     
-    private void submitReplicateTasks(String indexName, Message message) {
-        List<RoutingService.NodeInfo> nodeInfos = routingService.getNodeInfos(indexName);
-        for (RoutingService.NodeInfo nodeInfo : nodeInfos) {
-            Client client = nodeClients.get(nodeInfo.getNodeId());
-            executorService.submit(new ReplicateTask(client, message));
+    private void submitReplicateTasks(String indexName, Message message, Action action) {
+        List<RoutingNode> indexRoutingNodes = routingService.getIndexRoutingNodes(indexName);
+        for (RoutingNode routingNode : indexRoutingNodes) {
+            if (routingNode.getNodeId().equals(node.getRoutingNode().getNodeId())) {
+                action.doAction();
+            } else {
+                Client client = nodeClients.get(routingNode.getNodeId());
+                executorService.submit(new ReplicateTask(client, message));
+            }
         }
     }
 
@@ -44,73 +62,115 @@ public class ReplicateService {
             schema = new Schema();
         }
         schema.setIndexName(createIndexRequest.getIndexName());
-        indexManagerContainer.createIndex(schema);
-        submitReplicateTasks(createIndexRequest.getIndexName(), message);
+        nodeAllocator.allocateNodes(schema.getReplicate(), schema.getShards(), schema.getIndexName());
+        final Schema finalSchema = schema;
+        submitReplicateTasks(createIndexRequest.getIndexName(), message, new Action() {
+            @Override
+            public void doAction() {
+                indexManagerContainer.createIndex(finalSchema);
+            }
+        });
         return new IndexResult();
     }
 
     public RpcResult dropIndex(Message message) {
         String indexName = (String) message.getData();
-        Schema schema = new Schema();
+        final Schema schema = new Schema();
         schema.setIndexName(indexName);
-        indexManagerContainer.dropIndex(schema);
-        submitReplicateTasks(indexName, message);
+        submitReplicateTasks(indexName, message, new Action() {
+            @Override
+            public void doAction() {
+                indexManagerContainer.dropIndex(schema);
+            }
+        });
         return new IndexResult();
     }
 
     public RpcResult putSchema(Message message) {
-        Schema schema = (Schema) message.getData();
-        indexManagerContainer.putSchema(schema);
-        submitReplicateTasks(schema.getIndexName(), message);
+        final Schema schema = (Schema) message.getData();
+        submitReplicateTasks(schema.getIndexName(), message, new Action() {
+            @Override
+            public void doAction() {
+                indexManagerContainer.putSchema(schema);
+            }
+        });
         return null;
     }
 
     public RpcResult putAlias(Message message) {
-        Tuple<String, String> alias = (Tuple<String, String>) message.getData();
-        indexManagerContainer.putAlias(alias);
-        submitReplicateTasks(alias.getT1(), message);
+        final Tuple<String, String> alias = (Tuple<String, String>) message.getData();
+        submitReplicateTasks(alias.getT1(), message, new Action() {
+            @Override
+            public void doAction() {
+                indexManagerContainer.putAlias(alias);
+            }
+        });
         return null;
     }
 
     public RpcResult dropAlias(Message message) {
-        Tuple<String, String> alias = (Tuple<String, String>) message.getData();
-        indexManagerContainer.dropAlias(alias);
-        submitReplicateTasks(alias.getT1(), message);
+        final Tuple<String, String> alias = (Tuple<String, String>) message.getData();
+        submitReplicateTasks(alias.getT1(), message, new Action() {
+            @Override
+            public void doAction() {
+                indexManagerContainer.dropAlias(alias);
+            }
+        });
         return null;
     }
 
     public RpcResult insertDocument(Message message) {
-        InsertRequest insertRequest = (InsertRequest) message.getData();
-        indexManagerContainer.insertDocument(insertRequest.getIndexName(), insertRequest.getDocument());
-        submitReplicateTasks(insertRequest.getIndexName(), message);
+        final InsertRequest insertRequest = (InsertRequest) message.getData();
+        submitReplicateTasks(insertRequest.getIndexName(), message, new Action() {
+            @Override
+            public void doAction() {
+                indexManagerContainer.insertDocument(insertRequest.getIndexName(), insertRequest.getDocument());
+            }
+        });
         return null;
     }
 
     public RpcResult bulkInsert(Message message) {
-        BulkRequest<Document> bulkRequest = (BulkRequest<Document>) message.getData();
-        indexManagerContainer.bulkInsert(bulkRequest.getIndexName(), bulkRequest.getBulkData());
-        submitReplicateTasks(bulkRequest.getIndexName(), message);
+        final BulkRequest<Document> bulkRequest = (BulkRequest<Document>) message.getData();
+        submitReplicateTasks(bulkRequest.getIndexName(), message, new Action() {
+            @Override
+            public void doAction() {
+                indexManagerContainer.bulkInsert(bulkRequest.getIndexName(), bulkRequest.getBulkData());
+            }
+        });
         return null;
     }
 
     public RpcResult deleteDocument(Message message) {
-        DeleteRequest deleteRequest = (DeleteRequest) message.getData();
-        indexManagerContainer.deleteDocument(deleteRequest.getIndexName(), deleteRequest.getDocId());
-        submitReplicateTasks(deleteRequest.getIndexName(), message);
+        final DeleteRequest deleteRequest = (DeleteRequest) message.getData();
+        submitReplicateTasks(deleteRequest.getIndexName(), message, new Action() {
+            @Override
+            public void doAction() {
+                indexManagerContainer.deleteDocument(deleteRequest.getIndexName(), deleteRequest.getDocId());
+            }
+        });
         return null;
     }
 
     public RpcResult bulkDelete(Message message) {
-        BulkRequest<Long> bulkRequest = (BulkRequest<Long>) message.getData();
-        indexManagerContainer.bulkDelete(bulkRequest.getIndexName(), bulkRequest.getBulkData());
-        submitReplicateTasks(bulkRequest.getIndexName(), message);
+        final BulkRequest<Long> bulkRequest = (BulkRequest<Long>) message.getData();
+        submitReplicateTasks(bulkRequest.getIndexName(), message, new Action() {
+            @Override
+            public void doAction() {
+                indexManagerContainer.bulkDelete(bulkRequest.getIndexName(), bulkRequest.getBulkData());
+            }
+        });
         return null;
     }
 
     public RpcResult deleteByQuery(Message message) {
-        QueryRequest queryRequest = (QueryRequest) message.getData();
-        indexManagerContainer.deleteByQuery(queryRequest.getIndexName(), queryRequest.getQueryBuilder());
-        submitReplicateTasks(queryRequest.getIndexName(), message);
+        final QueryRequest queryRequest = (QueryRequest) message.getData();
+        submitReplicateTasks(queryRequest.getIndexName(), message, new Action() {
+            @Override
+            public void doAction() {
+                indexManagerContainer.deleteByQuery(queryRequest.getIndexName(), queryRequest.getQueryBuilder());
+            }
+        });
         return null;
     }
 
@@ -118,9 +178,13 @@ public class ReplicateService {
      * Query and merge
      */
     public RpcResult Query(Message message) {
-        QueryRequest queryRequest = (QueryRequest) message.getData();
-        indexManagerContainer.query(queryRequest.getIndexName(), queryRequest.getQueryBuilder());
-        submitReplicateTasks(queryRequest.getIndexName(), message);
+        final QueryRequest queryRequest = (QueryRequest) message.getData();
+        submitReplicateTasks(queryRequest.getIndexName(), message, new Action() {
+            @Override
+            public void doAction() {
+                indexManagerContainer.query(queryRequest.getIndexName(), queryRequest.getQueryBuilder());
+            }
+        });
         return null;
     }
 

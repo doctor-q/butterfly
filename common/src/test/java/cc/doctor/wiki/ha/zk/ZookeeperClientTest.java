@@ -13,8 +13,7 @@ public class ZookeeperClientTest {
     @Before
     public void setUp() {
         PropertyUtils.setProperty("zk.listener.scan.package", "cc.doctor.wiki.ha.zk");
-        zookeeperClient = new ZookeeperClient();
-        zookeeperClient.createConnection();
+        zookeeperClient = ZookeeperClient.getClient("127.0.0.1:2181");
     }
 
     @After

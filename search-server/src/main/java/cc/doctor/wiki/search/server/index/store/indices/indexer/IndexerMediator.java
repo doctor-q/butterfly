@@ -68,12 +68,12 @@ public class IndexerMediator {
     private boolean insertWord(Schema schema, Format format, Field field) {
         switch (format) {
             case STRING:
-                trieTreeIndexer.insertWord(schema, field);
+                trieTreeIndexer.insertWord("", field);
                 break;
             case LONG:
             case DOUBLE:
             case DATE:
-                jumpTableIndexer.insertWord(schema, field);
+                jumpTableIndexer.insertWord("", field);
                 break;
         }
         return true;

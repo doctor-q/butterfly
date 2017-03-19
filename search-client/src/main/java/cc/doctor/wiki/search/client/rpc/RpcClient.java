@@ -10,7 +10,8 @@ import java.util.LinkedList;
 
 /**
  * Created by doctor on 2017/3/14.
- * netty客户端,目前单协调者
+ * netty客户端,目前单协调者,客户端直接与master打交道,将请求提交给master,master做路由
+ * 负责分配转发请求
  */
 public class RpcClient implements Client {
     private NettyClient nettyClient;
@@ -99,10 +100,5 @@ public class RpcClient implements Client {
     @Override
     public RpcResult sendMessage(Message message) {
         return nettyClient.sendMessage(message);
-    }
-
-    public static void main(String[] args) {
-        RpcClient rpcClient = new RpcClient();
-        rpcClient.query(QueryBuilder.queryBuilder());
     }
 }

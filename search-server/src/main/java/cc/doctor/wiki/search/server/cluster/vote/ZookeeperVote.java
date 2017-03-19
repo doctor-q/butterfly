@@ -20,7 +20,6 @@ public class ZookeeperVote extends Vote {
 
     @Override
     public VoteInfo voteMaster() {
-        zkClient.createConnection();
         boolean masterExist = zkClient.existsNode(ZK_NODE_MASTER);
         if (masterExist) {
             String masterInfo = zkClient.readData(ZK_NODE_MASTER);

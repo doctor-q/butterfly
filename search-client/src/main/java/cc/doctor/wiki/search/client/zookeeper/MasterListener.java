@@ -30,7 +30,6 @@ public class MasterListener extends ZkEventListenerAdapter {
     }
 
     private void reConnectMaster() {
-        zkClient.createConnection();
         boolean masterExist = zkClient.existsNode(ZK_NODE_MASTER);
         if (masterExist) {
             String masterInfo = zkClient.readData(ZK_NODE_MASTER);

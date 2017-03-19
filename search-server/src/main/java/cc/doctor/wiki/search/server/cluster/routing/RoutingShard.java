@@ -2,12 +2,19 @@ package cc.doctor.wiki.search.server.cluster.routing;
 
 /**
  * Created by doctor on 2017/3/13.
+ * 分片信息
  */
 public class RoutingShard {
     private String indexName;
     private String alias;
     private String nodeId;
     private int shardId;
+
+    public RoutingShard(String indexName, String nodeId, int shardId) {
+        this.indexName = indexName;
+        this.nodeId = nodeId;
+        this.shardId = shardId;
+    }
 
     public String getIndexName() {
         return indexName;

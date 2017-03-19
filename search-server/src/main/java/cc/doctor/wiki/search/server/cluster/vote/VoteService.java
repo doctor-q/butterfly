@@ -1,5 +1,6 @@
 package cc.doctor.wiki.search.server.cluster.vote;
 
+import cc.doctor.wiki.ha.zk.ZookeeperClient;
 import cc.doctor.wiki.search.server.cluster.node.LifeCycle;
 import cc.doctor.wiki.search.server.cluster.node.Node;
 
@@ -11,7 +12,7 @@ public class VoteService implements LifeCycle{
     private Node node;
 
     public VoteService() {
-        vote = new ZookeeperVote(null);
+        vote = new ZookeeperVote(ZookeeperClient.getClient(Node.ZK_CONNECTION_STRING));
     }
 
     @Override

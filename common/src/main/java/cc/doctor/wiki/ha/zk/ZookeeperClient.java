@@ -10,22 +10,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Stack;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by doctor on 2017/3/12.
  */
 public class ZookeeperClient {
     private Logger log = LoggerFactory.getLogger(ZookeeperClient.class);
-    private static final int SESSION_TIMEOUT = 10000;
-    private static final String CONNECTION_STRING = PropertyUtils.getProperty("zk.host", "127.0.0.1:2181");
+    private int sessionTimeout = 10000;
+    private String connectionString;
     private ZooKeeper zk = null;
     private ZookeeperWatcher zookeeperWatcher = ZookeeperWatcher.zkWatcher;
+    private static Map<String, ZookeeperClient> zkClients = new ConcurrentHashMap<>();
 
-    public void createConnection() {
-        this.releaseConnection();
+    public ZookeeperClient(String connectionString) {
+        this(connectionString, 10000);
+    }
+
+    public ZookeeperClient(String connectionString, int sessionTimeout) {
+        this.connectionString = connectionString;
+        this.sessionTimeout = sessionTimeout;
         try {
-            zk = new ZooKeeper(CONNECTION_STRING, SESSION_TIMEOUT, zookeeperWatcher);
+            zk = new ZooKeeper(connectionString, sessionTimeout, zookeeperWatcher);
         } catch (IOException e) {
             log.error("", e);
         }
@@ -132,5 +140,13 @@ public class ZookeeperClient {
         } catch (KeeperException | InterruptedException e) {
             log.error("", e);
         }
+    }
+
+    public static ZookeeperClient getClient(String connString) {
+        if (zkClients.get(connString) == null) {
+            ZookeeperClient zookeeperClient = new ZookeeperClient(connString);
+            zkClients.put(connString, zookeeperClient);
+        }
+        return zkClients.get(connString);
     }
 }
