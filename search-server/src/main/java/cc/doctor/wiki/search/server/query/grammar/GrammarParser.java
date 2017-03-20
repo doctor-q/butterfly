@@ -7,6 +7,8 @@ import cc.doctor.wiki.search.client.query.grammar.Relation;
 
 import java.util.Stack;
 
+import static cc.doctor.wiki.search.server.query.grammar.Optimizer.optimizer;
+
 /**
  * Created by doctor on 2017/3/13.
  * 生成语法树
@@ -49,7 +51,7 @@ public class GrammarParser {
                 queryStack.push(String.valueOf(ch));
             }
         }
-        return (GrammarNode) queryStack.pop();
+        return optimizer.optimize((GrammarNode) queryStack.pop());
     }
 
     private Tuple<GrammarNode, GrammarNode> readGrammarNodes(Stack queryStack) {

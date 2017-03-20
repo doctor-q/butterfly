@@ -1,6 +1,7 @@
 package cc.doctor.wiki.search.server.index.store.indices.inverted;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by doctor on 2017/3/7.
@@ -9,7 +10,7 @@ import java.io.Serializable;
 public class InvertedTable implements Serializable {
     private static final long serialVersionUID = -8762176665798767763L;
     private WordInfo.InvertedNode invertedNode;
-    private Iterable<InvertedDoc> invertedDocs;
+    private List<InvertedDoc> invertedDocs;
 
     public WordInfo.InvertedNode getInvertedNode() {
         return invertedNode;
@@ -19,12 +20,54 @@ public class InvertedTable implements Serializable {
         this.invertedNode = invertedNode;
     }
 
-    public Iterable<InvertedDoc> getInvertedDocs() {
+    public List<InvertedDoc> getInvertedDocs() {
         return invertedDocs;
     }
 
-    public void setInvertedDocs(Iterable<InvertedDoc> invertedDocs) {
+    public void setInvertedDocs(List<InvertedDoc> invertedDocs) {
         this.invertedDocs = invertedDocs;
+    }
+
+    public InvertedDoc getInvertedDoc(Long docId) {
+        int size = invertedDocs.size();
+        int left = 0;
+        int middle = size / 2;
+        int right = size - 1;
+        while (middle != left) {
+            InvertedDoc invertedDoc = invertedDocs.get(middle);
+            if (invertedDoc.getDocId() > docId) {
+                right = middle;
+                middle = (left + right) / 2;
+            } else if (invertedDoc.getDocId() < docId) {
+                left = middle;
+                middle = (left + right) / 2;
+            } else {
+                return invertedDoc;
+            }
+        }
+        return null;
+    }
+
+    public void addInvertedDoc(InvertedDoc invertedDoc) {
+        int size = invertedDocs.size();
+        int left = 0;
+        int middle = size / 2;
+        int right = size - 1;
+        while (middle != left) {
+            InvertedDoc middleDoc = invertedDocs.get(middle);
+            InvertedDoc middleRightDoc = invertedDocs.get(middle + 1);
+            if (middleDoc.getDocId() < invertedDoc.getDocId() && middleRightDoc.getDocId() > invertedDoc.getDocId()) {
+                invertedDocs.add(middle, invertedDoc);
+            } else {
+                if (invertedDoc.getDocId() > invertedDoc.getDocId()) {
+                    right = middle;
+                    middle = (left + right) / 2;
+                } else if (invertedDoc.getDocId() < invertedDoc.getDocId()) {
+                    left = middle;
+                    middle = (left + right) / 2;
+                }
+            }
+        }
     }
 
     //文档id
@@ -43,6 +86,10 @@ public class InvertedTable implements Serializable {
 
         public long getDocFrequency() {
             return docFrequency;
+        }
+
+        public void setDocFrequency(long docFrequency) {
+            this.docFrequency = docFrequency;
         }
     }
 }

@@ -1,5 +1,6 @@
 package cc.doctor.wiki.search.server.index.store.indices.indexer;
 
+import cc.doctor.wiki.common.Range;
 import cc.doctor.wiki.exceptions.query.QueryException;
 import cc.doctor.wiki.search.client.index.schema.Schema;
 import cc.doctor.wiki.search.server.index.store.indices.indexer.datastruct.TrieTree;
@@ -26,7 +27,7 @@ public class TrieTreeIndexer extends AbstractIndexer {
         return trieTree;
     }
     @Override
-    public void insertWordInner(String field, Object value) {
+    public void insertWordInner(Long docId, String field, Object value) {
         TrieTree<WordInfo> trieTree = getOrCreateTree(field);
         trieTree.insertWord(value.toString(), new WordInfo(new WordInfo.InvertedNode(null, 0, 0)));
     }
@@ -50,27 +51,32 @@ public class TrieTreeIndexer extends AbstractIndexer {
     }
 
     @Override
-    public List<WordInfo> getWordInfoGreatThanInner(String field, String value) {
+    public List<WordInfo> getWordInfoGreatThanInner(String field, Object value) {
         throw new QueryException("String cannot compare.");
     }
 
     @Override
-    public List<WordInfo> getWordInfoGreatThanEqualInner(String field, String value) {
+    public List<WordInfo> getWordInfoGreatThanEqualInner(String field, Object value) {
         throw new QueryException("String cannot compare.");
     }
 
     @Override
-    public List<WordInfo> getWordInfoLessThanInner(String field, String value) {
+    public List<WordInfo> getWordInfoLessThanInner(String field, Object value) {
         throw new QueryException("String cannot compare.");
     }
 
     @Override
-    public List<WordInfo> getWordInfoLessThanEqualInner(String field, String value) {
+    public List<WordInfo> getWordInfoLessThanEqualInner(String field, Object value) {
         throw new QueryException("String cannot compare.");
     }
 
     @Override
-    public List<WordInfo> getWordInfoPrefixInner(String field, String value) {
+    public List<WordInfo> getWordInfoRangeInner(String field, Range range) {
+        throw new QueryException("String cannot compare.");
+    }
+
+    @Override
+    public List<WordInfo> getWordInfoPrefixInner(String field, Object value) {
         if (field == null || value == null) {
             return null;
         }
@@ -78,7 +84,7 @@ public class TrieTreeIndexer extends AbstractIndexer {
         if (trieTree == null) {
             return null;
         }
-        return CollectionUtils.transfer(trieTree.getPrefixDataNodes(value), new CollectionUtils.Function<TrieTree.TreeNode<WordInfo>, WordInfo>() {
+        return CollectionUtils.transfer(trieTree.getPrefixDataNodes(value.toString()), new CollectionUtils.Function<TrieTree.TreeNode<WordInfo>, WordInfo>() {
 
             @Override
             public WordInfo transfer(TrieTree.TreeNode<WordInfo> from) {
@@ -88,7 +94,7 @@ public class TrieTreeIndexer extends AbstractIndexer {
     }
 
     @Override
-    public List<WordInfo> getWordInfoMatchInner(String field, String value) {
+    public List<WordInfo> getWordInfoMatchInner(String field, Object value) {
         return null;
     }
 }

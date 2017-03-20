@@ -21,6 +21,10 @@ public class WordInfo {
         return false;
     }
 
+    public InvertedNode getInvertedNode() {
+        return invertedNode;
+    }
+
     /**
      * 倒排链物理结构,有数据区和空闲区写,当空闲区写满后,读出倒排链后增加版本号,扩展倒排链大小追加到文件尾
      */
@@ -69,6 +73,10 @@ public class WordInfo {
 
         public void setFree(int free) {
             this.free = free;
+        }
+
+        public int total() {
+            return size + free;
         }
 
         public InvertedNode(Object data, int position, int size) {

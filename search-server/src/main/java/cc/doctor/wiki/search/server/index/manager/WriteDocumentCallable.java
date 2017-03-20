@@ -32,7 +32,7 @@ public class WriteDocumentCallable implements Callable {
         long position = sourceFile.appendSource(source);
         sourceFile.setPositionById(document.getId(), position);
         //write index
-        indexerMediator.index(document, schema);
+        indexerMediator.index(document);
 
         return new WriteResult();
     }
