@@ -1,5 +1,6 @@
 package cc.doctor.wiki.search.server.index.store.mm;
 
+import cc.doctor.wiki.common.Action;
 import cc.doctor.wiki.common.Tuple;
 import cc.doctor.wiki.utils.DateUtils;
 
@@ -28,6 +29,8 @@ public interface ScrollFile {
 
     //下一个文件名
     String next();
+    //文件切换的事件
+    void onWriteFileCheck(Action action);
 
     /**
      * 序列化写对象,返回写入的起始位置

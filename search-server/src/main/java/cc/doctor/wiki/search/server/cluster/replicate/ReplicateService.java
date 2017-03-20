@@ -1,5 +1,6 @@
 package cc.doctor.wiki.search.server.cluster.replicate;
 
+import cc.doctor.wiki.common.Action;
 import cc.doctor.wiki.common.Tuple;
 import cc.doctor.wiki.ha.zk.ZookeeperClient;
 import cc.doctor.wiki.index.document.Document;
@@ -39,10 +40,6 @@ public class ReplicateService {
     public ReplicateService() {
         routingService = new RoutingService();
         nodeAllocator = new NodeAllocator(routingService, ZookeeperClient.getClient(settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING)));
-    }
-
-    interface Action {
-        void doAction();
     }
     
     private void submitReplicateTasks(String indexName, Message message, Action action) {

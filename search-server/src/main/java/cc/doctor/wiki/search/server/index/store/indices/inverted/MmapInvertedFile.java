@@ -1,5 +1,7 @@
 package cc.doctor.wiki.search.server.index.store.indices.inverted;
 
+import cc.doctor.wiki.common.Action;
+import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.search.server.index.store.mm.MmapScrollFile;
 import cc.doctor.wiki.search.server.index.store.mm.ScrollFile;
 import cc.doctor.wiki.utils.FileUtils;
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.TreeMap;
 
+import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 import static cc.doctor.wiki.search.server.index.store.mm.ScrollFile.AutoIncrementScrollFileNameStrategy.autoIncrementScrollFileNameStrategy;
 
 /**
@@ -20,6 +23,17 @@ public class MmapInvertedFile extends InvertedFile {
     private ScrollFile scrollFile;
     private ScrollFile.ScrollFileNameStrategy scrollFileNameStrategy = autoIncrementScrollFileNameStrategy;
 
+    MmapInvertedFile() {
+        scrollFile = new MmapScrollFile(settings.get(GlobalConfig.INVERTED_FILE_NAME),
+                Integer.parseInt(settings.get(GlobalConfig.INVERTED_FILE_SIZE_NAME)), autoIncrementScrollFileNameStrategy);
+        scrollFile.onWriteFileCheck(new Action() {
+            @Override
+            public void doAction() {
+                flushInvertedTable();
+            }
+        });
+    }
+
     @Override
     public InvertedTable getInvertedTable(WordInfo.InvertedNode invertedNode) {
         return (InvertedTable) scrollFile.readSerializable(invertedNode.getPosition()).getT2();
@@ -28,6 +42,11 @@ public class MmapInvertedFile extends InvertedFile {
     @Override
     public long writeInvertedTable(InvertedTable invertedTable) {
         return scrollFile.writeSerializable(invertedTable);
+    }
+
+    @Override
+    public void flushInvertedTable() {
+
     }
 
     /**

@@ -1,5 +1,6 @@
 package cc.doctor.wiki.search.server.index.store.mm;
 
+import cc.doctor.wiki.common.Action;
 import cc.doctor.wiki.common.Tuple;
 import cc.doctor.wiki.exceptions.file.MmapFileException;
 import cc.doctor.wiki.utils.FileUtils;
@@ -28,6 +29,7 @@ public class MmapScrollFile implements ScrollFile {
     private long position = 0;
     private String current;
     private ScrollFileNameStrategy scrollFileNameStrategy;
+    private Action onWriteFileCheckAction;
 
     public MmapScrollFile(String root, int scrollSize) {
         this(root, scrollSize, autoIncrementScrollFileNameStrategy);
@@ -114,6 +116,9 @@ public class MmapScrollFile implements ScrollFile {
                 if (!FileUtils.exists(nextFileAbsolute)) {
                     FileUtils.createFileRecursion(nextFileAbsolute);
                 }
+                if (onWriteFileCheckAction != null) {
+                    onWriteFileCheckAction.doAction();
+                }
                 mmapFile = new MmapFile(nextFileAbsolute, scrollSize);
                 current = nextFile;
                 position = files.size() * scrollSize;
@@ -132,7 +137,7 @@ public class MmapScrollFile implements ScrollFile {
     @Override
     public <T extends Serializable> Tuple<Long, T> readSerializable(long position) {
         int positionInFile = (int) (position % scrollSize);
-        int index = (int)(position/scrollSize);
+        int index = (int) (position / scrollSize);
         String file = getFile(position);
         if (file == null) {
             return null;
@@ -161,5 +166,10 @@ public class MmapScrollFile implements ScrollFile {
     @Override
     public void readLock() {
 
+    }
+
+    @Override
+    public void onWriteFileCheck(Action action) {
+        onWriteFileCheckAction = action;
     }
 }

@@ -13,11 +13,18 @@ public abstract class InvertedFile {
     /**
      * 获取倒排文件列表
      *
-     * @param invertedNode
+     * @param invertedNode 倒排表索引头信息
      */
     public abstract InvertedTable getInvertedTable(WordInfo.InvertedNode invertedNode);
 
+    /**
+     * 写倒排表,非实时刷新,写入内存,当积累到一定程度或定时刷新到文件
+     * @param invertedTable 倒排表
+     * @return
+     */
     public abstract long writeInvertedTable(InvertedTable invertedTable);
+    //将倒排表刷盘
+    public abstract void flushInvertedTable();
 
 
 }

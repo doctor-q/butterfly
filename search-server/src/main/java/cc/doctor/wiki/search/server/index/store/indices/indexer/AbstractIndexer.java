@@ -34,6 +34,11 @@ public abstract class AbstractIndexer {
         } else {
             invertedTable.addInvertedDoc(new InvertedTable.InvertedDoc(docId, 1));
         }
+        invertedFile.writeInvertedTable(invertedTable);
+        wordInfo.getInvertedNode().setPosition(invertedTable.getInvertedNode().getPosition());
+        wordInfo.getInvertedNode().setSize(invertedTable.getInvertedNode().getSize());
+        wordInfo.getInvertedNode().setFree(invertedTable.getInvertedNode().getFree());
+        wordInfo.getInvertedNode().setVersion(invertedTable.getInvertedNode().getVersion());
     }
 
     //在索引增加一个词

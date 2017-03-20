@@ -1,5 +1,7 @@
 package cc.doctor.wiki.search.server.index.store.indices.inverted;
 
+import cc.doctor.wiki.search.server.index.store.indices.indexer.datastruct.Dichotomy;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -29,49 +31,15 @@ public class InvertedTable implements Serializable {
     }
 
     public InvertedDoc getInvertedDoc(Long docId) {
-        int size = invertedDocs.size();
-        int left = 0;
-        int middle = size / 2;
-        int right = size - 1;
-        while (middle != left) {
-            InvertedDoc invertedDoc = invertedDocs.get(middle);
-            if (invertedDoc.getDocId() > docId) {
-                right = middle;
-                middle = (left + right) / 2;
-            } else if (invertedDoc.getDocId() < docId) {
-                left = middle;
-                middle = (left + right) / 2;
-            } else {
-                return invertedDoc;
-            }
-        }
-        return null;
+        return Dichotomy.dichotomySearch(invertedDocs, new InvertedDoc(docId, 0));
     }
 
     public void addInvertedDoc(InvertedDoc invertedDoc) {
-        int size = invertedDocs.size();
-        int left = 0;
-        int middle = size / 2;
-        int right = size - 1;
-        while (middle != left) {
-            InvertedDoc middleDoc = invertedDocs.get(middle);
-            InvertedDoc middleRightDoc = invertedDocs.get(middle + 1);
-            if (middleDoc.getDocId() < invertedDoc.getDocId() && middleRightDoc.getDocId() > invertedDoc.getDocId()) {
-                invertedDocs.add(middle, invertedDoc);
-            } else {
-                if (invertedDoc.getDocId() > invertedDoc.getDocId()) {
-                    right = middle;
-                    middle = (left + right) / 2;
-                } else if (invertedDoc.getDocId() < invertedDoc.getDocId()) {
-                    left = middle;
-                    middle = (left + right) / 2;
-                }
-            }
-        }
+        Dichotomy.dichotomyInsert(invertedDocs, invertedDoc);
     }
 
     //文档id
-    public static class InvertedDoc {
+    public static class InvertedDoc implements Comparable<InvertedDoc> {
         long docId;     //文档id
         long docFrequency;   //文档频率
 
@@ -90,6 +58,11 @@ public class InvertedTable implements Serializable {
 
         public void setDocFrequency(long docFrequency) {
             this.docFrequency = docFrequency;
+        }
+
+        @Override
+        public int compareTo(InvertedDoc invertedDoc) {
+            return ((Long)docId).compareTo(invertedDoc.getDocId());
         }
     }
 }
