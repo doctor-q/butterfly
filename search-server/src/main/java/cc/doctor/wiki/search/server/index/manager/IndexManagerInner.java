@@ -12,13 +12,15 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
+import static cc.doctor.wiki.search.server.common.config.Settings.settings;
+
 /**
  * Created by doctor on 2017/3/8.
  * 索引管理,负责本地创建索引,调用shardService进行索引操作,每个索引配置一个
  */
 public class IndexManagerInner {
     private static final Logger log = LoggerFactory.getLogger(IndexManagerInner.class);
-    public static final String dataRoot = PropertyUtils.getProperty(GlobalConfig.DATA_PATH, GlobalConfig.DATA_PATH_DEFAULT);
+    public static final String dataRoot = settings.get(GlobalConfig.DATA_PATH);
     public static final int defaultShardsNum = PropertyUtils.getProperty(GlobalConfig.DEFAULT_SHARDS_NUM, GlobalConfig.DEFAULT_SHARDS_NUM_DEFAULT);
 
     private String indexRoot;

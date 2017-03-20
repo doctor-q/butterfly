@@ -19,6 +19,10 @@ public class RoutingNode {
         return master;
     }
 
+    public boolean getMaster() {
+        return master;
+    }
+
     public void setMaster(boolean master) {
         this.master = master;
     }

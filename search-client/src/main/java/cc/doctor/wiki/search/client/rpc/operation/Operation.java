@@ -5,6 +5,7 @@ package cc.doctor.wiki.search.client.rpc.operation;
  * 操作
  */
 public enum Operation {
+    PING(0),
     CREATE_INDEX(1),
     DROP_INDEX(2),
     PUT_SCHEMA(0),

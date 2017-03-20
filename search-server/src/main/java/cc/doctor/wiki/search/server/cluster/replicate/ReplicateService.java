@@ -12,6 +12,7 @@ import cc.doctor.wiki.search.client.rpc.result.RpcResult;
 import cc.doctor.wiki.search.server.cluster.node.Node;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingNode;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingService;
+import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 import static cc.doctor.wiki.search.server.index.manager.IndexManagerContainer.indexManagerContainer;
 
 /**
@@ -36,7 +38,7 @@ public class ReplicateService {
 
     public ReplicateService() {
         routingService = new RoutingService();
-        nodeAllocator = new NodeAllocator(routingService, ZookeeperClient.getClient(Node.ZK_CONNECTION_STRING));
+        nodeAllocator = new NodeAllocator(routingService, ZookeeperClient.getClient(settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING)));
     }
 
     interface Action {

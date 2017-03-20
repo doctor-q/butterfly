@@ -1,9 +1,10 @@
 package cc.doctor.wiki.search.server.cluster.vote;
 
+import cc.doctor.wiki.exceptions.cluster.VoteException;
 import cc.doctor.wiki.ha.zk.ZookeeperClient;
+import cc.doctor.wiki.utils.StringUtils;
 
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -55,22 +56,18 @@ public class ZookeeperVote extends Vote {
             return null;
         }
         VoteInfo voteInfo = new VoteInfo();
-        masterInfo = URLDecoder.decode(masterInfo);
-        String[] split = masterInfo.split("&");
-        for (String nameValue : split) {
-            String[] nameValuePair = nameValue.split("=");
-            if (nameValuePair.length == 2) {
-                if (nameValuePair[0].equals("voteId")) {
-                    voteInfo.setVoteId(Long.parseLong(nameValuePair[1]));
-                } else if (nameValuePair[0].equals("host")) {
-                    voteInfo.setHost(nameValuePair[1]);
-                } else if (nameValuePair[0].equals("port")) {
-                    voteInfo.setPort(nameValuePair[1]);
-                } else if (nameValuePair[0].equals("timestamp")) {
-                    voteInfo.setTimestamp(Long.parseLong(nameValuePair[1]));
-                }
-            }
+        Map<String, String> valuePair = StringUtils.toNameValuePair(masterInfo);
+        String voteId = valuePair.get("voteId");
+        String host = valuePair.get("host");
+        String port = valuePair.get("port");
+        String timestamp = valuePair.get("timestamp");
+        if (voteId == null || host == null || port == null || timestamp == null) {
+            throw new VoteException("Vote message error.");
         }
+        voteInfo.setVoteId(Long.parseLong(voteId));
+        voteInfo.setHost(host);
+        voteInfo.setPort(port);
+        voteInfo.setTimestamp(Long.parseLong(timestamp));
         return voteInfo;
     }
 
@@ -78,6 +75,6 @@ public class ZookeeperVote extends Vote {
         if (voteInfo == null || voteInfo.getHost() == null || voteInfo.getPort() == null) {
             return null;
         }
-        return URLEncoder.encode("voteId=" + voteInfo.getVoteId() + "&host=" + voteInfo.getHost() + "&port=" + voteInfo.getPort() + "&timestamp=" + voteInfo.getTimestamp());
+        return StringUtils.toNameValuePairString(voteInfo);
     }
 }

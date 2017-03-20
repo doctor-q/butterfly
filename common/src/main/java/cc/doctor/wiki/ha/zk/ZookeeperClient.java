@@ -1,6 +1,5 @@
 package cc.doctor.wiki.ha.zk;
 
-import cc.doctor.wiki.utils.PropertyUtils;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
@@ -10,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
@@ -148,5 +149,20 @@ public class ZookeeperClient {
             zkClients.put(connString, zookeeperClient);
         }
         return zkClients.get(connString);
+    }
+
+    public Map<String, String> getChildren(String parent) {
+        Map<String, String> childDataMap = new LinkedHashMap<>();
+        try {
+            List<String> children = zk.getChildren(parent, true);
+            for (String child : children) {
+                String data = readData(parent + "/" + child);
+                childDataMap.put(child, data);
+            }
+            return childDataMap;
+        } catch (KeeperException | InterruptedException e) {
+            log.error("", e);
+        }
+        return null;
     }
 }

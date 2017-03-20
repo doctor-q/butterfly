@@ -30,6 +30,10 @@ public class NodeAllocator {
      * @param indexName 索引名
      */
     public void allocateNodes(int replicate, int shardNum, String indexName) {
+        List<RoutingNode> indexRoutingNodes = routingService.getIndexRoutingNodes(indexName);
+        if (indexRoutingNodes != null && indexRoutingNodes.size() > 0) {
+            return;
+        }
         List<RoutingNode> routingNodes = routingService.getRoutingNodes();
         int nodeNum = routingNodes.size();
         int signedNodeNum = replicate;

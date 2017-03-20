@@ -10,4 +10,13 @@ package cc.doctor.wiki.search.server.cluster.routing;
  */
 public enum NodeState {
     STARTING,RUNNING,BLOCKED,MISSING,STOP;
+
+    public static NodeState getState(String nodeState) {
+        for (NodeState state : NodeState.values()) {
+            if (state.toString().equals(nodeState)) {
+                return state;
+            }
+        }
+        return null;
+    }
 }

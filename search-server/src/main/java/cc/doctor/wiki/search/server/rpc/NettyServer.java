@@ -1,6 +1,5 @@
 package cc.doctor.wiki.search.server.rpc;
 
-import cc.doctor.wiki.search.server.cluster.node.LifeCycle;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.utils.PropertyUtils;
 import io.netty.bootstrap.ServerBootstrap;
@@ -13,7 +12,7 @@ import java.net.InetSocketAddress;
 /**
  * Created by doctor on 2017/3/14.
  */
-public class NettyServer implements LifeCycle {
+public class NettyServer implements Server {
     private int nettyServerPort = PropertyUtils.getProperty(GlobalConfig.NETTY_SERVER_PORT, GlobalConfig.NETTY_SERVER_PORT_DEFAULT);
     private ServerBootstrap serverBootstrap;
 
@@ -22,7 +21,7 @@ public class NettyServer implements LifeCycle {
     }
 
     @Override
-    public void onNodeStart() {
+    public void start() {
         InetSocketAddress inetSocketAddress = new InetSocketAddress(nettyServerPort);
         ChannelFuture channelFuture = serverBootstrap.group(new NioEventLoopGroup()).channel(NioServerSocketChannel.class)
                 .childHandler(new ServerHandler()).bind(inetSocketAddress);
@@ -34,15 +33,7 @@ public class NettyServer implements LifeCycle {
     }
 
     @Override
-    public void onNodeStarted() {
+    public void stop() {
 
-    }
-
-    @Override
-    public void onNodeStop() {
-    }
-
-    public static void main(String[] args) {
-        new NettyServer().onNodeStart();
     }
 }

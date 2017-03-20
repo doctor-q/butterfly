@@ -45,7 +45,11 @@ public class GlobalConfig {
 
     //zk
     public static final String ZOOKEEPER_CONN_STRING = "zookeeper.conn.string";
-    public static final String ZOOKEEPER_CONN_STRING_DEFUALT = "127.0.0.1:2181";
+    public static final String ZOOKEEPER_CONN_STRING_DEFAULT = "127.0.0.1:2181";
+    public static final String ZOOKEEPER_MASTER_PATH = "zk.master.path";
+    public static final String ZOOKEEPER_MASTER_PATH_DEFAULT = "/es/metadata/master";
+    public static final String ZOOKEEPER_NODE_PATH = "zk.metadata.node.path";
+    public static final String ZOOKEEPER_NODE_PATH_DEFAULT = "/es/metadata/nodes";
 
     public static final String NODE_NAME = "node.name";
 }

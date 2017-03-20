@@ -45,4 +45,8 @@ public class RecoveryService {
     public Long getCheckPoint() {
         return checkPointFile.getCheckPoint();
     }
+
+    public void doRecovery() {
+
+    }
 }

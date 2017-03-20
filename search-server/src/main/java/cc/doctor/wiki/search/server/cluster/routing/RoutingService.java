@@ -27,6 +27,30 @@ public class RoutingService {
         return routingNodes;
     }
 
+    public void updateRoutingNodes(RoutingNode routingNode) {
+        RoutingNode node = getNode(routingNode.getNodeId());
+        if (node == null) {
+            routingNodes.add(routingNode);
+        } else {
+            node.setNodeName(routingNode.getNodeName());
+            node.setNodeState(routingNode.getNodeState());
+            node.setMaster(routingNode.isMaster());
+        }
+    }
+
+    public RoutingNode getNode(String nodeId) {
+        for (RoutingNode routingNode : routingNodes) {
+            if (routingNode.getNodeId().equals(nodeId)) {
+                return routingNode;
+            }
+        }
+        return null;
+    }
+
+    public void loadRoutingNodes() {
+
+    }
+
     public class NodeInfo {
 
         private String nodeId;

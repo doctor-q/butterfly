@@ -7,12 +7,14 @@ import org.junit.Test;
 
 import java.util.Date;
 
+import static cc.doctor.wiki.search.server.common.config.Settings.settings;
+
 /**
  * Created by doctor on 2017/3/13.
  */
 public class ZookeeperVoteTest {
     private ZookeeperVote zookeeperVote;
-    ZookeeperClient client = new ZookeeperClient();
+    ZookeeperClient client = ZookeeperClient.getClient(settings.get(""));
     @Before
     public void setUp() {
         zookeeperVote = new ZookeeperVote(client);

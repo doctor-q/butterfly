@@ -32,4 +32,6 @@ public interface Client {
     BulkResult bulkDeleteByQuery(QueryBuilder queryBuilder);
 
     RpcResult sendMessage(Message message);
+
+    RpcResult sendMessage(Message message, long timeout);
 }

@@ -101,4 +101,9 @@ public class RpcClient implements Client {
     public RpcResult sendMessage(Message message) {
         return nettyClient.sendMessage(message);
     }
+
+    @Override
+    public RpcResult sendMessage(Message message, long timeout) {
+        return nettyClient.sendMessage(message);
+    }
 }
