@@ -20,7 +20,7 @@ import static cc.doctor.wiki.search.server.common.config.Settings.settings;
  */
 public class IndexManagerInner {
     private static final Logger log = LoggerFactory.getLogger(IndexManagerInner.class);
-    public static final String dataRoot = settings.get(GlobalConfig.DATA_PATH);
+    public static final String dataRoot = (String) settings.get(GlobalConfig.DATA_PATH);
     public static final int defaultShardsNum = PropertyUtils.getProperty(GlobalConfig.DEFAULT_SHARDS_NUM, GlobalConfig.DEFAULT_SHARDS_NUM_DEFAULT);
 
     private String indexRoot;

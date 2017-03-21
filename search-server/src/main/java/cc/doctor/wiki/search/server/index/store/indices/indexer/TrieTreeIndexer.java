@@ -29,7 +29,7 @@ public class TrieTreeIndexer extends AbstractIndexer {
     @Override
     public void insertWordInner(Long docId, String field, Object value) {
         TrieTree<WordInfo> trieTree = getOrCreateTree(field);
-        trieTree.insertWord(value.toString(), new WordInfo(new WordInfo.InvertedNode(null, 0, 0)));
+        trieTree.insertWord(value.toString(), new WordInfo());
     }
 
     @Override

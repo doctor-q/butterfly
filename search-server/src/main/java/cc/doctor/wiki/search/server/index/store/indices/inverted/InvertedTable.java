@@ -11,15 +11,24 @@ import java.util.List;
  */
 public class InvertedTable implements Serializable {
     private static final long serialVersionUID = -8762176665798767763L;
-    private WordInfo.InvertedNode invertedNode;
+    private String field;
+    private WordInfo wordInfo;
     private List<InvertedDoc> invertedDocs;
 
-    public WordInfo.InvertedNode getInvertedNode() {
-        return invertedNode;
+    public String getField() {
+        return field;
     }
 
-    public void setInvertedNode(WordInfo.InvertedNode invertedNode) {
-        this.invertedNode = invertedNode;
+    public void setField(String field) {
+        this.field = field;
+    }
+
+    public WordInfo getWordInfo() {
+        return wordInfo;
+    }
+
+    public void setWordInfo(WordInfo wordInfo) {
+        this.wordInfo = wordInfo;
     }
 
     public List<InvertedDoc> getInvertedDocs() {
@@ -39,7 +48,8 @@ public class InvertedTable implements Serializable {
     }
 
     //文档id
-    public static class InvertedDoc implements Comparable<InvertedDoc> {
+    public static class InvertedDoc implements Comparable<InvertedDoc>, Serializable {
+        private static final long serialVersionUID = -1387682032722468702L;
         long docId;     //文档id
         long docFrequency;   //文档频率
 

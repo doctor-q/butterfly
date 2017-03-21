@@ -15,12 +15,12 @@ import static cc.doctor.wiki.search.server.common.config.Settings.settings;
  * 路由信息监听
  */
 public class RoutingNodeListener extends ZkEventListenerAdapter {
-    public static final String NODE_PATH = settings.get(GlobalConfig.ZOOKEEPER_NODE_PATH);
+    public static final String NODE_PATH = (String) settings.get(GlobalConfig.ZOOKEEPER_NODE_PATH);
     private RoutingService routingService;
 
     @Override
     public void onNodeChildrenChanged(WatchedEvent watchedEvent) {
-        ZookeeperClient zookeeperClient = ZookeeperClient.getClient(settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING));
+        ZookeeperClient zookeeperClient = ZookeeperClient.getClient((String) settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING));
         String path = watchedEvent.getPath();
         if (path.equals(NODE_PATH)) {
             Map<String, String> children = zookeeperClient.getChildren(NODE_PATH);

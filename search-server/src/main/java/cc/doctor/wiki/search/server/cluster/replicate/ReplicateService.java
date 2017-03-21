@@ -39,7 +39,7 @@ public class ReplicateService {
 
     public ReplicateService() {
         routingService = new RoutingService();
-        nodeAllocator = new NodeAllocator(routingService, ZookeeperClient.getClient(settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING)));
+        nodeAllocator = new NodeAllocator(routingService, ZookeeperClient.getClient((String) settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING)));
     }
     
     private void submitReplicateTasks(String indexName, Message message, Action action) {

@@ -2,6 +2,7 @@ package cc.doctor.wiki.search.server.index.store.mm;
 
 import cc.doctor.wiki.common.Action;
 import cc.doctor.wiki.common.Tuple;
+import cc.doctor.wiki.exceptions.file.FileException;
 import cc.doctor.wiki.exceptions.file.MmapFileException;
 import cc.doctor.wiki.utils.FileUtils;
 import cc.doctor.wiki.utils.SerializeUtils;
@@ -171,5 +172,28 @@ public class MmapScrollFile implements ScrollFile {
     @Override
     public void onWriteFileCheck(Action action) {
         onWriteFileCheckAction = action;
+    }
+
+    @Override
+    public <T extends Serializable> long writeSerializable(long position, T serializable) {
+        int positionInFile = (int) (position % scrollSize);
+        String file = getFile(position);
+        if (file == null) {
+            throw new FileException("Position over limit.");
+        }
+        if (!file.equals(mmapFile.getFile().getName())) {
+            try {
+                mmapFile = new MmapFile(root + "/" + file, scrollSize, positionInFile);
+            } catch (IOException e) {
+                log.error("", e);
+            }
+        }
+
+        return 0;
+    }
+
+    @Override
+    public void position(long position) {
+        mmapFile.setPosition((int) (position % scrollSize));
     }
 }

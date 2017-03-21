@@ -14,7 +14,8 @@ import static cc.doctor.wiki.search.server.common.config.Settings.settings;
  */
 public class ZookeeperVoteTest {
     private ZookeeperVote zookeeperVote;
-    ZookeeperClient client = ZookeeperClient.getClient(settings.get(""));
+    ZookeeperClient client = ZookeeperClient.getClient((String) settings.get(""));
+
     @Before
     public void setUp() {
         zookeeperVote = new ZookeeperVote(client);
@@ -25,6 +26,7 @@ public class ZookeeperVoteTest {
         voteInfo.setTimestamp(new Date().getTime());
         zookeeperVote.setVoteInfo(voteInfo);
     }
+
     @Test
     public void voteMaster() throws Exception {
         Vote.VoteInfo voteInfo = zookeeperVote.voteMaster();

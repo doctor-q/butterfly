@@ -8,8 +8,8 @@ import cc.doctor.wiki.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 import static cc.doctor.wiki.search.server.index.store.mm.ScrollFile.AutoIncrementScrollFileNameStrategy.autoIncrementScrollFileNameStrategy;
@@ -22,10 +22,13 @@ public class MmapInvertedFile extends InvertedFile {
     private static final Logger log = LoggerFactory.getLogger(InvertedFile.class);
     private ScrollFile scrollFile;
     private ScrollFile.ScrollFileNameStrategy scrollFileNameStrategy = autoIncrementScrollFileNameStrategy;
+    private List<InvertedTable> mmInvertedTables = new LinkedList<>();
+    private static AtomicInteger mmInvertedTableNum = new AtomicInteger();
+    public static final int flushTableNum = settings.getInt(GlobalConfig.FLUSH_INVERTED_TABLE_NUM);
 
     MmapInvertedFile() {
-        scrollFile = new MmapScrollFile(settings.get(GlobalConfig.INVERTED_FILE_NAME),
-                Integer.parseInt(settings.get(GlobalConfig.INVERTED_FILE_SIZE_NAME)), autoIncrementScrollFileNameStrategy);
+        scrollFile = new MmapScrollFile((String) settings.get(GlobalConfig.INVERTED_FILE_PATH_NAME),
+                (int) settings.get(GlobalConfig.INVERTED_FILE_SIZE_NAME), autoIncrementScrollFileNameStrategy);
         scrollFile.onWriteFileCheck(new Action() {
             @Override
             public void doAction() {
@@ -35,18 +38,38 @@ public class MmapInvertedFile extends InvertedFile {
     }
 
     @Override
-    public InvertedTable getInvertedTable(WordInfo.InvertedNode invertedNode) {
-        return (InvertedTable) scrollFile.readSerializable(invertedNode.getPosition()).getT2();
+    public InvertedTable getInvertedTable(WordInfo wordInfo) {
+        return (InvertedTable) scrollFile.readSerializable(wordInfo.getPosition()).getT2();
     }
 
+    /**
+     * 写倒排表,先写到缓存,如果有倒排表被换出,将被换出的倒排表加入待flush的列表中,如果待flush的倒排表数量达到上限则flush到磁盘
+     * @param invertedTable 倒排表
+     */
     @Override
-    public long writeInvertedTable(InvertedTable invertedTable) {
-        return scrollFile.writeSerializable(invertedTable);
+    public void writeInvertedTable(InvertedTable invertedTable) {
+        InvertedTable removedInvertedTable = invertedTableCache.put(invertedTable.getWordInfo().getPosition(), invertedTable);
+        if (removedInvertedTable != null) {
+            if (mmInvertedTableNum.decrementAndGet() == flushTableNum) {
+                flushInvertedTable();
+            } else {
+                mmInvertedTables.add(removedInvertedTable);
+            }
+        }
     }
 
     @Override
     public void flushInvertedTable() {
-
+        Collections.sort(mmInvertedTables, new Comparator<InvertedTable>() {
+            @Override
+            public int compare(InvertedTable o1, InvertedTable o2) {
+                return ((Long) o1.getWordInfo().getPosition()).compareTo(o2.getWordInfo().getPosition());
+            }
+        });
+        for (InvertedTable mmInvertedTable : mmInvertedTables) {
+            scrollFile.writeSerializable(mmInvertedTable);
+        }
+        mmInvertedTables.clear();
     }
 
     /**
@@ -54,21 +77,21 @@ public class MmapInvertedFile extends InvertedFile {
      * 取出除了当前写文件所有的文件进行合并,重新生成新的文件
      * todo 字符串前缀相同的倒排链保存在相邻位置
      */
-    public void mergeInvertedTables(List<WordInfo.InvertedNode> invertedNodes) {
+    public void mergeInvertedTables(List<WordInfo> wordInfos) {
         ScrollFile newScrollFile = new MmapScrollFile(scrollFile.root() + "/new", scrollFile.scrollSize(), scrollFileNameStrategy);
         List<String> files = scrollFile.files();
         int mergeFileNum = files.size() - 1;
         long maxPosition = mergeFileNum * scrollFile.scrollSize();
         //按position排序顺序读取
-        TreeMap<Long, WordInfo.InvertedNode> invertedNodeMap = new TreeMap<>();
-        for (WordInfo.InvertedNode invertedNode : invertedNodes) {
-            invertedNodeMap.put(invertedNode.getPosition(), invertedNode);
+        TreeMap<Long, WordInfo> wordInfoMap = new TreeMap<>();
+        for (WordInfo wordInfo : wordInfos) {
+            wordInfoMap.put(wordInfo.getPosition(), wordInfo);
         }
-        for (WordInfo.InvertedNode invertedNode : invertedNodeMap.values()) {
-            if (invertedNode.getPosition() < maxPosition) {
-                InvertedTable invertedTable = getInvertedTable(invertedNode);
+        for (WordInfo wordInfo : wordInfoMap.values()) {
+            if (wordInfo.getPosition() < maxPosition) {
+                InvertedTable invertedTable = getInvertedTable(wordInfo);
                 long position = newScrollFile.writeSerializable(invertedTable);
-                invertedNode.setPosition(position);
+                wordInfo.setPosition(position);
             }
         }
         //lock

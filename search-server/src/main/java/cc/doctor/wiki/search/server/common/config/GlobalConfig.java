@@ -4,8 +4,12 @@ package cc.doctor.wiki.search.server.common.config;
  * Created by doctor on 2017/3/8.
  */
 public class GlobalConfig {
+    //分片
     public static final String DEFAULT_SHARDS_NUM = "shards.num.default";
     public static final int DEFAULT_SHARDS_NUM_DEFAULT = 5;
+    //副本
+    public static final String DEFAULT_REPLICATION_NUM = "replication.num.default";
+    public static final int DEFAULT_REPLICATION_NUM_DEFAULT = 1;
     //单个Source文件大小
     public static final String SOURCE_FILE_SIZE_NAME = "file.size.source";
     public static final int SOURCE_FILE_SIZE_DEFUALT = 10 * 1024 * 1024;   //默认10M
@@ -13,10 +17,13 @@ public class GlobalConfig {
     public static final int SOURCE_FILE_SIZE_MIN = 1024 * 1024;   //最小1M
 
     //单个倒排文件大小
-    public static final String INVERTED_FILE_SIZE_NAME = "file.size.source";
+    public static final String INVERTED_FILE_SIZE_NAME = "file.size.inverted";
     public static final int INVERTED_FILE_SIZE_DEFUALT = 10 * 1024 * 1024;   //默认10M
     public static final int INVERTED_FILE_SIZE_MAX = 100 * 1024 * 1024;   //最大100M
     public static final int INVERTED_FILE_SIZE_MIN = 1024 * 1024;   //最大1M
+    public static final String INVERTED_FILE_PATH_NAME = "inverted";
+    public static final String FLUSH_INVERTED_TABLE_NUM = "flush.inverted.table.num";
+    public static String CACHE_INVERTED_TABLE_SIZE = "cache.inverted.table.size";
 
     //单个操作日志文件大小
     public static final String OPERATION_LOG_SIZE_NAME = "file.size.operation.log";
@@ -25,7 +32,7 @@ public class GlobalConfig {
     public static final int OPERATION_LOG_SIZE_MIN = 10 * 1024 * 1024;   //最小10M
     //是否保留查询日志
     public static final String OPERATION_LOG_QUERY = "operation.log.query";
-    public static final Boolean OPERATION_LOG_QUERY_DEFAULT = false;
+    public static final boolean OPERATION_LOG_QUERY_DEFAULT = false;
     //索引文档线程数
     public static final String THREAD_NUM_WRITE_DOCUMENT = "thread.num.write.document";
     public static final int THREAD_NUM_WRITE_DOCUMENT_DEFAULT = 10;
@@ -52,6 +59,4 @@ public class GlobalConfig {
     public static final String ZOOKEEPER_NODE_PATH_DEFAULT = "/es/metadata/nodes";
 
     public static final String NODE_NAME = "node.name";
-
-    public static final String INVERTED_FILE_NAME = "";
 }

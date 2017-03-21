@@ -27,7 +27,7 @@ public abstract class AbstractIndexer {
     }
 
     protected void updateInvertedDocs(Long docId, WordInfo wordInfo) {
-        InvertedTable invertedTable = invertedFile.getInvertedTable(wordInfo.getInvertedNode());
+        InvertedTable invertedTable = invertedFile.getInvertedTable(wordInfo);
         InvertedTable.InvertedDoc invertedDoc = invertedTable.getInvertedDoc(docId);
         if (invertedDoc != null) {
             invertedDoc.setDocFrequency(invertedDoc.getDocFrequency() + 1);
@@ -35,10 +35,8 @@ public abstract class AbstractIndexer {
             invertedTable.addInvertedDoc(new InvertedTable.InvertedDoc(docId, 1));
         }
         invertedFile.writeInvertedTable(invertedTable);
-        wordInfo.getInvertedNode().setPosition(invertedTable.getInvertedNode().getPosition());
-        wordInfo.getInvertedNode().setSize(invertedTable.getInvertedNode().getSize());
-        wordInfo.getInvertedNode().setFree(invertedTable.getInvertedNode().getFree());
-        wordInfo.getInvertedNode().setVersion(invertedTable.getInvertedNode().getVersion());
+        wordInfo.setPosition(invertedTable.getWordInfo().getPosition());
+        wordInfo.setVersion(invertedTable.getWordInfo().getVersion());
     }
 
     //在索引增加一个词

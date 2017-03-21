@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
  * Created by doctor on 2017/3/7.
  * 使用跳表做数字查找
  */
-public class JumpTableIndexer extends AbstractIndexer {
+public class SkipTableIndexer extends AbstractIndexer {
     //数字跳表,每份索引的每个域包含一个
     private Map<String, ConcurrentSkipListMap<Number, WordInfo>> concurrentSkipListMap = new HashMap<>();
 
@@ -42,8 +42,8 @@ public class JumpTableIndexer extends AbstractIndexer {
         //时间
         //// TODO: 2017/3/8 加入倒排表信息
         InvertedTable invertedTable = new InvertedTable();
-        long position = invertedFile.writeInvertedTable(invertedTable);
-        skipList.put(checkAndFormatValue(field, value), new WordInfo(new WordInfo.InvertedNode(value, 0, 0)));
+        invertedFile.writeInvertedTable(invertedTable);
+        skipList.put(checkAndFormatValue(field, value), new WordInfo());
     }
 
     @Override

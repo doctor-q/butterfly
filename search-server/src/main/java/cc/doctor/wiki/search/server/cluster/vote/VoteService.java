@@ -16,7 +16,7 @@ public class VoteService {
     private NodeService nodeService;
 
     public VoteService() {
-        vote = new ZookeeperVote(ZookeeperClient.getClient(settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING)));
+        vote = new ZookeeperVote(ZookeeperClient.getClient((String) settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING)));
     }
 
     public void doVote() {

@@ -36,6 +36,11 @@ public class MmapFile {
         return position;
     }
 
+    public void setPosition(int position) {
+        mappedByteBuffer.position(position);
+        this.position = position;
+    }
+
     public File getFile() {
         return file;
     }

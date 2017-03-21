@@ -47,6 +47,14 @@ public interface ScrollFile {
     //读锁
     void readLock();
 
+    /**
+     * 序列化写对象,返回写入的起始位置
+     * @param position 写入的位置
+     */
+    <T extends Serializable> long writeSerializable(long position, T serializable);
+
+    void position(long position);
+
     public interface ScrollFileNameStrategy {
         String first();
 

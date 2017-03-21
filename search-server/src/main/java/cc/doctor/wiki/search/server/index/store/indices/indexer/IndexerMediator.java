@@ -21,14 +21,14 @@ import static cc.doctor.wiki.search.server.index.store.indices.format.Format.*;
  * 索引中间者,负责探测数据类型后转交给对应的索引器建立索引,每个索引(分片)拥有一个
  */
 public class IndexerMediator {
-    private JumpTableIndexer jumpTableIndexer;
+    private SkipTableIndexer skipTableIndexer;
     private TrieTreeIndexer trieTreeIndexer;
     private InvertedFile invertedFile;
     private ShardService shardService;
     private Schema schema;
 
     private IndexerMediator() {
-        jumpTableIndexer = new JumpTableIndexer();
+        skipTableIndexer = new SkipTableIndexer();
         trieTreeIndexer = new TrieTreeIndexer();
     }
 
@@ -62,7 +62,7 @@ public class IndexerMediator {
             case LONG:
             case DOUBLE:
             case DATE:
-                jumpTableIndexer.insertWord(docId, field, value);
+                skipTableIndexer.insertWord(docId, field, value);
                 break;
         }
         return true;
@@ -91,7 +91,7 @@ public class IndexerMediator {
             case LONG:
             case DATE:
             case DOUBLE:
-                wordInfo = jumpTableIndexer.getWordInfoInner(field, value);
+                wordInfo = skipTableIndexer.getWordInfoInner(field, value);
                 break;
         }
         if (wordInfo == null) {
@@ -111,7 +111,7 @@ public class IndexerMediator {
             case LONG:
             case DATE:
             case DOUBLE:
-                wordInfos = jumpTableIndexer.getWordInfoGreatThanInner(field, value);
+                wordInfos = skipTableIndexer.getWordInfoGreatThanInner(field, value);
                 break;
         }
         return wordInfos;
@@ -126,7 +126,7 @@ public class IndexerMediator {
             case LONG:
             case DATE:
             case DOUBLE:
-                wordInfos = jumpTableIndexer.getWordInfoGreatThanEqualInner(field, value);
+                wordInfos = skipTableIndexer.getWordInfoGreatThanEqualInner(field, value);
                 break;
         }
         return wordInfos;
@@ -141,7 +141,7 @@ public class IndexerMediator {
             case LONG:
             case DATE:
             case DOUBLE:
-                wordInfos = jumpTableIndexer.getWordInfoLessThanInner(field, value);
+                wordInfos = skipTableIndexer.getWordInfoLessThanInner(field, value);
                 break;
         }
         return wordInfos;
@@ -156,7 +156,7 @@ public class IndexerMediator {
             case LONG:
             case DATE:
             case DOUBLE:
-                wordInfos = jumpTableIndexer.getWordInfoLessThanEqualInner(field, value);
+                wordInfos = skipTableIndexer.getWordInfoLessThanEqualInner(field, value);
                 break;
         }
         return wordInfos;
@@ -187,7 +187,7 @@ public class IndexerMediator {
             case LONG:
             case DATE:
             case DOUBLE:
-                WordInfo wordInfo = jumpTableIndexer.getWordInfoInner(field, value);
+                WordInfo wordInfo = skipTableIndexer.getWordInfoInner(field, value);
                 if (wordInfo != null) {
                     wordInfos.add(wordInfo);
                 } else {
