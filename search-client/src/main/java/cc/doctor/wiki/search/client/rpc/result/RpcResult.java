@@ -1,6 +1,7 @@
 package cc.doctor.wiki.search.client.rpc.result;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by doctor on 2017/3/14.
@@ -42,5 +43,12 @@ public class RpcResult implements Serializable {
 
     public void setErrorMsg(String errorMsg) {
         this.errorMsg = errorMsg;
+    }
+
+    public static RpcResult successRpcResult() {
+        RpcResult rpcResult = new RpcResult();
+        rpcResult.setSuccess(true);
+        rpcResult.setTimestamp(new Date().getTime());
+        return rpcResult;
     }
 }

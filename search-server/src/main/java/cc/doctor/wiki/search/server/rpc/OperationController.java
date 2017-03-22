@@ -4,6 +4,7 @@ import cc.doctor.wiki.exceptions.rpc.UnSupportOperationException;
 import cc.doctor.wiki.search.client.rpc.Message;
 import cc.doctor.wiki.search.client.rpc.operation.Operation;
 import cc.doctor.wiki.search.client.rpc.result.RpcResult;
+import cc.doctor.wiki.search.server.cluster.node.tolerance.ToleranceService;
 import cc.doctor.wiki.search.server.cluster.replicate.ReplicateService;
 
 /**
@@ -13,6 +14,7 @@ public class OperationController {
     public static final OperationController operationController = new OperationController();
 
     private ReplicateService replicateService;
+    private ToleranceService toleranceService;
 
     private OperationController() {
     }
@@ -42,6 +44,12 @@ public class OperationController {
                 return replicateService.deleteByQuery(message);
             case QUERY:
                 return replicateService.Query(message);
+            case PING:
+                return toleranceService.responsePing(message);
+            case MASTER_LOSS:
+                return toleranceService.doMasterLoss(message);
+            case NODE_LOSS:
+                return toleranceService.doNodeLoss(message);
         }
         throw new UnSupportOperationException("UnSupport operation.");
     }

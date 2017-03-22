@@ -62,7 +62,14 @@ public class NettyClient {
         if (message.getTimestamp() == 0) {
             message.timestamp(new Date().getTime());
         }
-        return clientHandler.sendMessageSync(message, 1000);
+        return clientHandler.sendMessageSync(message, null);
+    }
+
+    public RpcResult sendMessage(Message message, long timeout) {
+        if (message.getTimestamp() == 0) {
+            message.timestamp(new Date().getTime());
+        }
+        return clientHandler.sendMessageSync(message, timeout);
     }
 
     public String getHost() {
@@ -82,10 +89,11 @@ public class NettyClient {
 
         /**
          * 同步发送消息,等待消息收到后返回给客户端
+         *
          * @param message 发送的消息
          * @param timeout
          */
-        public RpcResult sendMessageSync(Message message, long timeout) {
+        public RpcResult sendMessageSync(Message message, Long timeout) {
             try {
                 ctxCountDown.await();
             } catch (InterruptedException ignored) {
@@ -100,7 +108,11 @@ public class NettyClient {
             if (channelFuture.isSuccess()) {
                 throw new RpcException("Send message error.");
             }
-            responseFuture.await(timeout);
+            if (timeout == null) {
+                responseFuture.await();
+            } else {
+                responseFuture.await(timeout);
+            }
             return responseFuture.getData();
         }
 

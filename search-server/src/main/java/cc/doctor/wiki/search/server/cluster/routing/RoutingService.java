@@ -51,12 +51,12 @@ public class RoutingService {
 
     }
 
-    public class NodeInfo {
-
-        private String nodeId;
-
-        public String getNodeId() {
-            return nodeId;
+    public RoutingNode getMaster() {
+        for (RoutingNode routingNode : routingNodes) {
+            if (routingNode.isMaster()) {
+                return routingNode;
+            }
         }
+        return null;
     }
 }

@@ -36,4 +36,10 @@ public class NodeService {
     public void unregisterNode() {
         zkClient.deleteNode(NODE_PATH + "/" + node.getRoutingNode().getNodeName());
     }
+
+    public void removeNode(RoutingNode routingNode) {
+        if (node.getRoutingNode().isMaster()) {
+            zkClient.deleteNode(NODE_PATH + "/" + routingNode.getNodeName());
+        }
+    }
 }
