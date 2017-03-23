@@ -7,18 +7,23 @@ import org.apache.zookeeper.Watcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
+
+import static cc.doctor.wiki.ha.zk.ZkListenerDispatcher.zkListenerDispatcher;
 
 /**
  * Created by doctor on 2017/3/12.
  */
 public class ZookeeperWatcher implements Watcher {
     private static final Logger log = LoggerFactory.getLogger(ZookeeperWatcher.class);
-    public static final ZookeeperWatcher zkWatcher = new ZookeeperWatcher();
-    private ConcurrentHashMap<String, ZkEventListener> zkEventListeners = new ConcurrentHashMap<>();
     private String listenerScanPackage = PropertyUtils.getProperty("zk.listener.scan.package", "cc.doctor.wiki.ha.zk.listener");
+    private ZookeeperClient zookeeperClient;
 
-    private ZookeeperWatcher() {
+    public ZookeeperWatcher(ZookeeperClient zookeeperClient) {
+        this.zookeeperClient = zookeeperClient;
+    }
+
+    public void scanListeners() {
         Scanner scanner = new Scanner(listenerScanPackage);
         scanner.doScan();
         for (Class aClass : scanner.getScanClass().values()) {
@@ -32,8 +37,23 @@ public class ZookeeperWatcher implements Watcher {
         }
     }
 
+    public <T extends ZkEventListener> void registerListener(Class<T> zkEventListenerClass) {
+        try {
+            ZkEventListener zkEventListener = zkEventListenerClass.newInstance();
+            registerListener(zkEventListener);
+        } catch (InstantiationException | IllegalAccessException e) {
+            log.error("", e);
+        }
+    }
+
     public void registerListener(ZkEventListener zkEventListener) {
-        zkEventListeners.put(zkEventListener.getClass().getName(), zkEventListener);
+        for (String path : zkEventListener.listenPaths()) {
+            //monitor all
+            zookeeperClient.existsNode(path);
+            zookeeperClient.readData(path);
+            zookeeperClient.getChildren(path);
+            zkListenerDispatcher.registerListener(path, zkEventListener);
+        }
     }
 
     @Override
@@ -43,7 +63,8 @@ public class ZookeeperWatcher implements Watcher {
         // 事件类型
         Event.EventType eventType = event.getType();
 
-        for (ZkEventListener zkEventListener : zkEventListeners.values()) {
+        List<ZkEventListener> zkEventListeners = zkListenerDispatcher.getListeners(event.getPath());
+        for (ZkEventListener zkEventListener : zkEventListeners) {
             if (Event.KeeperState.SyncConnected == keeperState) {
                 // 成功连接上ZK服务器
                 if (Event.EventType.None == eventType) {

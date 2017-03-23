@@ -15,6 +15,7 @@ public class MasterListener extends ZkEventListenerAdapter {
     private ZookeeperClient zkClient;
 
     public MasterListener(Client client, ZookeeperClient zkClient) {
+        listenPaths.add(ZK_NODE_MASTER);
         this.client = client;
         this.zkClient = zkClient;
     }

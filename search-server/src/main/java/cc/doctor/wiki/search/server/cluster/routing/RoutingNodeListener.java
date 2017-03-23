@@ -5,6 +5,8 @@ import cc.doctor.wiki.ha.zk.ZookeeperClient;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.utils.StringUtils;
 import org.apache.zookeeper.WatchedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -15,12 +17,23 @@ import static cc.doctor.wiki.search.server.common.config.Settings.settings;
  * 路由信息监听
  */
 public class RoutingNodeListener extends ZkEventListenerAdapter {
+    private static final Logger log = LoggerFactory.getLogger(RoutingNodeListener.class);
+
     public static final String NODE_PATH = (String) settings.get(GlobalConfig.ZOOKEEPER_NODE_PATH);
+    ZookeeperClient zookeeperClient = ZookeeperClient.getClient((String) settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING));
     private RoutingService routingService;
+
+    public RoutingNodeListener() {
+        listenPaths.add(NODE_PATH);
+    }
+
+    @Override
+    public void onNodeCreate(WatchedEvent watchedEvent) {
+        super.onNodeCreate(watchedEvent);
+    }
 
     @Override
     public void onNodeChildrenChanged(WatchedEvent watchedEvent) {
-        ZookeeperClient zookeeperClient = ZookeeperClient.getClient((String) settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING));
         String path = watchedEvent.getPath();
         if (path.equals(NODE_PATH)) {
             Map<String, String> children = zookeeperClient.getChildren(NODE_PATH);

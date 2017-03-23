@@ -47,6 +47,7 @@ public class GlobalConfig {
     public static final String CHECKPOINT_FILE_NAME = "checkpoint";
     public static final String LOG_PATH = "logs";
     //rpc
+    public static final String NETTY_SERVER_HOST = "netty.server.host";
     public static final String NETTY_SERVER_PORT = "netty.server.port";
     public static final int NETTY_SERVER_PORT_DEFAULT = 1218;
 

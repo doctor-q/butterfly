@@ -1,6 +1,6 @@
 package cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog;
 
-import cc.doctor.wiki.index.document.Document;
+import cc.doctor.wiki.search.client.query.document.Document;
 import cc.doctor.wiki.search.client.rpc.operation.Operation;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.utils.PropertyUtils;

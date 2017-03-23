@@ -11,6 +11,7 @@ import cc.doctor.wiki.search.server.cluster.routing.RoutingNode;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingService;
 import cc.doctor.wiki.search.server.cluster.vote.VoteService;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,7 +24,7 @@ public class ToleranceService {
     private NodeService nodeService;
     private VoteService voteService;
     private Map<String, Client> nodeClients;
-    private Map<String, AtomicInteger> nodeLoss;
+    private Map<String, AtomicInteger> nodeLoss = new HashMap<>();
 
     public ToleranceService(Node node) {
         this.node = node;

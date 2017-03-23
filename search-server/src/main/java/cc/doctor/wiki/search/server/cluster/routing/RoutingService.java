@@ -8,7 +8,7 @@ import java.util.List;
  * 路由服务,根据索引获取对应的节点
  */
 public class RoutingService {
-    private List<RoutingNode> routingNodes;
+    private List<RoutingNode> routingNodes = new LinkedList<>();
 
     public List<RoutingNode> getIndexRoutingNodes(String indexName) {
         List<RoutingNode> indexRoutingNodes = new LinkedList<>();

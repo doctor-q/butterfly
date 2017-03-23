@@ -1,8 +1,8 @@
 package cc.doctor.wiki.search.server.index.store.indices.indexer;
 
 import cc.doctor.wiki.exceptions.schema.SchemaException;
-import cc.doctor.wiki.index.document.Document;
-import cc.doctor.wiki.index.document.Field;
+import cc.doctor.wiki.search.client.query.document.Document;
+import cc.doctor.wiki.search.client.query.document.Field;
 import cc.doctor.wiki.search.client.index.schema.Schema;
 import cc.doctor.wiki.search.server.index.shard.ShardService;
 import cc.doctor.wiki.search.server.index.store.indices.format.DateFormat;

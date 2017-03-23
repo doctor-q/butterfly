@@ -1,6 +1,6 @@
 package cc.doctor.wiki.search.server.index.manager;
 
-import cc.doctor.wiki.index.document.Document;
+import cc.doctor.wiki.search.client.query.document.Document;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.utils.PropertyUtils;
 import cc.doctor.wiki.search.client.index.schema.Schema;

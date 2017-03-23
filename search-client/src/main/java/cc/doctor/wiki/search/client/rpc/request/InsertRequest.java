@@ -1,6 +1,6 @@
 package cc.doctor.wiki.search.client.rpc.request;
 
-import cc.doctor.wiki.index.document.Document;
+import cc.doctor.wiki.search.client.query.document.Document;
 
 /**
  * Created by doctor on 2017/3/15.

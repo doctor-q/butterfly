@@ -3,7 +3,7 @@ package cc.doctor.wiki.search.server.cluster.replicate;
 import cc.doctor.wiki.common.Action;
 import cc.doctor.wiki.common.Tuple;
 import cc.doctor.wiki.ha.zk.ZookeeperClient;
-import cc.doctor.wiki.index.document.Document;
+import cc.doctor.wiki.search.client.query.document.Document;
 import cc.doctor.wiki.search.client.index.schema.Schema;
 import cc.doctor.wiki.search.client.rpc.Client;
 import cc.doctor.wiki.search.client.rpc.Message;

@@ -1,9 +1,8 @@
 package cc.doctor.wiki.search.server.index.manager;
 
-import cc.doctor.wiki.index.document.Document;
-import cc.doctor.wiki.index.writer.WriteResult;
-import cc.doctor.wiki.search.server.index.store.indices.indexer.IndexerMediator;
+import cc.doctor.wiki.search.client.query.document.Document;
 import cc.doctor.wiki.search.client.index.schema.Schema;
+import cc.doctor.wiki.search.server.index.store.indices.indexer.IndexerMediator;
 import cc.doctor.wiki.search.server.index.store.mm.source.SourceFile;
 
 import java.util.concurrent.Callable;
@@ -34,6 +33,6 @@ public class WriteDocumentCallable implements Callable {
         //write index
         indexerMediator.index(document);
 
-        return new WriteResult();
+        return null;
     }
 }

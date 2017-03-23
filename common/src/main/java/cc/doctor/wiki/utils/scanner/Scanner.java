@@ -15,6 +15,7 @@ public class Scanner {
     private ConcurrentHashMap<String, Class> scanClass = new ConcurrentHashMap<>();
     public static final URL base = Scanner.class.getClass().getResource("/");
     private String scanPackage;
+
     public Scanner(String scanPackage) {
         this.scanPackage = scanPackage;
     }
@@ -29,6 +30,10 @@ public class Scanner {
 
     public void loadPackage(String packageName) {
         String packagePath = base.getPath() + packageName.replace(".", "/");
+        loadPath(packagePath, packageName);
+    }
+
+    public void loadPath(String packagePath, String packageName) {
         File pack = new File(packagePath);
         if (!pack.exists() || pack.isFile()) {
             return;

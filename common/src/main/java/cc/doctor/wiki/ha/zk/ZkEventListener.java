@@ -2,10 +2,13 @@ package cc.doctor.wiki.ha.zk;
 
 import org.apache.zookeeper.WatchedEvent;
 
+import java.util.List;
+
 /**
  * Created by doctor on 2017/3/12.
  */
 public interface ZkEventListener {
+    List<String> listenPaths();
     void onNodeCreate(WatchedEvent watchedEvent);
 
     void onNodeDeleted(WatchedEvent watchedEvent);

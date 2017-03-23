@@ -8,7 +8,6 @@ import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,21 +22,29 @@ public class ZookeeperClient {
     private int sessionTimeout = 10000;
     private String connectionString;
     private ZooKeeper zk = null;
-    private ZookeeperWatcher zookeeperWatcher = ZookeeperWatcher.zkWatcher;
+    private ZookeeperWatcher zookeeperWatcher;
     private static Map<String, ZookeeperClient> zkClients = new ConcurrentHashMap<>();
 
-    public ZookeeperClient(String connectionString) {
-        this(connectionString, 10000);
-    }
-
-    public ZookeeperClient(String connectionString, int sessionTimeout) {
+    public ZookeeperClient(String connectionString, int sessionTimeout, ZookeeperWatcher zookeeperWatcher) {
+        this.zookeeperWatcher = zookeeperWatcher;
         this.connectionString = connectionString;
         this.sessionTimeout = sessionTimeout;
         try {
-            zk = new ZooKeeper(connectionString, sessionTimeout, zookeeperWatcher);
-        } catch (IOException e) {
+            if (this.zookeeperWatcher == null) {
+                this.zookeeperWatcher = new ZookeeperWatcher(this);
+            }
+            zk = new ZooKeeper(connectionString, sessionTimeout, this.zookeeperWatcher);
+        } catch (Exception e) {
             log.error("", e);
         }
+    }
+
+    public ZookeeperClient(String connectionString, int sessionTimeout) {
+        this(connectionString, sessionTimeout, null);
+    }
+
+    public ZookeeperWatcher getZookeeperWatcher() {
+        return zookeeperWatcher;
     }
 
     public void releaseConnection() {
@@ -118,7 +125,10 @@ public class ZookeeperClient {
     //read and watch path
     public String readData(String path) {
         try {
-            return new String(this.zk.getData(path, true, null));
+            byte[] data = this.zk.getData(path, true, null);
+            if (data != null) {
+                return new String(data);
+            }
         } catch (KeeperException | InterruptedException e) {
             log.error("", e);
         }
@@ -145,7 +155,7 @@ public class ZookeeperClient {
 
     public static ZookeeperClient getClient(String connString) {
         if (zkClients.get(connString) == null) {
-            ZookeeperClient zookeeperClient = new ZookeeperClient(connString);
+            ZookeeperClient zookeeperClient = new ZookeeperClient(connString, 10000);
             zkClients.put(connString, zookeeperClient);
         }
         return zkClients.get(connString);

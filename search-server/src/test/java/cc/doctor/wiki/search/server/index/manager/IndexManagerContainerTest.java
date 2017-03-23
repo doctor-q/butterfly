@@ -1,7 +1,7 @@
 package cc.doctor.wiki.search.server.index.manager;
 
-import cc.doctor.wiki.index.document.Document;
-import cc.doctor.wiki.index.document.Field;
+import cc.doctor.wiki.search.client.query.document.Document;
+import cc.doctor.wiki.search.client.query.document.Field;
 import cc.doctor.wiki.search.client.index.schema.Schema;
 import org.junit.Before;
 import org.junit.Test;

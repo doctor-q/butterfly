@@ -1,7 +1,7 @@
 package cc.doctor.wiki.search.client.rpc;
 
 import cc.doctor.wiki.common.Tuple;
-import cc.doctor.wiki.index.document.Document;
+import cc.doctor.wiki.search.client.query.document.Document;
 import cc.doctor.wiki.search.client.rpc.operation.Operation;
 import cc.doctor.wiki.search.client.query.QueryBuilder;
 import cc.doctor.wiki.search.client.rpc.result.*;

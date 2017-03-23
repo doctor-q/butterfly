@@ -2,10 +2,14 @@ package cc.doctor.wiki.search.server.cluster.vote;
 
 import cc.doctor.wiki.exceptions.cluster.VoteException;
 import cc.doctor.wiki.ha.zk.ZookeeperClient;
+import cc.doctor.wiki.search.server.cluster.routing.RoutingNode;
+import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.utils.StringUtils;
 
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+
+import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 
 /**
  * Created by doctor on 2017/3/13.
@@ -15,8 +19,9 @@ public class ZookeeperVote extends Vote {
     public static final String ZK_NODE_MASTER = "/es/metadata/master";
     private CountDownLatch masterCountDown = new CountDownLatch(1);
 
-    public ZookeeperVote(ZookeeperClient zkClient) {
-        this.zkClient = zkClient;
+    public ZookeeperVote(RoutingNode routingNode) {
+        super(routingNode);
+        this.zkClient = ZookeeperClient.getClient(settings.getString(GlobalConfig.ZOOKEEPER_CONN_STRING));
     }
 
     @Override
@@ -24,7 +29,12 @@ public class ZookeeperVote extends Vote {
         boolean masterExist = zkClient.existsNode(ZK_NODE_MASTER);
         if (masterExist) {
             String masterInfo = zkClient.readData(ZK_NODE_MASTER);
-            return decodeMasterInfo(masterInfo);
+            VoteInfo voteInfo = decodeMasterInfo(masterInfo);
+            if (voteInfo == null || voteInfo.getVoteVersion() < getVoteInfo().getVoteVersion()) {
+                zkClient.writeData(ZK_NODE_MASTER, encodeMasterInfo(getVoteInfo()));
+                return getVoteInfo();
+            }
+            return voteInfo;
         } else {
             boolean created = zkClient.createPathRecursion(ZK_NODE_MASTER, encodeMasterInfo(getVoteInfo()));
             if (created && zkClient.existsNode(ZK_NODE_MASTER)) {
@@ -64,15 +74,15 @@ public class ZookeeperVote extends Vote {
         if (voteId == null || host == null || port == null || timestamp == null) {
             throw new VoteException("Vote message error.");
         }
-        voteInfo.setVoteId(Long.parseLong(voteId));
+        voteInfo.setVoteId(voteId);
         voteInfo.setHost(host);
-        voteInfo.setPort(port);
+        voteInfo.setPort(Integer.parseInt(port));
         voteInfo.setTimestamp(Long.parseLong(timestamp));
         return voteInfo;
     }
 
     private String encodeMasterInfo(VoteInfo voteInfo) {
-        if (voteInfo == null || voteInfo.getHost() == null || voteInfo.getPort() == null) {
+        if (voteInfo == null || voteInfo.getHost() == null) {
             return null;
         }
         return StringUtils.toNameValuePairString(voteInfo);

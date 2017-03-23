@@ -1,7 +1,7 @@
 package cc.doctor.wiki.search.server.index.shard;
 
 import cc.doctor.wiki.exceptions.query.QueryGrammarException;
-import cc.doctor.wiki.index.document.Document;
+import cc.doctor.wiki.search.client.query.document.Document;
 import cc.doctor.wiki.search.client.query.grammar.Predication;
 import cc.doctor.wiki.search.client.rpc.operation.Operation;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;

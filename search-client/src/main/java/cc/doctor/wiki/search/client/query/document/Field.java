@@ -1,4 +1,4 @@
-package cc.doctor.wiki.index.document;
+package cc.doctor.wiki.search.client.query.document;
 
 import java.io.Serializable;
 

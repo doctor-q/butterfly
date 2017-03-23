@@ -1,11 +1,29 @@
 package cc.doctor.wiki.search.server.cluster.vote;
 
+import cc.doctor.wiki.search.server.cluster.routing.RoutingNode;
+import cc.doctor.wiki.search.server.common.config.GlobalConfig;
+
+import java.util.Date;
+
+import static cc.doctor.wiki.search.server.common.config.Settings.settings;
+
 /**
  * Created by doctor on 2017/3/13.
  */
 public abstract class Vote {
     private VoteInfo voteInfo;
     private VoteIdStrategy voteIdStrategy;
+    private RoutingNode routingNode;
+
+    public Vote(RoutingNode routingNode) {
+        this.routingNode = routingNode;
+        voteIdStrategy = new DefaultVoteIdStrategy(routingNode);
+    }
+
+    public Vote(RoutingNode routingNode, VoteIdStrategy voteIdStrategy) {
+        this.routingNode = routingNode;
+        this.voteIdStrategy = voteIdStrategy;
+    }
 
     public void setVoteInfo(VoteInfo voteInfo) {
         this.voteInfo = voteInfo;
@@ -26,18 +44,41 @@ public abstract class Vote {
      */
     public abstract VoteInfo abdicate();
 
-    static class VoteInfo {
-        private long voteId;
+    public VoteInfo newVoteInfo() {
+        VoteInfo voteInfo = new VoteInfo();
+        voteInfo.setVoteId(voteIdStrategy.getVoteId());
+        voteInfo.setHost(settings.getString(GlobalConfig.NETTY_SERVER_HOST));
+        voteInfo.setPort(settings.getInt(GlobalConfig.NETTY_SERVER_PORT));
+        voteInfo.setTimestamp(new Date().getTime());
+        voteInfo.setVoteVersion(0);
+        return voteInfo;
+    }
+
+    /**
+     * 选主信息,voteId代表参与选主的id,
+     * voteVersion表示参与选主的版本号,主节点初始启动后版本号为0,每当新一轮选主,版本号加一
+     */
+    public static class VoteInfo {
+        private String voteId;
+        private long voteVersion;
         private String host;
-        private String port;
+        private int port;
         private long timestamp;
 
-        public long getVoteId() {
+        public String getVoteId() {
             return voteId;
         }
 
-        public void setVoteId(long voteId) {
+        public void setVoteId(String voteId) {
             this.voteId = voteId;
+        }
+
+        public long getVoteVersion() {
+            return voteVersion;
+        }
+
+        public void setVoteVersion(long voteVersion) {
+            this.voteVersion = voteVersion;
         }
 
         public String getHost() {
@@ -48,11 +89,11 @@ public abstract class Vote {
             this.host = host;
         }
 
-        public String getPort() {
+        public int getPort() {
             return port;
         }
 
-        public void setPort(String port) {
+        public void setPort(int port) {
             this.port = port;
         }
 
@@ -65,5 +106,20 @@ public abstract class Vote {
         }
     }
 
-    interface VoteIdStrategy {}
+    interface VoteIdStrategy {
+
+        String getVoteId();
+    }
+
+    public class DefaultVoteIdStrategy implements VoteIdStrategy {
+        private RoutingNode routingNode;
+        public DefaultVoteIdStrategy(RoutingNode routingNode) {
+            this.routingNode = routingNode;
+        }
+
+        @Override
+        public String getVoteId() {
+            return routingNode.getNodeId();
+        }
+    }
 }
