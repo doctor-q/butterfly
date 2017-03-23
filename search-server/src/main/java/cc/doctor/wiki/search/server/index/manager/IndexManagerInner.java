@@ -71,4 +71,10 @@ public class IndexManagerInner {
     public Schema getSchema() {
         return schema;
     }
+
+    public void doRecovery() {
+        for (ShardService shardService : shardServiceMap.values()) {
+            shardService.doRecovery();
+        }
+    }
 }

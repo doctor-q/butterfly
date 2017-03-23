@@ -16,7 +16,7 @@ import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 public class NettyServer implements Server {
     private ServerBootstrap serverBootstrap;
 
-    private NettyServer() {
+    public NettyServer() {
         serverBootstrap = new ServerBootstrap();
     }
 

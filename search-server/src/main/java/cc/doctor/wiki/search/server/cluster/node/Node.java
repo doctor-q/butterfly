@@ -4,8 +4,11 @@ import cc.doctor.wiki.schedule.Scheduler;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingNode;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingService;
 import cc.doctor.wiki.search.server.cluster.vote.VoteService;
-import cc.doctor.wiki.search.server.index.store.indices.recovery.RecoveryService;
+import cc.doctor.wiki.search.server.index.manager.RecoveryServiceContainer;
+import cc.doctor.wiki.search.server.rpc.NettyServer;
 import cc.doctor.wiki.search.server.rpc.Server;
+
+import static cc.doctor.wiki.search.server.common.Container.container;
 
 /**
  * Created by doctor on 2017/3/13.
@@ -17,7 +20,7 @@ public class Node {
     private VoteService voteService;
     private RoutingService routingService;
     private Server server;
-    private RecoveryService recoveryService;
+    private RecoveryServiceContainer recoveryServiceContainer;
     private Scheduler scheduler;
 
     public RoutingNode getRoutingNode() {
@@ -44,8 +47,18 @@ public class Node {
         return server;
     }
 
-    public RecoveryService getRecoveryService() {
-        return recoveryService;
+    public Node() {
+        nodeService = new NodeService(this);
+        voteService = new VoteService();
+        routingService = new RoutingService();
+        server = new NettyServer();
+        recoveryServiceContainer = new RecoveryServiceContainer();
+
+        container.addComponent(nodeService);
+        container.addComponent(voteService);
+        container.addComponent(routingService);
+        container.addComponent(server);
+        container.addComponent(recoveryServiceContainer);
     }
 
     public void start() {
@@ -56,7 +69,7 @@ public class Node {
         //生成路由表
         routingService.loadRoutingNodes();
         //恢复数据
-        recoveryService.doRecovery();
+        recoveryServiceContainer.doRecovery();
         //启动定时任务
         scheduler.scanTasks();
         //启动rpc服务

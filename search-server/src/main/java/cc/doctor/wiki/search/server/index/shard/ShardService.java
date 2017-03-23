@@ -104,4 +104,8 @@ public class ShardService {
     public Iterable<InvertedTable> getInvertedTables(Iterable<WordInfo> wordInfos) {
         return null;
     }
+
+    public void doRecovery() {
+        recoveryService.doRecovery();
+    }
 }
