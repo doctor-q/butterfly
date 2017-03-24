@@ -21,5 +21,5 @@ public abstract class OperationLogFile {
 
     abstract boolean appendOperationLogInner(OperationLog operationLog);
 
-    abstract Iterable<OperationLog> loadOperationLogs(long position);
+    public abstract Iterable<OperationLog> loadOperationLogs(long position);
 }

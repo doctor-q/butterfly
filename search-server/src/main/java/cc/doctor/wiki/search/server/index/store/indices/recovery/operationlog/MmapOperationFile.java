@@ -39,7 +39,7 @@ public class MmapOperationFile extends OperationLogFile {
 
     //load operation logs lazy
     @Override
-    Iterable<OperationLog> loadOperationLogs(final long position) {
+    public Iterable<OperationLog> loadOperationLogs(final long position) {
         return new Iterable<OperationLog>() {
             @Override
             public Iterator<OperationLog> iterator() {

@@ -4,7 +4,6 @@ import cc.doctor.wiki.schedule.Scheduler;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingNode;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingService;
 import cc.doctor.wiki.search.server.cluster.vote.VoteService;
-import cc.doctor.wiki.search.server.index.manager.RecoveryServiceContainer;
 import cc.doctor.wiki.search.server.rpc.NettyServer;
 import cc.doctor.wiki.search.server.rpc.Server;
 
@@ -20,7 +19,6 @@ public class Node {
     private VoteService voteService;
     private RoutingService routingService;
     private Server server;
-    private RecoveryServiceContainer recoveryServiceContainer;
     private Scheduler scheduler;
 
     public RoutingNode getRoutingNode() {
@@ -52,13 +50,10 @@ public class Node {
         voteService = new VoteService();
         routingService = new RoutingService();
         server = new NettyServer();
-        recoveryServiceContainer = new RecoveryServiceContainer();
 
         container.addComponent(nodeService);
         container.addComponent(voteService);
         container.addComponent(routingService);
-        container.addComponent(server);
-        container.addComponent(recoveryServiceContainer);
     }
 
     public void start() {
@@ -69,7 +64,6 @@ public class Node {
         //生成路由表
         routingService.loadRoutingNodes();
         //恢复数据
-        recoveryServiceContainer.doRecovery();
         //启动定时任务
         scheduler.scanTasks();
         //启动rpc服务

@@ -41,7 +41,6 @@ public class IndexManagerContainerTest {
         fields.add(new Field("name", "chen"));
         fields.add(new Field("date", "2016-10-11 10:20:30"));
         document.setFields(fields);
-        indexManagerContainer.writeDocument(schema, document);
         indexManagerContainer.dropIndex(schema);
     }
 

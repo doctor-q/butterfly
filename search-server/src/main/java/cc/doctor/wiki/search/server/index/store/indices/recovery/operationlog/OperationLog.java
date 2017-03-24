@@ -3,6 +3,7 @@ package cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog;
 import cc.doctor.wiki.search.client.rpc.operation.Operation;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by doctor on 2017/3/8.
@@ -15,6 +16,12 @@ public class OperationLog<T extends Serializable> implements Serializable {
     private T data;
 
     public OperationLog() {
+    }
+
+    public OperationLog(Operation operation, T data) {
+        this.operation = operation;
+        this.timestamp = new Date().getTime();
+        this.data = data;
     }
 
     public OperationLog(Operation operation, long timestamp, T data) {
@@ -53,5 +60,9 @@ public class OperationLog<T extends Serializable> implements Serializable {
                 "operation=" + operation +
                 ", timestamp=" + timestamp +
                 '}';
+    }
+
+    public static OperationLog newOperationLog() {
+        return new OperationLog();
     }
 }

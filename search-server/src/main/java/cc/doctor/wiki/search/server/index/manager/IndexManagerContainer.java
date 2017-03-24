@@ -2,9 +2,10 @@ package cc.doctor.wiki.search.server.index.manager;
 
 import cc.doctor.wiki.common.Tuple;
 import cc.doctor.wiki.exceptions.index.IndexException;
-import cc.doctor.wiki.search.client.query.document.Document;
 import cc.doctor.wiki.search.client.index.schema.Schema;
 import cc.doctor.wiki.search.client.query.QueryBuilder;
+import cc.doctor.wiki.search.client.query.document.Document;
+import cc.doctor.wiki.search.server.index.store.indices.recovery.RecoveryService;
 import cc.doctor.wiki.search.server.query.SearcherInner;
 
 import java.util.HashMap;
@@ -41,43 +42,28 @@ public class IndexManagerContainer {
         }
     }
 
-    public void writeDocument(Schema schema, Document document) {
-        if (indexManagerInnerMap.get(schema.getIndexName()) == null) {
-            throw new IndexException("Index doesn't exist.");
-        }
-        indexManagerInnerMap.get(schema.getIndexName()).writeDocumentInner(document);
-    }
-
     public void putSchema(Schema schema) {
-
     }
 
     public void putAlias(Tuple<String, String> alias) {
-
     }
 
     public void dropAlias(Tuple<String, String> alias) {
-
     }
 
     public void insertDocument(String indexName, Document document) {
-
     }
 
     public void bulkInsert(String indexName, Iterable<Document> documents) {
-
     }
 
     public void deleteDocument(String indexName, Long docId) {
-
     }
 
     public void bulkDelete(String indexName, Iterable<Long> docIds) {
-
     }
 
     public void deleteByQuery(String indexName, QueryBuilder queryBuilder) {
-
     }
 
     public void query(String indexName, QueryBuilder queryBuilder) {

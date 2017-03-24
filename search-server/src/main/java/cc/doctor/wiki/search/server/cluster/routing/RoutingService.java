@@ -59,4 +59,13 @@ public class RoutingService {
         }
         return null;
     }
+
+    public boolean containsIndexNode(RoutingNode routingNode) {
+        for (RoutingNode node : routingNodes) {
+            if (node.getNodeId().equals(routingNode.getNodeId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

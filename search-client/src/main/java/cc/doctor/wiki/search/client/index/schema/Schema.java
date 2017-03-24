@@ -1,5 +1,6 @@
 package cc.doctor.wiki.search.client.index.schema;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,7 +9,8 @@ import java.util.Map;
 /**
  * Created by doctor on 2017/3/3.
  */
-public class Schema {
+public class Schema implements Serializable {
+    private static final long serialVersionUID = -5358709288352559858L;
     private String indexName;   //索引名
     private String alias;       //别名,通过索引名别名任意一个均可以访问
     private int replicate;      //副本数目

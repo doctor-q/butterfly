@@ -22,6 +22,7 @@ public class Settings {
         add(GlobalConfig.NODE_NAME, PropertyUtils.getProperty(GlobalConfig.NODE_NAME, ""));
         add(GlobalConfig.NETTY_SERVER_HOST, NetworkUtils.getOneUnLoopHost().getHostAddress());
         add(GlobalConfig.NETTY_SERVER_PORT, GlobalConfig.NETTY_SERVER_PORT_DEFAULT);
+        add(GlobalConfig.OPERATION_LOG_QUERY, GlobalConfig.OPERATION_LOG_QUERY_DEFAULT);
     }
 
     public Object get(String key) {
@@ -39,5 +40,9 @@ public class Settings {
 
     public String getString(String key) {
         return (String) get(key);
+    }
+
+    public boolean getBoolean(String key) {
+        return (boolean) get(key);
     }
 }
