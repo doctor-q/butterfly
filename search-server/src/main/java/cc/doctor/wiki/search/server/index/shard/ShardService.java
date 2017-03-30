@@ -63,8 +63,7 @@ public class ShardService {
      * @param document 文档
      */
     public boolean writeDocumentInner(Document document) {
-
-            shardWriteExecutor.submit(new WriteDocumentCallable(indexerMediator, sourceFile, document, indexManagerInner.getSchema()));
+        shardWriteExecutor.submit(new WriteDocumentCallable(indexerMediator, sourceFile, document, indexManagerInner.getSchema()));
         return true;
     }
 
@@ -91,5 +90,19 @@ public class ShardService {
 
     public Iterable<InvertedTable> getInvertedTables(Iterable<WordInfo> wordInfos) {
         return null;
+    }
+
+    public void setShardRoot(String shardRoot) {
+        this.shardRoot = shardRoot;
+    }
+
+    /**
+     * 刷新索引,
+     * 1. 刷新倒排,
+     * 2. 刷新词典
+     */
+    public void flush() {
+        indexerMediator.flushInvertedDocs();
+        indexerMediator.flushIndexer();
     }
 }

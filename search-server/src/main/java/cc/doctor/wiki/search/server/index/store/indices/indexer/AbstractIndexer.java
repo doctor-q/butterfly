@@ -66,4 +66,8 @@ public abstract class AbstractIndexer {
 
     //分词查询
     public abstract List<WordInfo> getWordInfoMatchInner(String field, Object value);
+
+    public abstract void writeLock();
+
+    public abstract void unlock();
 }

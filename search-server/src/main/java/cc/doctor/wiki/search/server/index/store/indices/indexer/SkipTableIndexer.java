@@ -25,6 +25,10 @@ public class SkipTableIndexer extends AbstractIndexer {
     //数字跳表,每份索引的每个域包含一个
     private Map<String, ConcurrentSkipListMap<Number, WordInfo>> concurrentSkipListMap = new HashMap<>();
 
+    public Map<String, ConcurrentSkipListMap<Number, WordInfo>> getConcurrentSkipListMap() {
+        return concurrentSkipListMap;
+    }
+
     /**
      * 此处的property必须有且完整
      */
@@ -138,16 +142,13 @@ public class SkipTableIndexer extends AbstractIndexer {
         throw new QueryException("Number not support match query");
     }
 
-    public static void main(String[] args) {
-        ConcurrentSkipListMap<Long, String> skipListMap = new ConcurrentSkipListMap<>();
-        long[] values = new long[]{10, 12, 9, 8, 99, 30, 35, 20};
-        for (long value : values) {
-            skipListMap.put(value, String.valueOf(value));
-        }
-        //上限
-        ConcurrentNavigableMap<Long, String> tailMap = skipListMap.tailMap(10L, false);
-        for (Long aLong : tailMap.keySet()) {
-            System.out.println(aLong);
-        }
+    @Override
+    public void writeLock() {
+
+    }
+
+    @Override
+    public void unlock() {
+
     }
 }

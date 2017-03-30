@@ -2,13 +2,14 @@ package cc.doctor.wiki.search.server.index.store.indices.indexer.datastruct;
 
 import cc.doctor.wiki.common.Tuple;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Created by doctor on 2017/3/17.
  * trie 树
  */
-public class TrieTree<T> {
+public class TrieTree<T> implements Serializable {
     //trie树索引,每份索引(shard)包含一个
     private Map<Character, TreeNode<T>> treeNodeMap = new HashMap<>();
 
@@ -113,7 +114,8 @@ public class TrieTree<T> {
         }
     }
 
-    public static class TreeNode<T> {
+    public static class TreeNode<T> implements Serializable {
+        private static final long serialVersionUID = 8499720875321195345L;
         char c;
         Map<Character, TreeNode<T>> nexts = new HashMap<>();
         T data;  //词的结尾会挂倒排

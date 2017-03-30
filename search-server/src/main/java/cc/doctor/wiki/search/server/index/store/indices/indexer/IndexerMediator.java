@@ -8,6 +8,7 @@ import cc.doctor.wiki.search.server.index.shard.ShardService;
 import cc.doctor.wiki.search.server.index.store.indices.format.DateFormat;
 import cc.doctor.wiki.search.server.index.store.indices.format.Format;
 import cc.doctor.wiki.search.server.index.store.indices.format.FormatProber;
+import cc.doctor.wiki.search.server.index.store.indices.inverted.DictFile;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedFile;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 
@@ -26,10 +27,13 @@ public class IndexerMediator {
     private InvertedFile invertedFile;
     private ShardService shardService;
     private Schema schema;
+    private DictFile dictFile;
 
-    private IndexerMediator() {
+    public IndexerMediator(ShardService shardService) {
+        this.shardService = shardService;
         skipTableIndexer = new SkipTableIndexer();
         trieTreeIndexer = new TrieTreeIndexer();
+        dictFile = new DictFile(this);
     }
 
     //为文档建索引
@@ -38,6 +42,20 @@ public class IndexerMediator {
         for (Field field : fields) {
             insertWord(document.getId(), field.getName(), field.getValue());
         }
+    }
+
+    public void flushInvertedDocs() {
+        invertedFile.flushInvertedTable();
+    }
+
+    //刷新索引,将词典保存起来
+    public void flushIndexer() {
+        skipTableIndexer.writeLock();
+        dictFile.writeDict(skipTableIndexer.getConcurrentSkipListMap());
+        skipTableIndexer.unlock();
+        trieTreeIndexer.writeLock();
+        dictFile.writeDict(trieTreeIndexer.getFieldTrieTree());
+        trieTreeIndexer.unlock();
     }
 
     private Format proberFormatAndSetProperty(Schema.Property property, Object value) {
@@ -196,5 +214,9 @@ public class IndexerMediator {
                 break;
         }
         return wordInfos;
+    }
+
+    public String getShardRoot() {
+        return shardService.getShardRoot();
     }
 }

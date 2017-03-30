@@ -18,6 +18,10 @@ import java.util.Map;
 public class TrieTreeIndexer extends AbstractIndexer {
     Map<String, TrieTree<WordInfo>> fieldTrieTree = new HashMap<>();
 
+    public Map<String, TrieTree<WordInfo>> getFieldTrieTree() {
+        return fieldTrieTree;
+    }
+
     private TrieTree<WordInfo> getOrCreateTree(String field) {
         TrieTree<WordInfo> trieTree = fieldTrieTree.get(field);
         if (trieTree == null) {
@@ -96,5 +100,15 @@ public class TrieTreeIndexer extends AbstractIndexer {
     @Override
     public List<WordInfo> getWordInfoMatchInner(String field, Object value) {
         return null;
+    }
+
+    @Override
+    public void writeLock() {
+
+    }
+
+    @Override
+    public void unlock() {
+
     }
 }

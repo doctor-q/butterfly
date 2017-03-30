@@ -46,6 +46,14 @@ public class GlobalConfig {
     public static final String INDEX_PATH_NAME = "index";
     public static final String CHECKPOINT_FILE_NAME = "checkpoint";
     public static final String LOG_PATH = "logs";
+
+    //词典
+    public static final String DICT_FILE_NAME = "dict";
+    public static final String DICT_FILE_SIZE = "dict.file.size"; //100M
+    public static final int DICT_FILE_SIZE_DEFAULT = 1024 * 1024 * 100; //100M
+    public static final String DICT_INDEX_FILE_NAME = "dict.idx";
+    public static final String DICT_INDEX_FILE_SIZE = "dict.index.file.size"; //100M
+    public static final int DICT_INDEX_FILE_SIZE_DEFAULT = 10 * 1024 * 1024; //10M
     //rpc
     public static final String NETTY_SERVER_HOST = "netty.server.host";
     public static final String NETTY_SERVER_PORT = "netty.server.port";

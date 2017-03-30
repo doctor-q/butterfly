@@ -72,9 +72,9 @@ public class IndexManagerInner {
         return schema;
     }
 
-    public void doRecovery() {
+    public void flush() {
         for (ShardService shardService : shardServiceMap.values()) {
-            shardService.doRecovery();
+            shardService.flush();
         }
     }
 }

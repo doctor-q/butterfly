@@ -23,6 +23,8 @@ public class Settings {
         add(GlobalConfig.NETTY_SERVER_HOST, NetworkUtils.getOneUnLoopHost().getHostAddress());
         add(GlobalConfig.NETTY_SERVER_PORT, GlobalConfig.NETTY_SERVER_PORT_DEFAULT);
         add(GlobalConfig.OPERATION_LOG_QUERY, GlobalConfig.OPERATION_LOG_QUERY_DEFAULT);
+        add(GlobalConfig.DICT_FILE_SIZE, GlobalConfig.DICT_FILE_SIZE_DEFAULT);
+        add(GlobalConfig.DICT_INDEX_FILE_SIZE, GlobalConfig.DICT_INDEX_FILE_SIZE_DEFAULT);
     }
 
     public Object get(String key) {
