@@ -12,6 +12,7 @@ import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 import cc.doctor.wiki.search.server.index.store.mm.source.MmapSourceFile;
 import cc.doctor.wiki.search.server.index.store.mm.source.SourceFile;
 import cc.doctor.wiki.search.server.query.grammar.GrammarParser;
+import cc.doctor.wiki.utils.CollectionUtils;
 import cc.doctor.wiki.utils.FileUtils;
 import cc.doctor.wiki.utils.PropertyUtils;
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ public class ShardService {
      * @param document 文档
      */
     public boolean writeDocumentInner(Document document) {
-        shardWriteExecutor.submit(new WriteDocumentCallable(indexerMediator, sourceFile, document, indexManagerInner.getSchema()));
+        shardWriteExecutor.submit(new WriteDocumentCallable(indexerMediator, sourceFile, CollectionUtils.list(document), null, indexManagerInner.getSchema()));
         return true;
     }
 
