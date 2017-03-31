@@ -23,6 +23,16 @@ public class IndexManagerContainer {
     private IndexManagerContainer() {
     }
 
+    private IndexManagerInner getIndexManager(String indexName) {
+        if (indexName == null) {
+            throw new IndexException("Null index name.");
+        }
+        if (indexManagerInnerMap.get(indexName) == null) {
+            throw new IndexException("Index dons't exist.");
+        }
+        return indexManagerInnerMap.get(indexName);
+    }
+
     public void createIndex(Schema schema) {
         if (indexManagerInnerMap.get(schema.getIndexName()) != null) {
             throw new IndexException("Index exists.");
@@ -52,15 +62,23 @@ public class IndexManagerContainer {
     }
 
     public void insertDocument(String indexName, Document document) {
+        IndexManagerInner indexManager = getIndexManager(indexName);
+        indexManager.insertDocument(document);
     }
 
     public void bulkInsert(String indexName, Iterable<Document> documents) {
+        IndexManagerInner indexManager = getIndexManager(indexName);
+        indexManager.bulkInsert(documents);
     }
 
     public void deleteDocument(String indexName, Long docId) {
+        IndexManagerInner indexManager = getIndexManager(indexName);
+        indexManager.deleteDocument(docId);
     }
 
     public void bulkDelete(String indexName, Iterable<Long> docIds) {
+        IndexManagerInner indexManager = getIndexManager(indexName);
+        indexManager.bulkDelete(docIds);
     }
 
     public void deleteByQuery(String indexName, QueryBuilder queryBuilder) {

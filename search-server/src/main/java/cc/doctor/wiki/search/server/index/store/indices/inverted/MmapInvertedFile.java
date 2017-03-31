@@ -22,8 +22,8 @@ public class MmapInvertedFile extends InvertedFile {
     private static final Logger log = LoggerFactory.getLogger(InvertedFile.class);
     private ScrollFile scrollFile;
     private ScrollFile.ScrollFileNameStrategy scrollFileNameStrategy = autoIncrementScrollFileNameStrategy;
-    private List<InvertedTable> mmInvertedTables = new LinkedList<>();
-    private static AtomicInteger mmInvertedTableNum = new AtomicInteger();
+    private List<InvertedTable> memInvertedTables = new LinkedList<>();
+    private static AtomicInteger memInvertedTableNum = new AtomicInteger();
     public static final int flushTableNum = settings.getInt(GlobalConfig.FLUSH_INVERTED_TABLE_NUM);
 
     MmapInvertedFile() {
@@ -50,26 +50,26 @@ public class MmapInvertedFile extends InvertedFile {
     public void writeInvertedTable(InvertedTable invertedTable) {
         InvertedTable removedInvertedTable = invertedTableCache.put(invertedTable.getWordInfo().getPosition(), invertedTable);
         if (removedInvertedTable != null) {
-            if (mmInvertedTableNum.decrementAndGet() == flushTableNum) {
+            if (memInvertedTableNum.decrementAndGet() == flushTableNum) {
                 flushInvertedTable();
             } else {
-                mmInvertedTables.add(removedInvertedTable);
+                memInvertedTables.add(removedInvertedTable);
             }
         }
     }
 
     @Override
     public void flushInvertedTable() {
-        Collections.sort(mmInvertedTables, new Comparator<InvertedTable>() {
+        Collections.sort(memInvertedTables, new Comparator<InvertedTable>() {
             @Override
             public int compare(InvertedTable o1, InvertedTable o2) {
                 return ((Long) o1.getWordInfo().getPosition()).compareTo(o2.getWordInfo().getPosition());
             }
         });
-        for (InvertedTable mmInvertedTable : mmInvertedTables) {
+        for (InvertedTable mmInvertedTable : memInvertedTables) {
             scrollFile.writeSerializable(mmInvertedTable);
         }
-        mmInvertedTables.clear();
+        memInvertedTables.clear();
     }
 
     /**

@@ -10,10 +10,7 @@ import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 import cc.doctor.wiki.utils.CollectionUtils;
 import cc.doctor.wiki.utils.DateUtils;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
@@ -33,7 +30,7 @@ public class SkipTableIndexer extends AbstractIndexer {
      * 此处的property必须有且完整
      */
     @Override
-    public void insertWordInner(Long docId, String field, Object value) {
+    public void insertWordInner(Collection<Long> docIds, String field, Object value) {
         ConcurrentSkipListMap<Number, WordInfo> skipList = concurrentSkipListMap.get(field);
         if (skipList == null) {
             skipList = new ConcurrentSkipListMap<>();
@@ -43,8 +40,7 @@ public class SkipTableIndexer extends AbstractIndexer {
         if (wordProperty == null || wordProperty.getType() == null) {
             throw new SchemaException("Property error.");
         }
-        //时间
-        //// TODO: 2017/3/8 加入倒排表信息
+        //逆向更新倒排信息
         InvertedTable invertedTable = new InvertedTable();
         invertedFile.writeInvertedTable(invertedTable);
         skipList.put(checkAndFormatValue(field, value), new WordInfo());

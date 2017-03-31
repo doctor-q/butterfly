@@ -17,6 +17,9 @@ import cc.doctor.wiki.utils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -46,15 +49,15 @@ public class ShardService {
         this.indexManagerInner = indexManagerInner;
         this.shard = shard;
         shardRoot = indexManagerInner.getIndexRoot() + "/" + shard;
-        //分片目录
-        FileUtils.createDirectoryRecursion(shardRoot);
-        //source目录
-        FileUtils.createDirectoryRecursion(shardRoot + "/" + GlobalConfig.SOURCE_PATH_NAME);
+        if (!FileUtils.exists(shardRoot)) {
+            //分片目录
+            FileUtils.createDirectoryRecursion(shardRoot);
+        }
+        if (!FileUtils.exists(shardRoot + "/" + GlobalConfig.SOURCE_PATH_NAME)) {
+            //source目录
+            FileUtils.createDirectoryRecursion(shardRoot + "/" + GlobalConfig.SOURCE_PATH_NAME);
+        }
         sourceFile = new MmapSourceFile();
-        //索引目录,持久化
-        // 正向:文档-词典
-        // 泛型:序列化的索引,倒排文件
-        FileUtils.createDirectoryRecursion(shardRoot + "/" + GlobalConfig.INDEX_PATH_NAME);
     }
 
     /**
@@ -104,5 +107,9 @@ public class ShardService {
     public void flush() {
         indexerMediator.flushInvertedDocs();
         indexerMediator.flushIndexer();
+    }
+
+    public boolean addInvertedDocs(Map<String, Map<Object, Set<Long>>> fieldValueDocMap, List<Document> documents) {
+        return false;
     }
 }

@@ -5,6 +5,9 @@ import cc.doctor.wiki.search.client.index.schema.Schema;
 import cc.doctor.wiki.search.server.index.store.indices.indexer.IndexerMediator;
 import cc.doctor.wiki.search.server.index.store.mm.source.SourceFile;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 /**
@@ -13,26 +16,38 @@ import java.util.concurrent.Callable;
 public class WriteDocumentCallable implements Callable {
     private IndexerMediator indexerMediator;
     private SourceFile sourceFile;
-    private Document document;
+    private List<Document> documents;
+    private Map<String, Map<Object, Set<Long>>> fieldValueDocMap;
     private Schema schema;
 
-    public WriteDocumentCallable(final IndexerMediator indexer, final SourceFile sourceFile, final Document document, final Schema schema) {
+    public WriteDocumentCallable(final IndexerMediator indexer,
+                                 final SourceFile sourceFile,
+                                 final List<Document> documents,
+                                 final Map<String, Map<Object, Set<Long>>> fieldValueDocMap,
+                                 final Schema schema) {
         this.indexerMediator = indexer;
         this.sourceFile = sourceFile;
-        this.document = document;
+        this.documents = documents;
+        this.fieldValueDocMap = fieldValueDocMap;
         this.schema = schema;
     }
 
     @Override
     public Object call() throws Exception {
-        //write source
-        SourceFile.Source source = new SourceFile.Source();
-        source.setDocument(document);
-        long position = sourceFile.appendSource(source);
-        sourceFile.setPositionById(document.getId(), position);
-        //write index
-        indexerMediator.index(document);
-
+        for (Document document : documents) {
+            //write source
+            SourceFile.Source source = new SourceFile.Source();
+            source.setDocument(document);
+            long position = sourceFile.appendSource(source);
+            sourceFile.setPositionById(document.getId(), position);
+            if (fieldValueDocMap == null) {
+                //write index
+                indexerMediator.index(document);
+            }
+        }
+        if (fieldValueDocMap != null) {
+            indexerMediator.index(fieldValueDocMap);
+        }
         return null;
     }
 }

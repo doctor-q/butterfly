@@ -14,6 +14,8 @@ import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static cc.doctor.wiki.search.server.index.store.indices.format.Format.*;
 
@@ -44,6 +46,51 @@ public class IndexerMediator {
         }
     }
 
+    //建立文档索引,在已有倒排的基础上
+    public boolean index(Map<String, Map<Object, Set<Long>>> fieldValueDocMap) {
+        for (String field : fieldValueDocMap.keySet()) {
+            insertWord(field, fieldValueDocMap.get(field));
+        }
+        return true;
+    }
+
+    private boolean insertWord(String field, Map<Object, Set<Long>> valueDocMap) {
+        Format format = getFormat(field);
+        if (format == null) {
+            format = proberFormatAndSetProperty(schema.getPropertyByName(field),
+                    valueDocMap.keySet().iterator().next());
+        }
+        switch (format) {
+            case STRING:
+                trieTreeIndexer.insertWord(field, valueDocMap);
+                break;
+            case LONG:
+            case DOUBLE:
+            case DATE:
+                skipTableIndexer.insertWord(field, valueDocMap);
+                break;
+        }
+        return true;
+    }
+
+    private boolean insertWord(Long docId, String field, Object value) {
+        Format format = getFormat(field);
+        if (format == null) {
+            format = proberFormatAndSetProperty(schema.getPropertyByName(field), value);
+        }
+        switch (format) {
+            case STRING:
+                trieTreeIndexer.insertWord(docId, field, value);
+                break;
+            case LONG:
+            case DOUBLE:
+            case DATE:
+                skipTableIndexer.insertWord(docId, field, value);
+                break;
+        }
+        return true;
+    }
+
     public void flushInvertedDocs() {
         invertedFile.flushInvertedTable();
     }
@@ -66,24 +113,6 @@ public class IndexerMediator {
             property.setPattern(pattern);
         }
         return format;
-    }
-
-    private boolean insertWord(Long docId, String field, Object value) {
-        Format format = getFormat(field);
-        if (format == null) {
-            format = proberFormatAndSetProperty(schema.getPropertyByName(field), value);
-        }
-        switch (format) {
-            case STRING:
-                trieTreeIndexer.insertWord(docId, field, value);
-                break;
-            case LONG:
-            case DOUBLE:
-            case DATE:
-                skipTableIndexer.insertWord(docId, field, value);
-                break;
-        }
-        return true;
     }
 
     private Format getFormat(String field) {

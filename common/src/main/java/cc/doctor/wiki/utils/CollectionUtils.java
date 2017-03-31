@@ -46,6 +46,17 @@ public class CollectionUtils {
         return toList;
     }
 
+    public static <T> List<T> list(T ... ts) {
+        List<T> list = new LinkedList<>();
+        if (ts == null) {
+            return list;
+        }
+        for (T t : ts) {
+            list.add(t);
+        }
+        return list;
+    }
+
     public interface Function<F, T> {
         T transfer(F from);
     }

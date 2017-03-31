@@ -1,6 +1,7 @@
 package cc.doctor.wiki.search.server.index.manager;
 
 import cc.doctor.wiki.search.client.query.document.Document;
+import cc.doctor.wiki.search.client.query.document.Field;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.utils.PropertyUtils;
 import cc.doctor.wiki.search.client.index.schema.Schema;
@@ -9,8 +10,7 @@ import cc.doctor.wiki.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 
@@ -59,13 +59,16 @@ public class IndexManagerInner {
         return FileUtils.dropDirectory(indexRoot);
     }
 
-    public boolean writeDocumentInner(Document document) {
+    public boolean insertDocument(Document document) {
+        shardServiceMap.get(allocateShard(document)).writeDocumentInner(document);
+        return true;
+    }
+
+    private int allocateShard(Document document) {
         if (document.getId() == null) {
             document.setId(DocIdGenerator.docIdGenerator.generateDocId(schema.getIndexName()));
         }
-        int shard = (int) (document.getId() % (long) shards);
-        shardServiceMap.get(shard).writeDocumentInner(document);
-        return true;
+        return (int) (document.getId() % (long) shards);
     }
 
     public Schema getSchema() {
@@ -76,5 +79,52 @@ public class IndexManagerInner {
         for (ShardService shardService : shardServiceMap.values()) {
             shardService.flush();
         }
+    }
+
+    /**
+     * 批量插入,会先将文档的相同列合并,合并后在建索引
+     * @param documents 文档集合
+     */
+    public boolean bulkInsert(Iterable<Document> documents) {
+        Map<Integer, List<Document>> shardDocuments = new HashMap<>();
+        Map<Integer, Map<String, Map<Object, Set<Long>>>> shardInvertedDocMap = new HashMap<>();
+        for (Document document : documents) {
+            int shard = allocateShard(document);
+            List<Document> documentList = shardDocuments.get(shard);
+            Map<String, Map<Object, Set<Long>>> invertedDocMap = shardInvertedDocMap.get(shard);
+            if (invertedDocMap == null) {
+                invertedDocMap = new HashMap<>();
+                shardInvertedDocMap.put(shard, invertedDocMap);
+                documentList = new LinkedList<>();
+                shardDocuments.put(shard, documentList);
+            }
+            documentList.add(document);
+            List<Field> fields = document.getFields();
+            for (Field field : fields) {
+                String fieldName = field.getName();
+                Object value = field.getValue();
+                Map<Object, Set<Long>> invertedDocInners = invertedDocMap.get(fieldName);
+                if (invertedDocInners == null) {
+                    invertedDocInners = new HashMap<>();
+                    invertedDocMap.put(fieldName, invertedDocInners);
+                }
+                if (invertedDocInners.get(value) == null) {
+                    invertedDocInners.put(value, new HashSet<Long>());
+                }
+                invertedDocInners.get(value).add(document.getId());
+            }
+        }
+        for (Integer shard : shardInvertedDocMap.keySet()) {
+            shardServiceMap.get(shard).addInvertedDocs(shardInvertedDocMap.get(shard), shardDocuments.get(shard));
+        }
+        return true;
+    }
+
+    public boolean deleteDocument(Long docId) {
+        return false;
+    }
+
+    public boolean bulkDelete(Iterable<Long> docIds) {
+        return false;
     }
 }
