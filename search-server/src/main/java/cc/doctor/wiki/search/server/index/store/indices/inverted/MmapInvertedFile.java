@@ -2,6 +2,7 @@ package cc.doctor.wiki.search.server.index.store.indices.inverted;
 
 import cc.doctor.wiki.common.Action;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
+import cc.doctor.wiki.search.server.index.shard.ShardService;
 import cc.doctor.wiki.search.server.index.store.mm.MmapScrollFile;
 import cc.doctor.wiki.search.server.index.store.mm.ScrollFile;
 import cc.doctor.wiki.utils.FileUtils;
@@ -26,9 +27,10 @@ public class MmapInvertedFile extends InvertedFile {
     private static AtomicInteger memInvertedTableNum = new AtomicInteger();
     public static final int flushTableNum = settings.getInt(GlobalConfig.FLUSH_INVERTED_TABLE_NUM);
 
-    MmapInvertedFile() {
-        scrollFile = new MmapScrollFile((String) settings.get(GlobalConfig.INVERTED_FILE_PATH_NAME),
-                (int) settings.get(GlobalConfig.INVERTED_FILE_SIZE_NAME), autoIncrementScrollFileNameStrategy);
+    public MmapInvertedFile(ShardService shardService) {
+        super(shardService);
+        scrollFile = new MmapScrollFile(shardService.getShardRoot() + "/" + GlobalConfig.INVERTED_FILE_PATH_NAME,
+                settings.getInt(GlobalConfig.INVERTED_FILE_SIZE_NAME), autoIncrementScrollFileNameStrategy);
         scrollFile.onWriteFileCheck(new Action() {
             @Override
             public void doAction() {
@@ -50,7 +52,7 @@ public class MmapInvertedFile extends InvertedFile {
     public void writeInvertedTable(InvertedTable invertedTable) {
         InvertedTable removedInvertedTable = invertedTableCache.put(invertedTable.getWordInfo().getPosition(), invertedTable);
         if (removedInvertedTable != null) {
-            if (memInvertedTableNum.decrementAndGet() == flushTableNum) {
+            if (memInvertedTableNum.incrementAndGet() == flushTableNum) {
                 flushInvertedTable();
             } else {
                 memInvertedTables.add(removedInvertedTable);
@@ -70,6 +72,7 @@ public class MmapInvertedFile extends InvertedFile {
             scrollFile.writeSerializable(mmInvertedTable);
         }
         memInvertedTables.clear();
+        memInvertedTableNum.set(0);
     }
 
     /**

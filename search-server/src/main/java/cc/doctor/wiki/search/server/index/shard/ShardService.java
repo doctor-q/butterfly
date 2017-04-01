@@ -7,7 +7,9 @@ import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.search.server.index.manager.IndexManagerInner;
 import cc.doctor.wiki.search.server.index.manager.WriteDocumentCallable;
 import cc.doctor.wiki.search.server.index.store.indices.indexer.IndexerMediator;
+import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedFile;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedTable;
+import cc.doctor.wiki.search.server.index.store.indices.inverted.MmapInvertedFile;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 import cc.doctor.wiki.search.server.index.store.mm.source.MmapSourceFile;
 import cc.doctor.wiki.search.server.index.store.mm.source.SourceFile;
@@ -34,6 +36,7 @@ public class ShardService {
     private String shardRoot;
     private IndexManagerInner indexManagerInner;
     private IndexerMediator indexerMediator;
+    private InvertedFile invertedFile;
     private SourceFile sourceFile;
     private static final int writeDocumentThreads = PropertyUtils.getProperty(GlobalConfig.THREAD_NUM_WRITE_DOCUMENT, GlobalConfig.THREAD_NUM_WRITE_DOCUMENT_DEFAULT);
     private ExecutorService shardWriteExecutor = Executors.newFixedThreadPool(writeDocumentThreads);
@@ -49,7 +52,7 @@ public class ShardService {
     public ShardService(IndexManagerInner indexManagerInner, int shard) {
         this.indexManagerInner = indexManagerInner;
         this.shard = shard;
-        shardRoot = indexManagerInner.getIndexRoot() + "/" + shard;
+        this.shardRoot = indexManagerInner.getIndexRoot() + "/" + shard;
         if (!FileUtils.exists(shardRoot)) {
             //分片目录
             FileUtils.createDirectoryRecursion(shardRoot);
@@ -58,7 +61,9 @@ public class ShardService {
             //source目录
             FileUtils.createDirectoryRecursion(shardRoot + "/" + GlobalConfig.SOURCE_PATH_NAME);
         }
-        sourceFile = new MmapSourceFile();
+        this.indexerMediator = new IndexerMediator(this);
+        this.invertedFile = new MmapInvertedFile(this);
+        this.sourceFile = new MmapSourceFile();
     }
 
     /**
@@ -106,7 +111,7 @@ public class ShardService {
      * 2. 刷新词典
      */
     public void flush() {
-        indexerMediator.flushInvertedDocs();
+        invertedFile.flushInvertedTable();
         indexerMediator.flushIndexer();
     }
 

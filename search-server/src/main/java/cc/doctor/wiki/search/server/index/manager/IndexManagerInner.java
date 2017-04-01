@@ -30,6 +30,11 @@ public class IndexManagerInner {
 
     public IndexManagerInner(Schema schema) {
         this.schema = schema;
+        shards = schema.getShards();
+    }
+
+    public void setIndexRoot(String indexRoot) {
+        this.indexRoot = indexRoot;
     }
 
     public String getIndexRoot() {
@@ -47,7 +52,6 @@ public class IndexManagerInner {
         indexRoot = dataRoot + "/" + schema.getIndexName();
         FileUtils.createDirectoryRecursion(indexRoot);
         //分片目录,分片设置后不可更改,除非重建索引
-        shards = schema.getShards();
         for (int i = 0; i < shards; i++) {
             ShardService shardService = new ShardService(this, i);
             shardServiceMap.put(i, shardService);

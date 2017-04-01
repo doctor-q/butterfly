@@ -3,6 +3,7 @@ package cc.doctor.wiki.search.server.index.store.indices.inverted;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.search.server.index.cache.Cache;
 import cc.doctor.wiki.search.server.index.cache.LocalCache;
+import cc.doctor.wiki.search.server.index.shard.ShardService;
 import cc.doctor.wiki.search.server.index.store.indices.indexer.AbstractIndexer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,11 @@ public abstract class InvertedFile {
     public static final int CACHE_INVERTED_TABLE_SIZE = settings.getInt(GlobalConfig.CACHE_INVERTED_TABLE_SIZE);
     protected AbstractIndexer indexer;
     protected Cache<Long, InvertedTable> invertedTableCache = new LocalCache<>(CACHE_INVERTED_TABLE_SIZE);
+    protected ShardService shardService;
+
+    public InvertedFile(ShardService shardService) {
+        this.shardService = shardService;
+    }
 
     /**
      * 获取倒排文件列表

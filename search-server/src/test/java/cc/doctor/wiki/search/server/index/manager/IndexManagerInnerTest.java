@@ -1,6 +1,8 @@
 package cc.doctor.wiki.search.server.index.manager;
 
 import cc.doctor.wiki.search.client.index.schema.Schema;
+import cc.doctor.wiki.search.client.query.document.Document;
+import cc.doctor.wiki.search.client.query.document.Field;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,12 +29,16 @@ public class IndexManagerInnerTest {
 
     @Test
     public void dropIndexInner() throws Exception {
-
+        indexManagerInner.dropIndexInner();
     }
 
     @Test
     public void writeDocumentInner() throws Exception {
-
+        createIndexInner();
+        Document document = new Document().id(1L).field(new Field("name", "chen"));
+        indexManagerInner.insertDocument(document);
+        Thread.sleep(1000);
+        indexManagerInner.flush();
     }
 
     @Test

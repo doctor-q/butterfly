@@ -25,6 +25,9 @@ public class Settings {
         add(GlobalConfig.OPERATION_LOG_QUERY, GlobalConfig.OPERATION_LOG_QUERY_DEFAULT);
         add(GlobalConfig.DICT_FILE_SIZE, GlobalConfig.DICT_FILE_SIZE_DEFAULT);
         add(GlobalConfig.DICT_INDEX_FILE_SIZE, GlobalConfig.DICT_INDEX_FILE_SIZE_DEFAULT);
+        add(GlobalConfig.CACHE_INVERTED_TABLE_SIZE, GlobalConfig.CACHE_INVERTED_TABLE_SIZE_DEFAULT);
+        add(GlobalConfig.FLUSH_INVERTED_TABLE_NUM, GlobalConfig.FLUSH_INVERTED_TABLE_NUM_DEFAULT);
+        add(GlobalConfig.INVERTED_FILE_SIZE_NAME, GlobalConfig.INVERTED_FILE_SIZE_DEFUALT);
     }
 
     public Object get(String key) {

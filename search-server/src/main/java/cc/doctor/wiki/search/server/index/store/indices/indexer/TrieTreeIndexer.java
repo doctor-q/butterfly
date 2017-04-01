@@ -7,6 +7,7 @@ import cc.doctor.wiki.search.server.index.store.indices.indexer.datastruct.TrieT
 import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 import cc.doctor.wiki.utils.CollectionUtils;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class TrieTreeIndexer extends AbstractIndexer {
         return trieTree;
     }
     @Override
-    public void insertWordInner(Long docId, String field, Object value) {
+    public void insertWordInner(Collection<Long> docIds, String field, Object value) {
         TrieTree<WordInfo> trieTree = getOrCreateTree(field);
         trieTree.insertWord(value.toString(), new WordInfo());
     }

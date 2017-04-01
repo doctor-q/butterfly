@@ -26,7 +26,6 @@ import static cc.doctor.wiki.search.server.index.store.indices.format.Format.*;
 public class IndexerMediator {
     private SkipTableIndexer skipTableIndexer;
     private TrieTreeIndexer trieTreeIndexer;
-    private InvertedFile invertedFile;
     private ShardService shardService;
     private Schema schema;
     private DictFile dictFile;
@@ -89,10 +88,6 @@ public class IndexerMediator {
                 break;
         }
         return true;
-    }
-
-    public void flushInvertedDocs() {
-        invertedFile.flushInvertedTable();
     }
 
     //刷新索引,将词典保存起来

@@ -23,7 +23,9 @@ public class GlobalConfig {
     public static final int INVERTED_FILE_SIZE_MIN = 1024 * 1024;   //最大1M
     public static final String INVERTED_FILE_PATH_NAME = "inverted";
     public static final String FLUSH_INVERTED_TABLE_NUM = "flush.inverted.table.num";
-    public static String CACHE_INVERTED_TABLE_SIZE = "cache.inverted.table.size";
+    public static final int FLUSH_INVERTED_TABLE_NUM_DEFAULT = 1000;
+    public static final String CACHE_INVERTED_TABLE_SIZE = "cache.inverted.table.size";
+    public static final int CACHE_INVERTED_TABLE_SIZE_DEFAULT = 1000;
 
     //单个操作日志文件大小
     public static final String OPERATION_LOG_SIZE_NAME = "file.size.operation.log";
