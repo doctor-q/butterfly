@@ -5,6 +5,7 @@ import cc.doctor.wiki.search.server.index.cache.Cache;
 import cc.doctor.wiki.search.server.index.cache.LocalCache;
 import cc.doctor.wiki.search.server.index.shard.ShardService;
 import cc.doctor.wiki.search.server.index.store.indices.indexer.AbstractIndexer;
+import cc.doctor.wiki.search.server.index.store.indices.indexer.IndexerMediator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,12 +18,13 @@ import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 public abstract class InvertedFile {
     private static final Logger log = LoggerFactory.getLogger(InvertedFile.class);
     public static final int CACHE_INVERTED_TABLE_SIZE = settings.getInt(GlobalConfig.CACHE_INVERTED_TABLE_SIZE);
-    protected AbstractIndexer indexer;
+    protected IndexerMediator indexerMediator;
     protected Cache<Long, InvertedTable> invertedTableCache = new LocalCache<>(CACHE_INVERTED_TABLE_SIZE);
     protected ShardService shardService;
 
     public InvertedFile(ShardService shardService) {
         this.shardService = shardService;
+        indexerMediator = shardService.getIndexerMediator();
     }
 
     /**
@@ -35,14 +37,23 @@ public abstract class InvertedFile {
     /**
      * 写倒排表,非实时刷新,写入内存,当积累到一定程度或定时刷新到文件
      * @param invertedTable 倒排表
-     * @return
      */
     public abstract void writeInvertedTable(InvertedTable invertedTable);
     //将倒排表刷盘
     public abstract void flushInvertedTable();
 
+    /**
+     * 反向更新倒排索引信息
+     * @param field 字段
+     * @param wordInfo 倒排索引信息
+     */
     protected void updateWordInfo(String field, WordInfo wordInfo) {
-        WordInfo wordInfoInner = indexer.getWordInfoInner(field, wordInfo.getData());
-        wordInfoInner.setPosition(wordInfo.getPosition());
+        if (field == null || wordInfo == null || wordInfo.getData() == null) {
+            return;
+        }
+        Iterable<WordInfo> wordInfos = indexerMediator.equalSearch(field, wordInfo.getData().toString());
+        if (wordInfos != null && wordInfos.iterator().hasNext()) {
+            wordInfos.iterator().next().setPosition(wordInfo.getPosition());
+        }
     }
 }

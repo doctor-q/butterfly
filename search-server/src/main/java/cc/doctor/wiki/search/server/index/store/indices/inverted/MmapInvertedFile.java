@@ -69,7 +69,10 @@ public class MmapInvertedFile extends InvertedFile {
             }
         });
         for (InvertedTable mmInvertedTable : memInvertedTables) {
-            scrollFile.writeSerializable(mmInvertedTable);
+            long position = scrollFile.writeSerializable(mmInvertedTable);
+            WordInfo wordInfo = mmInvertedTable.getWordInfo();
+            wordInfo.setPosition(position);
+            updateWordInfo(mmInvertedTable.getField(), wordInfo);
         }
         memInvertedTables.clear();
         memInvertedTableNum.set(0);

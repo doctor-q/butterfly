@@ -49,6 +49,10 @@ public class ShardService {
         return shard;
     }
 
+    public IndexerMediator getIndexerMediator() {
+        return indexerMediator;
+    }
+
     public ShardService(IndexManagerInner indexManagerInner, int shard) {
         this.indexManagerInner = indexManagerInner;
         this.shard = shard;
