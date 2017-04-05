@@ -18,6 +18,10 @@ public class RoutingService {
     private ZookeeperClient zkClient = ZookeeperClient.getClient(settings.getString(GlobalConfig.ZOOKEEPER_CONN_STRING));
     public static final String routingPath = GlobalConfig.ZOOKEEPER_ROUTING_PATH;
 
+    public void registerRoutingNodeListener() {
+        zkClient.getZookeeperWatcher().registerListener(RoutingNodeListener.class);
+    }
+
     public List<RoutingNode> getIndexRoutingNodes(String indexName) {
         List<RoutingNode> indexRoutingNodes = new LinkedList<>();
         if (indexName == null) {
@@ -43,12 +47,15 @@ public class RoutingService {
             node.setNodeName(routingNode.getNodeName());
             node.setNodeState(routingNode.getNodeState());
             node.setMaster(routingNode.isMaster());
+            node.setNodeId(routingNode.getNodeId());
+            node.setRoutingShards(routingNode.getRoutingShards());
         }
+        updateRoutingInfo();
     }
 
-    public RoutingNode getNode(String nodeId) {
+    public RoutingNode getNode(String nodeName) {
         for (RoutingNode routingNode : routingNodes) {
-            if (routingNode.getNodeId().equals(nodeId)) {
+            if (routingNode.getNodeName().equals(nodeName)) {
                 return routingNode;
             }
         }

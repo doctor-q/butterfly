@@ -12,6 +12,7 @@ import cc.doctor.wiki.search.client.rpc.result.*;
 import cc.doctor.wiki.search.server.cluster.node.Node;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingNode;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingService;
+import cc.doctor.wiki.search.server.common.Container;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.search.server.index.store.indices.recovery.RecoveryService;
 
@@ -22,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static cc.doctor.wiki.search.server.common.Container.container;
 import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 import static cc.doctor.wiki.search.server.index.manager.IndexManagerContainer.indexManagerContainer;
 
@@ -38,9 +40,11 @@ public class ReplicateService {
     private Node node;
     private RecoveryService recoveryService;
 
-    public ReplicateService() {
-        routingService = new RoutingService();
+    public ReplicateService(Node node) {
+        this.node = node;
+        routingService = container.getComponent(RoutingService.class);
         nodeAllocator = new NodeAllocator(routingService, ZookeeperClient.getClient((String) settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING)));
+        recoveryService = container.getComponent(RecoveryService.class);
     }
 
     private void submitReplicateTasks(String indexName, Message message, Action action) {

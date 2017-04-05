@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * Created by doctor on 2017/3/8.
@@ -37,9 +39,14 @@ public class SerializeUtils {
         }
     }
 
-    public static <T> T jsonToObject(String json, Class<T> tClass) {
+    public static <T> T jsonToObject(String json, Type type) {
         Gson gson = new Gson();
-        return gson.fromJson(json, tClass);
+        return gson.fromJson(json, type);
+    }
+
+    public static <T> List<T> jsonToList(String json, Type type) {
+        Gson gson = new Gson();
+        return gson.fromJson(json, List.class);
     }
 
     public static <T> String objectToJson(T t) {

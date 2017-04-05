@@ -35,9 +35,9 @@ public class ToleranceService {
 
     public void reportMasterLoss() {
         RoutingNode master = routingService.getMaster();
-        for (String nodeId : nodeClients.keySet()) {
-            if (!master.getNodeId().equals(nodeId)) {
-                Client client = nodeClients.get(nodeId);
+        for (String nodeName : nodeClients.keySet()) {
+            if (!master.getNodeName().equals(nodeName)) {
+                Client client = nodeClients.get(nodeName);
                 Message message = Message.newMessage().operation(Operation.MASTER_LOSS).currentTimestamp();
                 client.sendMessage(message);
             }
@@ -46,7 +46,7 @@ public class ToleranceService {
 
     public void reportSlaveLoss() {
         RoutingNode master = routingService.getMaster();
-        Client client = nodeClients.get(master.getNodeId());
+        Client client = nodeClients.get(master.getNodeName());
         Message message = Message.newMessage().operation(Operation.NODE_LOSS).currentTimestamp();
         client.sendMessage(message);
     }
@@ -56,10 +56,10 @@ public class ToleranceService {
     }
 
     public RpcResult doMasterLoss(Message message) {
-        String nodeId = (String) message.getData();
-        RoutingNode routingNode = routingService.getNode(nodeId);
+        String nodeName = (String) message.getData();
+        RoutingNode routingNode = routingService.getNode(nodeName);
         if (routingNode.isMaster()) {
-            AtomicInteger nodeLoss = this.nodeLoss.get(nodeId);
+            AtomicInteger nodeLoss = this.nodeLoss.get(nodeName);
             if (nodeLoss.incrementAndGet() > routingService.getRoutingNodes().size() / 2) {
                 //remove node
                 voteService.doVote();
@@ -67,7 +67,7 @@ public class ToleranceService {
                 if (node.getRoutingNode().isMaster()) {
                     nodeService.removeNode(routingNode);
                 }
-                this.nodeLoss.remove(nodeId);
+                this.nodeLoss.remove(nodeName);
             }
         }
         return RpcResult.successRpcResult();
@@ -76,12 +76,12 @@ public class ToleranceService {
     public RpcResult doNodeLoss(Message message) {
         boolean master = node.getRoutingNode().isMaster();
         if (master) {
-            String nodeId = (String) message.getData();
-            AtomicInteger nodeLoss = this.nodeLoss.get(nodeId);
+            String nodeName = (String) message.getData();
+            AtomicInteger nodeLoss = this.nodeLoss.get(nodeName);
             if (nodeLoss.incrementAndGet() > routingService.getRoutingNodes().size() / 2) {
                 //remove node
-                nodeService.removeNode(routingService.getNode(nodeId));
-                this.nodeLoss.remove(nodeId);
+                nodeService.removeNode(routingService.getNode(nodeName));
+                this.nodeLoss.remove(nodeName);
             }
         }
         return RpcResult.successRpcResult();

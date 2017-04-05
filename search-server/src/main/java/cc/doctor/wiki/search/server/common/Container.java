@@ -16,12 +16,12 @@ public class Container {
         }
     }
 
-    public Object getComponent(Class clazz) {
+    public <T> T getComponent(Class<T> clazz) {
         if (clazz == null) {
             return null;
         }
         String clazzName = clazz.getName();
-        return getComponent(clazzName);
+        return (T) getComponent(clazzName);
     }
 
     public Object getComponent(String name) {

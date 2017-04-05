@@ -7,12 +7,12 @@ package cc.doctor.wiki.search.server.cluster.routing;
 public class RoutingShard {
     private String indexName;
     private String alias;
-    private String nodeId;
+    private String nodeName;
     private int shardId;
 
-    public RoutingShard(String indexName, String nodeId, int shardId) {
+    public RoutingShard(String indexName, String nodeName, int shardId) {
         this.indexName = indexName;
-        this.nodeId = nodeId;
+        this.nodeName = nodeName;
         this.shardId = shardId;
     }
 
@@ -32,12 +32,12 @@ public class RoutingShard {
         this.alias = alias;
     }
 
-    public String getNodeId() {
-        return nodeId;
+    public String getNodeName() {
+        return nodeName;
     }
 
-    public void setNodeId(String nodeId) {
-        this.nodeId = nodeId;
+    public void setNodeName(String nodeName) {
+        this.nodeName = nodeName;
     }
 
     public int getShardId() {

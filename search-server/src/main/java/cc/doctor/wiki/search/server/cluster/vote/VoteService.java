@@ -29,6 +29,10 @@ public class VoteService {
         vote.setVoteInfo(voteInfo);
     }
 
+    public void registerMasterNodeListener() {
+        nodeService.registerMasterNodeListener();
+    }
+
     public void doVote() {
         vote.getVoteInfo().setVoteId(vote.getVoteId());
 

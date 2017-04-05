@@ -3,6 +3,7 @@ package cc.doctor.wiki.search.server.cluster.node;
 import cc.doctor.wiki.ha.zk.ZookeeperClient;
 import cc.doctor.wiki.search.server.cluster.routing.NodeState;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingNode;
+import cc.doctor.wiki.search.server.cluster.vote.MasterNodeListener;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.utils.StringUtils;
 
@@ -41,5 +42,9 @@ public class NodeService {
         if (node.getRoutingNode().isMaster()) {
             zkClient.deleteNode(NODE_PATH + "/" + routingNode.getNodeName());
         }
+    }
+
+    public void registerMasterNodeListener() {
+        zkClient.getZookeeperWatcher().registerListener(MasterNodeListener.class);
     }
 }

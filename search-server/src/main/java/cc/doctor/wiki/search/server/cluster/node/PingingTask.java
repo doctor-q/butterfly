@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static cc.doctor.wiki.search.server.common.Container.container;
 import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 
 /**
@@ -28,8 +29,8 @@ public class PingingTask implements Task {
     private final long pingTimeout = 30 * 1000;
     private Map<String, Client> nodeClients = new ConcurrentHashMap<>();
     private Map<String, Integer> nodeFailds = new HashMap<>();
-    private RoutingService routingService;
-    private ToleranceService toleranceService;
+    private RoutingService routingService = container.getComponent(RoutingService.class);
+    private ToleranceService toleranceService = container.getComponent(ToleranceService.class);
     public static final int maxLossConnectionTimes = settings.getInt(GlobalConfig.MAX_LOSS_CONNECTION_TIMES);
 
     @Override

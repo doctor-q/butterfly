@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
+import static cc.doctor.wiki.search.server.common.Container.container;
 import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 
 /**
@@ -20,11 +21,12 @@ public class RoutingNodeListener extends ZkEventListenerAdapter {
     private static final Logger log = LoggerFactory.getLogger(RoutingNodeListener.class);
 
     public static final String NODE_PATH = (String) settings.get(GlobalConfig.ZOOKEEPER_NODE_PATH);
-    ZookeeperClient zookeeperClient = ZookeeperClient.getClient((String) settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING));
+    private ZookeeperClient zookeeperClient = ZookeeperClient.getClient(settings.getString(GlobalConfig.ZOOKEEPER_CONN_STRING));
     private RoutingService routingService;
 
     public RoutingNodeListener() {
         listenPaths.add(NODE_PATH);
+        routingService = container.getComponent(RoutingService.class);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package cc.doctor.wiki.search.server.cluster.node;
 
 import cc.doctor.wiki.schedule.Scheduler;
+import cc.doctor.wiki.search.server.cluster.node.tolerance.ToleranceService;
+import cc.doctor.wiki.search.server.cluster.replicate.ReplicateService;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingNode;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingService;
 import cc.doctor.wiki.search.server.cluster.vote.VoteService;
@@ -18,6 +20,8 @@ public class Node {
     private NodeService nodeService;
     private VoteService voteService;
     private RoutingService routingService;
+    private ReplicateService replicateService;
+    private ToleranceService toleranceService;
     private Server server;
     private Scheduler scheduler;
 
@@ -50,14 +54,21 @@ public class Node {
         nodeService = new NodeService(this);
         voteService = new VoteService(this);
         routingService = new RoutingService();
+        replicateService = new ReplicateService(this);
+        toleranceService = new ToleranceService(this);
         scheduler = new Scheduler();
 
         container.addComponent(nodeService);
         container.addComponent(voteService);
         container.addComponent(routingService);
+        container.addComponent(replicateService);
+        container.addComponent(toleranceService);
     }
 
     public void start() {
+        //注册监听对象，监听节点变更和主节点变更
+        routingService.registerRoutingNodeListener();
+        voteService.registerMasterNodeListener();
         //注册节点
         nodeService.registerNode();
         //选主

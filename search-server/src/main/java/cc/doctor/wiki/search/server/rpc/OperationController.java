@@ -7,6 +7,8 @@ import cc.doctor.wiki.search.client.rpc.result.RpcResult;
 import cc.doctor.wiki.search.server.cluster.node.tolerance.ToleranceService;
 import cc.doctor.wiki.search.server.cluster.replicate.ReplicateService;
 
+import static cc.doctor.wiki.search.server.common.Container.container;
+
 /**
  * Created by doctor on 2017/3/14.
  */
@@ -17,6 +19,8 @@ public class OperationController {
     private ToleranceService toleranceService;
 
     private OperationController() {
+        replicateService = container.getComponent(ReplicateService.class);
+        toleranceService = container.getComponent(ToleranceService.class);
     }
 
     public RpcResult handlerOperation(Message message) {

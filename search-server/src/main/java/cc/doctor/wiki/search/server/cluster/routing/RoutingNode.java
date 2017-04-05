@@ -6,11 +6,11 @@ import java.util.Map;
 
 /**
  * Created by doctor on 2017/3/13.
- * 路由节点,根据索引名或别名找到对应的节点
+ * 节点信息和路由信息，当节点不存在相关路由时，routing_shards是空的,根据索引名或别名找到对应的节点
  */
 public class RoutingNode {
     private boolean master;     //是否主节点
-    private String nodeId;
+    private String nodeId;  //retain
     private String nodeName;
     private NodeState nodeState;
     private Map<String, List<RoutingShard>> routingShards;

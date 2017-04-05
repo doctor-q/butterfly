@@ -5,6 +5,7 @@ import cc.doctor.wiki.search.client.rpc.Message;
 import cc.doctor.wiki.search.client.rpc.operation.Operation;
 import cc.doctor.wiki.search.client.rpc.request.CreateIndexRequest;
 import cc.doctor.wiki.search.client.rpc.result.IndexResult;
+import cc.doctor.wiki.search.server.cluster.node.Node;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,7 +20,10 @@ public class ReplicateServiceTest {
     ReplicateService replicateService;
     @Before
     public void setup() {
-        replicateService = new ReplicateService();
+        Node node = new Node();
+//        node.start();
+        node.getRoutingService().loadRoutingNodes();
+        replicateService = new ReplicateService(node);
     }
     @Test
     public void createIndex() throws Exception {
