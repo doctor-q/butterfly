@@ -8,6 +8,10 @@ public class DeleteRequest extends IndexRequest {
 
     private Long docId;
 
+    public DeleteRequest(String indexName) {
+        super(indexName);
+    }
+
     public Long getDocId() {
         return docId;
     }

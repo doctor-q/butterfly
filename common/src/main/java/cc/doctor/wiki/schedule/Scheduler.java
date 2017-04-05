@@ -24,9 +24,9 @@ public class Scheduler {
     private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(10);
     private static String scheduleScanPackage;
 
-    private Scheduler() {
+    public Scheduler() {
         scheduleScanPackage = PropertyUtils.getProperty("schedule.scan.package", "cc.doctor.wiki.schedule");
-        scanTasks();
+//        scanTasks();
     }
 
     public Map<String, Task> getTaskMap() {

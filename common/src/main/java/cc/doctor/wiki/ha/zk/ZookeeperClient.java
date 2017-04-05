@@ -105,7 +105,7 @@ public class ZookeeperClient {
     public void getCreatePathRecursion(Stack<String> paths, String path) {
         paths.push(path);
         String parent = getParent(path);
-        if (!existsNode(parent) && parent != null && !parent.equals("")) {
+        if (parent != null && !parent.equals("") && !existsNode(parent)) {
             getCreatePathRecursion(paths, parent);
         } else {
             return;

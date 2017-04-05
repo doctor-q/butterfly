@@ -10,6 +10,10 @@ public class BulkRequest<T extends Serializable> extends IndexRequest {
     private static final long serialVersionUID = 3595252177661100774L;
     List<T> bulkData;
 
+    public BulkRequest(String indexName) {
+        super(indexName);
+    }
+
     public List<T> getBulkData() {
         return bulkData;
     }

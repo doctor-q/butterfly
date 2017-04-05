@@ -12,12 +12,6 @@ public class ZookeeperVoteTest {
 
     @Before
     public void setUp() {
-        RoutingNode routingNode = new RoutingNode();
-        routingNode.setNodeId("sfafsasadsfdfs");
-        zookeeperVote = new ZookeeperVote(routingNode);
-        Vote.VoteInfo voteInfo = zookeeperVote.newVoteInfo();
-        voteInfo.setVoteVersion(1);
-        zookeeperVote.setVoteInfo(voteInfo);
     }
 
     @Test

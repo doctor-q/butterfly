@@ -10,6 +10,10 @@ public class InsertRequest extends IndexRequest {
 
     private Document document;
 
+    public InsertRequest(String indexName) {
+        super(indexName);
+    }
+
     public Document getDocument() {
         return document;
     }

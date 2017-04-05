@@ -1,7 +1,13 @@
 package cc.doctor.wiki.search.server.cluster.routing;
 
+import cc.doctor.wiki.ha.zk.ZookeeperClient;
+import cc.doctor.wiki.search.server.common.config.GlobalConfig;
+import cc.doctor.wiki.utils.SerializeUtils;
+
 import java.util.LinkedList;
 import java.util.List;
+
+import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 
 /**
  * Created by doctor on 2017/3/15.
@@ -9,6 +15,8 @@ import java.util.List;
  */
 public class RoutingService {
     private List<RoutingNode> routingNodes = new LinkedList<>();
+    private ZookeeperClient zkClient = ZookeeperClient.getClient(settings.getString(GlobalConfig.ZOOKEEPER_CONN_STRING));
+    public static final String routingPath = GlobalConfig.ZOOKEEPER_ROUTING_PATH;
 
     public List<RoutingNode> getIndexRoutingNodes(String indexName) {
         List<RoutingNode> indexRoutingNodes = new LinkedList<>();
@@ -48,7 +56,12 @@ public class RoutingService {
     }
 
     public void loadRoutingNodes() {
-
+        if (zkClient.existsNode(routingPath)) {
+            String data = zkClient.readData(routingPath);
+            if (data != null) {
+                routingNodes = SerializeUtils.jsonToObject(data, List.class);
+            }
+        }
     }
 
     public RoutingNode getMaster() {
@@ -67,5 +80,15 @@ public class RoutingService {
             }
         }
         return false;
+    }
+
+    //更新索引信息
+    public void updateRoutingInfo() {
+        String routing = SerializeUtils.objectToJson(routingNodes);
+        if (!zkClient.existsNode(routingPath)) {
+            zkClient.createPathRecursion(routingPath, routing);
+        } else {
+            zkClient.writeData(routingPath, routing);
+        }
     }
 }

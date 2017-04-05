@@ -13,15 +13,15 @@ import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 public abstract class Vote {
     private VoteInfo voteInfo;
     private VoteIdStrategy voteIdStrategy;
-    private RoutingNode routingNode;
+    private VoteService voteService;
 
-    public Vote(RoutingNode routingNode) {
-        this.routingNode = routingNode;
-        voteIdStrategy = new DefaultVoteIdStrategy(routingNode);
+    public Vote(VoteService voteService) {
+        this.voteService = voteService;
+        voteIdStrategy = new DefaultVoteIdStrategy();
     }
 
-    public Vote(RoutingNode routingNode, VoteIdStrategy voteIdStrategy) {
-        this.routingNode = routingNode;
+    public Vote(VoteService voteService, VoteIdStrategy voteIdStrategy) {
+        this.voteService = voteService;
         this.voteIdStrategy = voteIdStrategy;
     }
 
@@ -52,6 +52,10 @@ public abstract class Vote {
         voteInfo.setTimestamp(new Date().getTime());
         voteInfo.setVoteVersion(0);
         return voteInfo;
+    }
+
+    public String getVoteId() {
+        return voteIdStrategy.getVoteId();
     }
 
     /**
@@ -112,14 +116,9 @@ public abstract class Vote {
     }
 
     public class DefaultVoteIdStrategy implements VoteIdStrategy {
-        private RoutingNode routingNode;
-        public DefaultVoteIdStrategy(RoutingNode routingNode) {
-            this.routingNode = routingNode;
-        }
-
         @Override
         public String getVoteId() {
-            return routingNode.getNodeId();
+            return voteService.getNode().getRoutingNode().getNodeId();
         }
     }
 }

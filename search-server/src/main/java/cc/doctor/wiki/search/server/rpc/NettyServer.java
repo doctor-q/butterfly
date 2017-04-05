@@ -1,6 +1,7 @@
 package cc.doctor.wiki.search.server.rpc;
 
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
+import cc.doctor.wiki.utils.NetworkUtils;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -35,5 +36,15 @@ public class NettyServer implements Server {
     @Override
     public void stop() {
 
+    }
+
+    @Override
+    public String getHost() {
+        return NetworkUtils.getOneUnLoopHost().getHostAddress();
+    }
+
+    @Override
+    public int getPort() {
+        return settings.getInt(GlobalConfig.NETTY_SERVER_PORT);
     }
 }

@@ -72,6 +72,12 @@ public class ReplicateService {
             public void doAction() {
                 indexManagerContainer.createIndex(finalSchema);
             }
+
+            @Override
+            public void callback() {
+                //保存索引信息
+                routingService.updateRoutingInfo();
+            }
         });
         return new IndexResult();
     }

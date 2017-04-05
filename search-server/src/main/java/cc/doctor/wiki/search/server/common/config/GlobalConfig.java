@@ -68,6 +68,7 @@ public class GlobalConfig {
     public static final String ZOOKEEPER_MASTER_PATH_DEFAULT = "/es/metadata/master";
     public static final String ZOOKEEPER_NODE_PATH = "zk.metadata.node.path";
     public static final String ZOOKEEPER_NODE_PATH_DEFAULT = "/es/metadata/nodes";
+    public static final String ZOOKEEPER_ROUTING_PATH = "/es/metadata/routing";
 
     public static final String NODE_NAME = "node.name";
     public static final String MAX_LOSS_CONNECTION_TIMES = "loss.connection.times.max";

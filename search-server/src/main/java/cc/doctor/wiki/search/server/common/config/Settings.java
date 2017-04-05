@@ -19,7 +19,7 @@ public class Settings {
         add(GlobalConfig.ZOOKEEPER_MASTER_PATH, GlobalConfig.ZOOKEEPER_MASTER_PATH_DEFAULT);
         add(GlobalConfig.ZOOKEEPER_NODE_PATH, GlobalConfig.ZOOKEEPER_NODE_PATH_DEFAULT);
         add(GlobalConfig.DATA_PATH, PropertyUtils.getProperty(GlobalConfig.DATA_PATH, GlobalConfig.DATA_PATH_DEFAULT));
-        add(GlobalConfig.NODE_NAME, PropertyUtils.getProperty(GlobalConfig.NODE_NAME, ""));
+        add(GlobalConfig.NODE_NAME, PropertyUtils.getProperty(GlobalConfig.NODE_NAME, "node"));
         add(GlobalConfig.NETTY_SERVER_HOST, NetworkUtils.getOneUnLoopHost().getHostAddress());
         add(GlobalConfig.NETTY_SERVER_PORT, GlobalConfig.NETTY_SERVER_PORT_DEFAULT);
         add(GlobalConfig.OPERATION_LOG_QUERY, GlobalConfig.OPERATION_LOG_QUERY_DEFAULT);

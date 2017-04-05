@@ -46,10 +46,11 @@ public class Node {
     }
 
     public Node() {
-        nodeService = new NodeService(this);
-        voteService = new VoteService();
-        routingService = new RoutingService();
         server = new NettyServer();
+        nodeService = new NodeService(this);
+        voteService = new VoteService(this);
+        routingService = new RoutingService();
+        scheduler = new Scheduler();
 
         container.addComponent(nodeService);
         container.addComponent(voteService);

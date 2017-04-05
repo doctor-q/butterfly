@@ -19,8 +19,8 @@ public class ZookeeperVote extends Vote {
     public static final String ZK_NODE_MASTER = "/es/metadata/master";
     private CountDownLatch masterCountDown = new CountDownLatch(1);
 
-    public ZookeeperVote(RoutingNode routingNode) {
-        super(routingNode);
+    public ZookeeperVote(VoteService voteService) {
+        super(voteService);
         this.zkClient = ZookeeperClient.getClient(settings.getString(GlobalConfig.ZOOKEEPER_CONN_STRING));
     }
 

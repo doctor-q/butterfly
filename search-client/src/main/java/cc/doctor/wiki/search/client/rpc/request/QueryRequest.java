@@ -10,6 +10,10 @@ public class QueryRequest extends IndexRequest {
 
     private QueryBuilder queryBuilder;
 
+    public QueryRequest(String indexName) {
+        super(indexName);
+    }
+
     public QueryBuilder getQueryBuilder() {
         return queryBuilder;
     }

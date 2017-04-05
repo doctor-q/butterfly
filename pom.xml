@@ -10,7 +10,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>parser</module>
         <module>search-client</module>
         <module>search-server</module>
         <module>webapp</module>
@@ -30,11 +29,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>cc.doctor.wiki</groupId>
-                <artifactId>common</artifactId>
-                <version>1.0.0</version>
-            </dependency>
             <dependency>
                 <groupId>cc.doctor.wiki</groupId>
                 <artifactId>search-client</artifactId>

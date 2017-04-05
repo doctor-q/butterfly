@@ -10,18 +10,22 @@ public class CreateIndexRequest extends IndexRequest{
     private String alias;
     private Schema schema;
 
-    CreateIndexRequest alias(String alias) {
+    public CreateIndexRequest(String indexName) {
+        super(indexName);
+    }
+
+    public CreateIndexRequest alias(String alias) {
         this.alias = alias;
         return this;
     }
 
-    CreateIndexRequest schema(Schema schema) {
+    public CreateIndexRequest schema(Schema schema) {
         this.schema = schema;
         return this;
     }
 
-    CreateIndexRequest newCreateIndexRequest() {
-        return new CreateIndexRequest();
+    CreateIndexRequest newCreateIndexRequest(String indexName) {
+        return new CreateIndexRequest(indexName);
     }
 
     public String getAlias() {

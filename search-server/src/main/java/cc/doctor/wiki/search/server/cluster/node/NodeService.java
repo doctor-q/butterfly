@@ -13,7 +13,7 @@ import static cc.doctor.wiki.search.server.common.config.Settings.settings;
  */
 public class NodeService {
     private ZookeeperClient zkClient = ZookeeperClient.getClient((String) settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING));
-    public static final String NODE_PATH = (String) settings.get(GlobalConfig.ZOOKEEPER_NODE_PATH);
+    public static final String NODE_PATH = settings.getString(GlobalConfig.ZOOKEEPER_NODE_PATH);
     private Node node;
 
     public NodeService(Node node) {
@@ -23,7 +23,7 @@ public class NodeService {
     public void registerNode() {
         RoutingNode routingNode = new RoutingNode();
         routingNode.setNodeId(StringUtils.base64UUid());
-        routingNode.setNodeName((String) settings.get(GlobalConfig.NODE_NAME));
+        routingNode.setNodeName(settings.getString(GlobalConfig.NODE_NAME));
         routingNode.setNodeState(NodeState.STARTING);
         String nodePath = NODE_PATH + "/" + routingNode.getNodeName();
         if (!zkClient.existsNode(nodePath)) {

@@ -9,6 +9,10 @@ public class IndexRequest implements Serializable {
     private static final long serialVersionUID = -6558157512513500729L;
     private String indexName;
 
+    public IndexRequest(String indexName) {
+        this.indexName = indexName;
+    }
+
     public String getIndexName() {
         return indexName;
     }
