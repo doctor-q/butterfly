@@ -11,7 +11,7 @@ import org.junit.Test;
 public class NettyClientTest {
     @Test
     public void sendMessage() throws Exception {
-        NettyClient nettyClient = new NettyClient();
+        NettyClient nettyClient = new NettyClient("127.0.0.1:1218");
         Message message = Message.newMessage().currentTimestamp().operation(Operation.QUERY).data(QueryBuilder.queryBuilder());
         RpcResult rpcResult = nettyClient.sendMessage(message);
         System.out.println(rpcResult);

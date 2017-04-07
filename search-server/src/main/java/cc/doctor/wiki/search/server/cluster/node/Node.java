@@ -3,6 +3,7 @@ package cc.doctor.wiki.search.server.cluster.node;
 import cc.doctor.wiki.schedule.Scheduler;
 import cc.doctor.wiki.search.server.cluster.node.tolerance.ToleranceService;
 import cc.doctor.wiki.search.server.cluster.replicate.ReplicateService;
+import cc.doctor.wiki.search.server.cluster.routing.NodeState;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingNode;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingService;
 import cc.doctor.wiki.search.server.cluster.vote.VoteService;
@@ -22,6 +23,7 @@ public class Node {
     private RoutingService routingService;
     private ReplicateService replicateService;
     private ToleranceService toleranceService;
+    private NodeClientHolder nodeClientHolder;
     private Server server;
     private Scheduler scheduler;
 
@@ -50,6 +52,7 @@ public class Node {
     }
 
     public Node() {
+        nodeClientHolder = new NodeClientHolder(this);
         server = new NettyServer();
         nodeService = new NodeService(this);
         voteService = new VoteService(this);
@@ -58,6 +61,7 @@ public class Node {
         toleranceService = new ToleranceService(this);
         scheduler = new Scheduler();
 
+        container.addComponent(nodeClientHolder);
         container.addComponent(nodeService);
         container.addComponent(voteService);
         container.addComponent(routingService);
@@ -80,6 +84,8 @@ public class Node {
         scheduler.scanTasks();
         //启动rpc服务
         server.start();
+        //更新节点状态
+        nodeService.updateNodeState(NodeState.RUNNING);
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {

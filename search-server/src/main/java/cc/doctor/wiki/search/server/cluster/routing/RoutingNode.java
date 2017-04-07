@@ -1,5 +1,6 @@
 package cc.doctor.wiki.search.server.cluster.routing;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -10,10 +11,12 @@ import java.util.Map;
  */
 public class RoutingNode {
     private boolean master;     //是否主节点
+    private String host;
+    private int port;
     private String nodeId;  //retain
     private String nodeName;
     private NodeState nodeState;
-    private Map<String, List<RoutingShard>> routingShards;
+    private Map<String, List<RoutingShard>> routingShards = new HashMap<>();
 
     public boolean isMaster() {
         return master;
@@ -25,6 +28,22 @@ public class RoutingNode {
 
     public void setMaster(boolean master) {
         this.master = master;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public String getNodeId() {

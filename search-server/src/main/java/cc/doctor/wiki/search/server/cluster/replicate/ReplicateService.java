@@ -10,6 +10,7 @@ import cc.doctor.wiki.search.client.rpc.Message;
 import cc.doctor.wiki.search.client.rpc.request.*;
 import cc.doctor.wiki.search.client.rpc.result.*;
 import cc.doctor.wiki.search.server.cluster.node.Node;
+import cc.doctor.wiki.search.server.cluster.node.NodeClientHolder;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingNode;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingService;
 import cc.doctor.wiki.search.server.common.Container;
@@ -33,27 +34,28 @@ import static cc.doctor.wiki.search.server.index.manager.IndexManagerContainer.i
  * 数据写入主节点log, 然后主节点发送消息给其他节点
  */
 public class ReplicateService {
-    private Map<String, Client> nodeClients = new ConcurrentHashMap<>();
     private RoutingService routingService;
     private ExecutorService executorService = Executors.newCachedThreadPool();
     private NodeAllocator nodeAllocator;
     private Node node;
     private RecoveryService recoveryService;
+    private NodeClientHolder nodeClientHolder;
 
     public ReplicateService(Node node) {
         this.node = node;
         routingService = container.getComponent(RoutingService.class);
         nodeAllocator = new NodeAllocator(routingService, ZookeeperClient.getClient((String) settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING)));
         recoveryService = container.getComponent(RecoveryService.class);
+        nodeClientHolder = container.getComponent(NodeClientHolder.class);
     }
 
     private void submitReplicateTasks(String indexName, Message message, Action action) {
         List<RoutingNode> indexRoutingNodes = routingService.getIndexRoutingNodes(indexName);
         for (RoutingNode routingNode : indexRoutingNodes) {
-            if (routingNode.getNodeId().equals(node.getRoutingNode().getNodeId())) {
+            if (routingNode.getNodeName().equals(node.getRoutingNode().getNodeName())) {
                 action.doAction();
             } else {
-                Client client = nodeClients.get(routingNode.getNodeId());
+                Client client = nodeClientHolder.getNodeClient(routingNode.getNodeName());
                 executorService.submit(new ReplicateTask(client, message));
             }
         }

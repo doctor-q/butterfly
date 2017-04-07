@@ -1,10 +1,13 @@
 package cc.doctor.wiki.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.io.*;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -44,13 +47,35 @@ public class SerializeUtils {
         return gson.fromJson(json, type);
     }
 
-    public static <T> List<T> jsonToList(String json, Type type) {
+    public static <T> List<T> jsonToList(String json, final Class<T> clazz) {
         Gson gson = new Gson();
-        return gson.fromJson(json, List.class);
+        // 生成List<T> 中的 List<T>
+        return gson.fromJson(json, new ListOfT<>(clazz));
     }
 
     public static <T> String objectToJson(T t) {
         Gson gson = new Gson();
         return gson.toJson(t);
+    }
+
+    static class ListOfT<T> implements ParameterizedType {
+
+        private Class<?> wrapped;
+
+        public ListOfT(Class<T> wrapped) {
+            this.wrapped = wrapped;
+        }
+
+        public Type[] getActualTypeArguments() {
+            return new Type[] { wrapped };
+        }
+
+        public Type getRawType() {
+            return List.class;
+        }
+
+        public Type getOwnerType() {
+            return null;
+        }
     }
 }

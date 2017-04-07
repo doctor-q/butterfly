@@ -23,6 +23,7 @@ public class ReplicateServiceTest {
         Node node = new Node();
 //        node.start();
         node.getRoutingService().loadRoutingNodes();
+        node.setRoutingNode(node.getRoutingService().getRoutingNodes().get(0));
         replicateService = new ReplicateService(node);
     }
     @Test

@@ -45,7 +45,7 @@ public class NodeAllocator {
         List<Tuple<Integer, Integer>> tuples = allocateNodeAndShard(signedNodeNum, shardNum);
         for (Tuple<Integer, Integer> nodeShard : tuples) {
             RoutingNode routingNode = routingNodes.get(nodeShard.getT1());
-            RoutingShard routingShard = new RoutingShard(indexName, routingNode.getNodeId(), nodeShard.getT2());
+            RoutingShard routingShard = new RoutingShard(indexName, routingNode.getNodeName(), nodeShard.getT2());
             routingNode.addRoutingShard(routingShard);
         }
         allocateNodeAndShard(unsignedNodeNum, shardNum);
@@ -59,6 +59,9 @@ public class NodeAllocator {
      */
     public List<Tuple<Integer, Integer>> allocateNodeAndShard(int nodeNum, int shardNum) {
         List<Tuple<Integer, Integer>> nodeShardTuples = new LinkedList<>();
+        if (nodeNum == 0 || shardNum == 0) {
+            return nodeShardTuples;
+        }
         for (int i = 0; i < shardNum; i++) {
             List<Integer> randomNodes = randomNodes(nodeNum, shardNum);
             for (Integer randomNode : randomNodes) {

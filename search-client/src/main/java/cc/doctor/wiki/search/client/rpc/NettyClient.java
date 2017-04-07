@@ -27,13 +27,9 @@ import java.util.concurrent.CountDownLatch;
  */
 public class NettyClient {
     private Bootstrap clientBootstrap;
-    private String serverAddress = PropertyUtils.getProperty("netty.server.address", "127.0.0.1:1218");
+    private String serverAddress;
     private ClientHandler clientHandler;
     private Map<Long, ResponseFuture<RpcResult>> responseFutureMap = new ConcurrentHashMap<>();
-
-    public NettyClient() {
-        init();
-    }
 
     public NettyClient(String serverAddress) {
         this.serverAddress = serverAddress;

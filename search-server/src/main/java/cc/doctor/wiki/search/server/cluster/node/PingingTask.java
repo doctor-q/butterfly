@@ -35,26 +35,26 @@ public class PingingTask implements Task {
 
     @Override
     public RpcResult run() {
-        for (String nodeId : nodeClients.keySet()) {
+        for (String nodeName : nodeClients.keySet()) {
             Message message = Message.newMessage().currentTimestamp().operation(Operation.PING);
             PingResult pingResult;
             try {
-                pingResult = (PingResult) nodeClients.get(nodeId).sendMessage(message, pingTimeout);
+                pingResult = (PingResult) nodeClients.get(nodeName).sendMessage(message, pingTimeout);
             } catch (TimeoutException e) {                //if timeout
-                Integer failds = nodeFailds.get(nodeId);
+                Integer failds = nodeFailds.get(nodeName);
                 if (failds == null) {
                     failds = 0;
                 }
                 failds ++;
-                nodeFailds.put(nodeId, failds);
+                nodeFailds.put(nodeName, failds);
             }
         }
         RoutingNode master = routingService.getMaster();
-        for (String nodeId : nodeFailds.keySet()) {
+        for (String nodeName : nodeFailds.keySet()) {
             //当从属节点被检测到丢失,从属节点向主节点汇报,主节点收到过半的丢失汇报后确认从属节点丢失
             //当主节点检测到丢失后,从属节点向所有从属节点汇报,当从属节点收到过半的汇报后从新选主
-            if (nodeFailds.get(nodeId) > maxLossConnectionTimes) {
-                if (master.getNodeId().equals(nodeId)) {
+            if (nodeFailds.get(nodeName) > maxLossConnectionTimes) {
+                if (master.getNodeName().equals(nodeName)) {
                     toleranceService.reportMasterLoss();
                 } else {
                     toleranceService.reportSlaveLoss();

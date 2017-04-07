@@ -28,7 +28,7 @@ public class RoutingService {
             return indexRoutingNodes;
         }
         for (RoutingNode routingNode : routingNodes) {
-            if (routingNode.getRoutingShards().containsKey(indexName)) {
+            if (routingNode.getRoutingShards() != null && routingNode.getRoutingShards().containsKey(indexName)) {
                 indexRoutingNodes.add(routingNode);
             }
         }
@@ -40,7 +40,7 @@ public class RoutingService {
     }
 
     public void updateRoutingNodes(RoutingNode routingNode) {
-        RoutingNode node = getNode(routingNode.getNodeId());
+        RoutingNode node = getNode(routingNode.getNodeName());
         if (node == null) {
             routingNodes.add(routingNode);
         } else {
@@ -50,7 +50,6 @@ public class RoutingService {
             node.setNodeId(routingNode.getNodeId());
             node.setRoutingShards(routingNode.getRoutingShards());
         }
-        updateRoutingInfo();
     }
 
     public RoutingNode getNode(String nodeName) {
@@ -66,7 +65,7 @@ public class RoutingService {
         if (zkClient.existsNode(routingPath)) {
             String data = zkClient.readData(routingPath);
             if (data != null) {
-                routingNodes = SerializeUtils.jsonToObject(data, List.class);
+                routingNodes = SerializeUtils.jsonToList(data, RoutingNode.class);
             }
         }
     }
@@ -82,7 +81,7 @@ public class RoutingService {
 
     public boolean containsIndexNode(RoutingNode routingNode) {
         for (RoutingNode node : routingNodes) {
-            if (node.getNodeId().equals(routingNode.getNodeId())) {
+            if (node.getNodeName().equals(routingNode.getNodeName())) {
                 return true;
             }
         }
@@ -97,5 +96,15 @@ public class RoutingService {
         } else {
             zkClient.writeData(routingPath, routing);
         }
+    }
+
+    public void updateRoutingNodes(List<RoutingNode> routingNodes) {
+        if (routingNodes == null || routingNodes.size() == 0) {
+            return;
+        }
+        for (RoutingNode routingNode : routingNodes) {
+            updateRoutingNodes(routingNode);
+        }
+        updateRoutingInfo();
     }
 }

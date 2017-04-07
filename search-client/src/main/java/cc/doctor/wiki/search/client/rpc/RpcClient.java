@@ -16,8 +16,8 @@ import java.util.LinkedList;
 public class RpcClient implements Client {
     private NettyClient nettyClient;
 
-    public RpcClient() {
-        nettyClient = new NettyClient();
+    public RpcClient(String address) {
+        nettyClient = new NettyClient(address);
     }
 
     public void connect(String address) {
