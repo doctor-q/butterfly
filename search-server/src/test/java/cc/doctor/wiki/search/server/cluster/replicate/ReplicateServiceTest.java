@@ -24,14 +24,17 @@ import static org.junit.Assert.*;
  */
 public class ReplicateServiceTest {
     ReplicateService replicateService;
+    Node node;
+
     @Before
     public void setup() {
-        Node node = new Node();
+        node = new Node();
 //        node.start();
         node.getRoutingService().loadRoutingNodes();
         node.setRoutingNode(node.getRoutingService().getRoutingNodes().get(0));
         replicateService = new ReplicateService(node);
     }
+
     @Test
     public void createIndex() throws Exception {
         Schema schema = new Schema();
@@ -63,6 +66,8 @@ public class ReplicateServiceTest {
 
     @Test
     public void bulkInsert() throws Exception {
+        node.getSchemaService().loadSchemas();
+        node.getIndexManagerService().loadIndexes();
         BulkRequest<Document> bulkRequest = new BulkRequest<>("order_info");
         List<Document> documents = new LinkedList<>();
         for (int i = 0; i < 1000; i++) {

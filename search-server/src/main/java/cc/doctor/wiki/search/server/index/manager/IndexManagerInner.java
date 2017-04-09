@@ -30,7 +30,9 @@ public class IndexManagerInner {
 
     public IndexManagerInner(Schema schema) {
         this.schema = schema;
-        shards = schema.getShards();
+        this.shards = schema.getShards();
+        this.indexRoot = dataRoot + "/" + schema.getIndexName();
+        loadShards();
     }
 
     public void setIndexRoot(String indexRoot) {

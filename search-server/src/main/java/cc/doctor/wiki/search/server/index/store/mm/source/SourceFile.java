@@ -4,6 +4,7 @@ import cc.doctor.wiki.exceptions.index.SourceException;
 import cc.doctor.wiki.search.client.query.document.Document;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.search.server.index.manager.IndexManagerInner;
+import cc.doctor.wiki.search.server.index.shard.ShardService;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -13,7 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by doctor on 2017/3/8.
  */
 public abstract class SourceFile {
-    public static final String sourceRoot = IndexManagerInner.dataRoot + "/" + GlobalConfig.SOURCE_PATH_NAME;
+    private ShardService shardService;
+    protected String sourceRoot;
     private static Map<Long, Long> idPositionMap = new ConcurrentHashMap<>();    //文档id,对应的Source偏移
 
     public Long getPositionById(long id) {
@@ -22,6 +24,11 @@ public abstract class SourceFile {
 
     public void setPositionById(long id, long position) {
         idPositionMap.put(id, position);
+    }
+
+    public SourceFile(ShardService shardService) {
+        this.shardService = shardService;
+        this.sourceRoot = shardService.getShardRoot() + "/" + GlobalConfig.SOURCE_PATH_NAME;
     }
 
     /**

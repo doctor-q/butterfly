@@ -4,6 +4,7 @@ import cc.doctor.wiki.common.Action;
 import cc.doctor.wiki.common.Tuple;
 import cc.doctor.wiki.exceptions.file.FileException;
 import cc.doctor.wiki.exceptions.file.MmapFileException;
+import cc.doctor.wiki.utils.CollectionUtils;
 import cc.doctor.wiki.utils.FileUtils;
 import cc.doctor.wiki.utils.SerializeUtils;
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ public class MmapScrollFile implements ScrollFile {
         this.root = root;
         this.scrollFileNameStrategy = scrollFileNameStrategy;
         this.scrollSize = scrollSize;
-        files = FileUtils.list(root, "checkpoint");
+        files = FileUtils.list(root, CollectionUtils.list("checkpoint"));
         String file = getFile(position);
         current = file;
         try {

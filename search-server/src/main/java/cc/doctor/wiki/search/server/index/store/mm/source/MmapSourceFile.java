@@ -1,6 +1,7 @@
 package cc.doctor.wiki.search.server.index.store.mm.source;
 
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
+import cc.doctor.wiki.search.server.index.shard.ShardService;
 import cc.doctor.wiki.search.server.index.store.mm.MmapScrollFile;
 import cc.doctor.wiki.search.server.index.store.mm.ScrollFile;
 import cc.doctor.wiki.utils.PropertyUtils;
@@ -15,7 +16,8 @@ public class MmapSourceFile extends SourceFile {
     private static final int sourceFileSize = PropertyUtils.getProperty(GlobalConfig.SOURCE_FILE_SIZE_NAME, GlobalConfig.SOURCE_FILE_SIZE_DEFUALT);
     private ScrollFile scrollFile;
 
-    public MmapSourceFile() {
+    public MmapSourceFile(ShardService shardService) {
+        super(shardService);
         scrollFile = new MmapScrollFile(sourceRoot, sourceFileSize);
     }
 

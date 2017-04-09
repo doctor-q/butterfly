@@ -67,7 +67,7 @@ public class ShardService {
         }
         this.indexerMediator = new IndexerMediator(this);
         this.invertedFile = new MmapInvertedFile(this);
-        this.sourceFile = new MmapSourceFile();
+        this.sourceFile = new MmapSourceFile(this);
     }
 
     /**

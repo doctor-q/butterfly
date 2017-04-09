@@ -86,7 +86,7 @@ public class FileUtils {
         return file.exists() && !file.isDirectory();
     }
 
-    public static List<String> list(String dir, String except) {
+    public static List<String> list(String dir, List<String> excepts) {
         LinkedList<String> list = new LinkedList<>();
         if (dir == null) {
             return new LinkedList<>();
@@ -96,7 +96,7 @@ public class FileUtils {
             String[] files = file.list();
             if (files != null) {
                 for (String fileName : files) {
-                    if (!fileName.equals(except)) {
+                    if (excepts == null || !excepts.contains(fileName)) {
                         list.add(fileName);
                     }
                 }

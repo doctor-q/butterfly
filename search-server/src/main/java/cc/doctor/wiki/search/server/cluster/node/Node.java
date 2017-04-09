@@ -1,12 +1,14 @@
 package cc.doctor.wiki.search.server.cluster.node;
 
 import cc.doctor.wiki.schedule.Scheduler;
+import cc.doctor.wiki.search.server.cluster.node.schema.SchemaService;
 import cc.doctor.wiki.search.server.cluster.node.tolerance.ToleranceService;
 import cc.doctor.wiki.search.server.cluster.replicate.ReplicateService;
 import cc.doctor.wiki.search.server.cluster.routing.NodeState;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingNode;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingService;
 import cc.doctor.wiki.search.server.cluster.vote.VoteService;
+import cc.doctor.wiki.search.server.index.manager.IndexManagerService;
 import cc.doctor.wiki.search.server.index.store.indices.recovery.RecoveryService;
 import cc.doctor.wiki.search.server.rpc.NettyServer;
 import cc.doctor.wiki.search.server.rpc.Server;
@@ -26,6 +28,8 @@ public class Node {
     private ToleranceService toleranceService;
     private NodeClientHolder nodeClientHolder;
     private RecoveryService recoveryService;
+    private IndexManagerService indexManagerService;
+    private SchemaService schemaService;
     private Server server;
     private Scheduler scheduler;
 
@@ -49,6 +53,14 @@ public class Node {
         return routingService;
     }
 
+    public SchemaService getSchemaService() {
+        return schemaService;
+    }
+
+    public IndexManagerService getIndexManagerService() {
+        return indexManagerService;
+    }
+
     public Server getServer() {
         return server;
     }
@@ -62,6 +74,8 @@ public class Node {
         replicateService = new ReplicateService(this);
         toleranceService = new ToleranceService(this);
         recoveryService = new RecoveryService();
+        schemaService = new SchemaService();
+        indexManagerService = new IndexManagerService(schemaService);
         scheduler = new Scheduler();
 
         container.addComponent(nodeClientHolder);
@@ -71,18 +85,25 @@ public class Node {
         container.addComponent(replicateService);
         container.addComponent(recoveryService);
         container.addComponent(toleranceService);
+        container.addComponent(schemaService);
+        container.addComponent(indexManagerService);
     }
 
     public void start() {
         //注册监听对象，监听节点变更和主节点变更
         routingService.registerRoutingNodeListener();
         voteService.registerMasterNodeListener();
+        schemaService.registerSchemaNodeListener();
         //注册节点
         nodeService.registerNode();
         //选主
         voteService.doVote();
         //生成路由表
         routingService.loadRoutingNodes();
+        //加载schema
+        schemaService.loadSchemas();
+        //加载索引
+        indexManagerService.loadIndexes();
         //恢复数据
         //启动定时任务
         scheduler.scanTasks();

@@ -21,6 +21,10 @@ public class SearcherInner {
     private String indexName;
     private Map<Integer, ShardService> shardServiceMap = new HashMap<>();
 
+    public SearcherInner(String indexName) {
+        this.indexName = indexName;
+    }
+
     public Iterable<InvertedTable.InvertedDoc> query(QueryBuilder queryBuilder) {
         GrammarParser.GrammarNode grammarNode = grammarParser.parseQuery(queryBuilder.toString());
         Map<Integer, Iterable<WordInfo>> shardWordInfoMap;

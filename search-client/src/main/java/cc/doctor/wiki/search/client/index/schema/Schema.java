@@ -18,7 +18,7 @@ public class Schema implements Serializable {
     private int shards = 3;      //分片数目
     private String dynamic;  //是否自动探测格式
     private List<Property> properties = new LinkedList<>();//字段
-    private Map<String, Property> propertyMap = new HashMap<>();
+    private Map<String, Property> propertyMap = new HashMap<>();    //retain
     private List<String> filters = new LinkedList<>();   //自定义前置过滤器
     private List<TypeHandlerNode> typeHandlers = new LinkedList<>();//自定义类型转换器
     private List<String> tokenizers = new LinkedList<>(); //自定义分词器
@@ -114,6 +114,16 @@ public class Schema implements Serializable {
         if (property != null) {
             this.properties.add(property);
             this.propertyMap.put(property.getName(), property);
+        }
+    }
+
+    public void addPropertyIfNotExist(Property property) {
+        if (property == null) {
+            return;
+        }
+        if (!propertyMap.containsKey(property.getName())) {
+            properties.add(property);
+            propertyMap.put(property.getName(), property);
         }
     }
 

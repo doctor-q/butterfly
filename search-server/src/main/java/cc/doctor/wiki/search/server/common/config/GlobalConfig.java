@@ -72,6 +72,6 @@ public class GlobalConfig {
 
     public static final String NODE_NAME = "node.name";
     public static final String MAX_LOSS_CONNECTION_TIMES = "loss.connection.times.max";
-    public static final String ZOOKEEPER_INDEX_SCHEMA_PATH = "index.schema.path";
-    public static final String ZOOKEEPER_INDEX_SCHEMA_PATH_DEFAULT = "";
+    public static final String ZOOKEEPER_INDEX_SCHEMA_PATH = "zk.index.schema.path";
+    public static final String ZOOKEEPER_INDEX_SCHEMA_PATH_DEFAULT = "/es/metadata/schema";
 }

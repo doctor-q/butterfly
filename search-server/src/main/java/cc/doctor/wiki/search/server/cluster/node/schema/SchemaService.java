@@ -12,6 +12,7 @@ import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 
 /**
  * Created by doctor on 2017/4/9.
+ * schema管理
  */
 public class SchemaService {
     private ZookeeperClient zkClient = ZookeeperClient.getClient((String) settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING));
@@ -22,10 +23,15 @@ public class SchemaService {
         return indexSchemas;
     }
 
+    public void registerSchemaNodeListener() {
+        zkClient.getZookeeperWatcher().registerListener(SchemaNodeListener.class);
+    }
+
     public boolean putSchema(Schema schema) {
         if (schema == null) {
             return false;
         }
+        indexSchemas.put(schema.getIndexName(), schema);
         String json = SerializeUtils.objectToJson(schema);
         String schemaPath = INDEX_SCHEMA_ROOT + "/" + schema.getIndexName();
         if (zkClient.existsNode(schemaPath)) {
@@ -38,5 +44,21 @@ public class SchemaService {
             zkClient.createPathRecursion(schemaPath, json);
         }
         return true;
+    }
+
+    public boolean loadSchemas() {
+        if (zkClient.existsNode(INDEX_SCHEMA_ROOT)) {
+            Map<String, String> indexSchemas = zkClient.getChildren(INDEX_SCHEMA_ROOT);
+            for (String index : indexSchemas.keySet()) {
+                this.indexSchemas.put(index, SerializeUtils.jsonToObject(indexSchemas.get(index), Schema.class));
+            }
+        } else {
+            zkClient.createPathRecursion(INDEX_SCHEMA_ROOT, null);
+        }
+        return true;
+    }
+
+    public Schema getSchema(String indexName) {
+        return indexSchemas.get(indexName);
     }
 }

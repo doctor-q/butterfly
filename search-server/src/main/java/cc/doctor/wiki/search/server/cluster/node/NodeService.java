@@ -14,6 +14,7 @@ import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 
 /**
  * Created by doctor on 2017/3/20.
+ * 节点管理,注册节点,节点状态变更
  */
 public class NodeService {
     private ZookeeperClient zkClient = ZookeeperClient.getClient((String) settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING));

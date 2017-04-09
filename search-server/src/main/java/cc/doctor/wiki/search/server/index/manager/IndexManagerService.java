@@ -8,8 +8,11 @@ import cc.doctor.wiki.search.client.query.document.Document;
 import cc.doctor.wiki.search.server.cluster.node.schema.SchemaService;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.search.server.query.SearcherInner;
+import cc.doctor.wiki.utils.CollectionUtils;
+import cc.doctor.wiki.utils.FileUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static cc.doctor.wiki.search.server.common.Container.container;
@@ -25,14 +28,15 @@ public class IndexManagerService {
     private Map<String, IndexManagerInner> indexManagerInnerMap = new HashMap<>();
     private Map<String, SearcherInner> searcherInnerMap = new HashMap<>();
 
-    private IndexManagerService() {
-        schemaService = container.getComponent(SchemaService.class);
+    public IndexManagerService(SchemaService schemaService) {
+        this.schemaService = schemaService;
     }
 
     public void loadIndexes() {
-        //load schema
-        for (String indexName : schemaService.getIndexSchemas().keySet()) {
-
+        List<String> indexNames = FileUtils.list(INDEX_PATH_ROOT, CollectionUtils.list("operationlog"));
+        for (String indexName : indexNames) {
+            indexManagerInnerMap.put(indexName, new IndexManagerInner(schemaService.getSchema(indexName)));
+            searcherInnerMap.put(indexName, new SearcherInner(indexName));
         }
         //// TODO: 2017/4/9 load index information
     }
@@ -67,12 +71,41 @@ public class IndexManagerService {
     }
 
     public void putSchema(Schema schema) {
+        if (schema == null) {
+            return;
+        }
+        Schema oldSchema = schemaService.getIndexSchemas().get(schema.getIndexName());
+        if (oldSchema != null) {
+            //replicate, shards, the exist property can't be update.
+            oldSchema.setAlias(schema.getAlias());
+            oldSchema.setDynamic(schema.getDynamic());
+            oldSchema.setFilters(schema.getFilters());
+            oldSchema.setTypeHandlers(schema.getTypeHandlers());
+            oldSchema.setTokenizers(schema.getTokenizers());
+            for (Schema.Property property : schema.getProperties()) {
+                oldSchema.addPropertyIfNotExist(property);
+            }
+            schemaService.putSchema(oldSchema);
+        } else {
+            schemaService.getIndexSchemas().put(schema.getIndexName(), schema);
+            schemaService.putSchema(schema);
+        }
     }
 
     public void putAlias(Tuple<String, String> alias) {
+        if (alias != null) {
+            Schema schema = schemaService.getIndexSchemas().get(alias.getT1());
+            schema.setAlias(alias.getT2());
+            schemaService.putSchema(schema);
+        }
     }
 
     public void dropAlias(Tuple<String, String> alias) {
+        if (alias != null) {
+            Schema schema = schemaService.getIndexSchemas().get(alias.getT1());
+            schema.setAlias(null);
+            schemaService.putSchema(schema);
+        }
     }
 
     public void insertDocument(String indexName, Document document) {

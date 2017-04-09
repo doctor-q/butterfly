@@ -71,10 +71,12 @@ public class DictFile {
         if (fieldPosition.size() == 0) {
             readFieldPosition();
         }
-        for (String field : fieldPosition.keySet()) {
-            Tuple<Integer, Integer> positionLength = fieldPosition.get(field);
-            T t = mmapFile.readObject(positionLength.getT1(), positionLength.getT2());
-            fieldDict.put(field, t);
+        if (fieldPosition != null) {
+            for (String field : fieldPosition.keySet()) {
+                Tuple<Integer, Integer> positionLength = fieldPosition.get(field);
+                T t = mmapFile.readObject(positionLength.getT1(), positionLength.getT2());
+                fieldDict.put(field, t);
+            }
         }
         return fieldDict;
     }
