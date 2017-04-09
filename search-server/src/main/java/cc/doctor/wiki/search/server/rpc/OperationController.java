@@ -46,6 +46,8 @@ public class OperationController {
                 return replicateService.bulkDelete(message);
             case DELETE_BY_QUERY:
                 return replicateService.deleteByQuery(message);
+            case FLUSH:
+                return replicateService.flush(message);
             case QUERY:
                 return replicateService.Query(message);
             case PING:

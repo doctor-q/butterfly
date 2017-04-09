@@ -41,6 +41,16 @@ public class IndexManagerInner {
         return indexRoot;
     }
 
+    public boolean loadShards() {
+        List<String> shards = FileUtils.list(indexRoot, null);
+        for (String shard : shards) {
+            int shd = Integer.parseInt(shard);
+            ShardService shardService = new ShardService(this, shd);
+            shardService.loadIndex();
+            shardServiceMap.put(shd, shardService);
+        }
+        return true;
+    }
     /**
      * 创建索引相关的目录
      */

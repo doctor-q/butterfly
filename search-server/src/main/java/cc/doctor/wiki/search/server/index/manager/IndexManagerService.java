@@ -5,22 +5,36 @@ import cc.doctor.wiki.exceptions.index.IndexException;
 import cc.doctor.wiki.search.client.index.schema.Schema;
 import cc.doctor.wiki.search.client.query.QueryBuilder;
 import cc.doctor.wiki.search.client.query.document.Document;
-import cc.doctor.wiki.search.server.index.store.indices.recovery.RecoveryService;
+import cc.doctor.wiki.search.server.cluster.node.schema.SchemaService;
+import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.search.server.query.SearcherInner;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static cc.doctor.wiki.search.server.common.Container.container;
+import static cc.doctor.wiki.search.server.common.config.Settings.settings;
+
 /**
  * Created by doctor on 2017/3/9.
  * 管控所有的操作
  */
-public class IndexManagerContainer {
-    public static final IndexManagerContainer indexManagerContainer = new IndexManagerContainer();
+public class IndexManagerService {
+    public static final String INDEX_PATH_ROOT = settings.getString(GlobalConfig.DATA_PATH);
+    private SchemaService schemaService;
     private Map<String, IndexManagerInner> indexManagerInnerMap = new HashMap<>();
     private Map<String, SearcherInner> searcherInnerMap = new HashMap<>();
 
-    private IndexManagerContainer() {
+    private IndexManagerService() {
+        schemaService = container.getComponent(SchemaService.class);
+    }
+
+    public void loadIndexes() {
+        //load schema
+        for (String indexName : schemaService.getIndexSchemas().keySet()) {
+
+        }
+        //// TODO: 2017/4/9 load index information
     }
 
     private IndexManagerInner getIndexManager(String indexName) {
@@ -90,4 +104,8 @@ public class IndexManagerContainer {
         //// TODO: 2017/3/16 算分
     }
 
+    public void flush(String indexName) {
+        IndexManagerInner indexManager = getIndexManager(indexName);
+        indexManager.flush();
+    }
 }

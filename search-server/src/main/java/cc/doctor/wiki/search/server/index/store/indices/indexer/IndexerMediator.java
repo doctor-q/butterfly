@@ -8,14 +8,17 @@ import cc.doctor.wiki.search.server.index.shard.ShardService;
 import cc.doctor.wiki.search.server.index.store.indices.format.DateFormat;
 import cc.doctor.wiki.search.server.index.store.indices.format.Format;
 import cc.doctor.wiki.search.server.index.store.indices.format.FormatProber;
+import cc.doctor.wiki.search.server.index.store.indices.indexer.datastruct.TrieTree;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.DictFile;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedFile;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import static cc.doctor.wiki.search.server.index.store.indices.format.Format.*;
 
@@ -242,5 +245,18 @@ public class IndexerMediator {
 
     public String getShardRoot() {
         return shardService.getShardRoot();
+    }
+
+    public boolean loadIndex() {
+        Map<String, Serializable> dict = dictFile.readDict();
+        for (String fieldName : dict.keySet()) {
+            Schema.Property propertyByName = schema.getPropertyByName(fieldName);
+            if (Format.getFormat(propertyByName.getType()).equals(Format.STRING)) {
+                trieTreeIndexer.getFieldTrieTree().put(fieldName, (TrieTree<WordInfo>) dict.get(fieldName));
+            } else {
+                skipTableIndexer.getConcurrentSkipListMap().put(fieldName, (ConcurrentSkipListMap<Number, WordInfo>) dict.get(fieldName));
+            }
+        }
+        return true;
     }
 }

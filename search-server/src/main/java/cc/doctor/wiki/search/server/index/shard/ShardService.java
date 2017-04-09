@@ -122,4 +122,12 @@ public class ShardService {
     public boolean addInvertedDocs(Map<String, Map<Object, Set<Long>>> fieldValueDocMap, List<Document> documents) {
         return false;
     }
+
+    /**
+     * 加载索引
+     */
+    public boolean loadIndex() {
+        indexerMediator.loadIndex();
+        return false;
+    }
 }

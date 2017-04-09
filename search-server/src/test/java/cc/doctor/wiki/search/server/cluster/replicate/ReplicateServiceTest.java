@@ -1,15 +1,21 @@
 package cc.doctor.wiki.search.server.cluster.replicate;
 
 import cc.doctor.wiki.search.client.index.schema.Schema;
+import cc.doctor.wiki.search.client.query.document.Document;
+import cc.doctor.wiki.search.client.query.document.Field;
 import cc.doctor.wiki.search.client.rpc.Message;
 import cc.doctor.wiki.search.client.rpc.operation.Operation;
+import cc.doctor.wiki.search.client.rpc.request.BulkRequest;
 import cc.doctor.wiki.search.client.rpc.request.CreateIndexRequest;
+import cc.doctor.wiki.search.client.rpc.request.IndexRequest;
 import cc.doctor.wiki.search.client.rpc.result.IndexResult;
 import cc.doctor.wiki.search.server.cluster.node.Node;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -57,6 +63,20 @@ public class ReplicateServiceTest {
 
     @Test
     public void bulkInsert() throws Exception {
+        BulkRequest<Document> bulkRequest = new BulkRequest<>("order_info");
+        List<Document> documents = new LinkedList<>();
+        for (int i = 0; i < 1000; i++) {
+            Document document = new Document();
+            document.field(new Field("id", i)).field(new Field("name", "name" + i));
+            documents.add(document);
+        }
+        bulkRequest.setBulkData(documents);
+        Message message = Message.newMessage().data(bulkRequest);
+        replicateService.bulkInsert(message);
+        IndexRequest indexRequest = new IndexRequest("order_info");
+        message = Message.newMessage().data(indexRequest);
+        replicateService.flush(message);
+        Thread.sleep(1000);
     }
 
     @Test

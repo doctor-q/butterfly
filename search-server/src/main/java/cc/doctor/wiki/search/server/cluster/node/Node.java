@@ -7,6 +7,7 @@ import cc.doctor.wiki.search.server.cluster.routing.NodeState;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingNode;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingService;
 import cc.doctor.wiki.search.server.cluster.vote.VoteService;
+import cc.doctor.wiki.search.server.index.store.indices.recovery.RecoveryService;
 import cc.doctor.wiki.search.server.rpc.NettyServer;
 import cc.doctor.wiki.search.server.rpc.Server;
 
@@ -24,6 +25,7 @@ public class Node {
     private ReplicateService replicateService;
     private ToleranceService toleranceService;
     private NodeClientHolder nodeClientHolder;
+    private RecoveryService recoveryService;
     private Server server;
     private Scheduler scheduler;
 
@@ -59,6 +61,7 @@ public class Node {
         routingService = new RoutingService();
         replicateService = new ReplicateService(this);
         toleranceService = new ToleranceService(this);
+        recoveryService = new RecoveryService();
         scheduler = new Scheduler();
 
         container.addComponent(nodeClientHolder);
@@ -66,6 +69,7 @@ public class Node {
         container.addComponent(voteService);
         container.addComponent(routingService);
         container.addComponent(replicateService);
+        container.addComponent(recoveryService);
         container.addComponent(toleranceService);
     }
 

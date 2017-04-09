@@ -18,7 +18,7 @@ public class GlobalConfig {
 
     //单个倒排文件大小
     public static final String INVERTED_FILE_SIZE_NAME = "file.size.inverted";
-    public static final int INVERTED_FILE_SIZE_DEFUALT = 10 * 1024 * 1024;   //默认10M
+    public static final int INVERTED_FILE_SIZE_DEFAULT = 10 * 1024 * 1024;   //默认10M
     public static final int INVERTED_FILE_SIZE_MAX = 100 * 1024 * 1024;   //最大100M
     public static final int INVERTED_FILE_SIZE_MIN = 1024 * 1024;   //最大1M
     public static final String INVERTED_FILE_PATH_NAME = "inverted";
@@ -72,4 +72,6 @@ public class GlobalConfig {
 
     public static final String NODE_NAME = "node.name";
     public static final String MAX_LOSS_CONNECTION_TIMES = "loss.connection.times.max";
+    public static final String ZOOKEEPER_INDEX_SCHEMA_PATH = "index.schema.path";
+    public static final String ZOOKEEPER_INDEX_SCHEMA_PATH_DEFAULT = "";
 }

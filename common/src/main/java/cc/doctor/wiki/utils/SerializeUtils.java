@@ -42,9 +42,9 @@ public class SerializeUtils {
         }
     }
 
-    public static <T> T jsonToObject(String json, Type type) {
+    public static <T> T jsonToObject(String json, Class<T> clazz) {
         Gson gson = new Gson();
-        return gson.fromJson(json, type);
+        return gson.fromJson(json, clazz);
     }
 
     public static <T> List<T> jsonToList(String json, final Class<T> clazz) {

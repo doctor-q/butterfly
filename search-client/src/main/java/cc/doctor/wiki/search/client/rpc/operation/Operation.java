@@ -16,6 +16,7 @@ public enum Operation {
     DELETE_DOCUMENT(4),
     BULK_DELETE(0),
     DELETE_BY_QUERY(0),
+    FLUSH(0),
     QUERY(5),
     MASTER_LOSS(0),
     NODE_LOSS(0);

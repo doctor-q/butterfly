@@ -6,6 +6,7 @@ import cc.doctor.wiki.search.client.query.QueryBuilder;
 import cc.doctor.wiki.search.client.query.document.Document;
 import cc.doctor.wiki.search.client.rpc.operation.Operation;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
+import cc.doctor.wiki.search.server.index.manager.IndexManagerService;
 import cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog.CheckPointFile;
 import cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog.MmapOperationFile;
 import cc.doctor.wiki.search.server.index.store.indices.recovery.operationlog.OperationLog;
@@ -15,19 +16,21 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import static cc.doctor.wiki.search.server.common.Container.container;
 import static cc.doctor.wiki.search.server.common.config.Settings.settings;
-import static cc.doctor.wiki.search.server.index.manager.IndexManagerContainer.indexManagerContainer;
 
 /**
  * Created by doctor on 2017/3/9.
  * 数据恢复服务,负责操作日志的管理和索引的恢复,每个node一个
  */
 public class RecoveryService {
+    private IndexManagerService indexManagerService;
     private OperationLogFile operationLogFile;  //操作日志目录
     private CheckPointFile checkPointFile;
     public static final boolean OPERATION_LOG_QUERY = settings.getBoolean(GlobalConfig.OPERATION_LOG_QUERY);
 
     public RecoveryService() {
+        indexManagerService = container.getComponent(IndexManagerService.class);
         checkPointFile = new CheckPointFile();
         try {
             operationLogFile = new MmapOperationFile(checkPointFile);
@@ -63,43 +66,43 @@ public class RecoveryService {
         switch (operation) {
             case CREATE_INDEX:
                 Schema schema = (Schema) operationLog.getData();
-                indexManagerContainer.createIndex(schema);
+                indexManagerService.createIndex(schema);
                 break;
             case DROP_INDEX:
                 schema = (Schema) operationLog.getData();
-                indexManagerContainer.dropIndex(schema);
+                indexManagerService.dropIndex(schema);
                 break;
             case PUT_SCHEMA:
                 schema = (Schema) operationLog.getData();
-                indexManagerContainer.putSchema(schema);
+                indexManagerService.putSchema(schema);
                 break;
             case PUT_ALIAS:
                 Tuple<String, String> alias = (Tuple<String, String>) operationLog.getData();
-                indexManagerContainer.putAlias(alias);
+                indexManagerService.putAlias(alias);
                 break;
             case DROP_ALIAS:
                 alias = (Tuple<String, String>) operationLog.getData();
-                indexManagerContainer.dropAlias(alias);
+                indexManagerService.dropAlias(alias);
                 break;
             case ADD_DOCUMENT:
                 Tuple<String, Document> documentTuple = (Tuple<String, Document>) operationLog.getData();
-                indexManagerContainer.insertDocument(documentTuple.getT1(), documentTuple.getT2());
+                indexManagerService.insertDocument(documentTuple.getT1(), documentTuple.getT2());
                 break;
             case BULK_INSERT:
                 Tuple<String, List<Document>> documentsTuple = (Tuple<String, List<Document>>) operationLog.getData();
-                indexManagerContainer.bulkInsert(documentsTuple.getT1(), documentsTuple.getT2());
+                indexManagerService.bulkInsert(documentsTuple.getT1(), documentsTuple.getT2());
                 break;
             case DELETE_DOCUMENT:
                 Tuple<String, Long> docIdTuple = (Tuple<String, Long>) operationLog.getData();
-                indexManagerContainer.deleteDocument(docIdTuple.getT1(), docIdTuple.getT2());
+                indexManagerService.deleteDocument(docIdTuple.getT1(), docIdTuple.getT2());
                 break;
             case BULK_DELETE:
                 Tuple<String, List<Long>> docIdsTuple = (Tuple<String, List<Long>>) operationLog.getData();
-                indexManagerContainer.bulkDelete(docIdsTuple.getT1(), docIdsTuple.getT2());
+                indexManagerService.bulkDelete(docIdsTuple.getT1(), docIdsTuple.getT2());
                 break;
             case DELETE_BY_QUERY:
                 Tuple<String, QueryBuilder> queryBuilderTuple = (Tuple<String, QueryBuilder>) operationLog.getData();
-                indexManagerContainer.deleteByQuery(queryBuilderTuple.getT1(), queryBuilderTuple.getT2());
+                indexManagerService.deleteByQuery(queryBuilderTuple.getT1(), queryBuilderTuple.getT2());
                 break;
         }
     }
@@ -149,5 +152,9 @@ public class RecoveryService {
             return operationLogFile.appendOperationLog(new OperationLog<>(Operation.QUERY, new Tuple<>(indexName, queryBuilder)));
         }
         return true;
+    }
+
+    public boolean flushOperation(String indexName) {
+        return operationLogFile.appendOperationLog(new OperationLog<>(Operation.FLUSH, indexName));
     }
 }

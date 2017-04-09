@@ -27,7 +27,8 @@ public class Settings {
         add(GlobalConfig.DICT_INDEX_FILE_SIZE, GlobalConfig.DICT_INDEX_FILE_SIZE_DEFAULT);
         add(GlobalConfig.CACHE_INVERTED_TABLE_SIZE, GlobalConfig.CACHE_INVERTED_TABLE_SIZE_DEFAULT);
         add(GlobalConfig.FLUSH_INVERTED_TABLE_NUM, GlobalConfig.FLUSH_INVERTED_TABLE_NUM_DEFAULT);
-        add(GlobalConfig.INVERTED_FILE_SIZE_NAME, GlobalConfig.INVERTED_FILE_SIZE_DEFUALT);
+        add(GlobalConfig.INVERTED_FILE_SIZE_NAME, GlobalConfig.INVERTED_FILE_SIZE_DEFAULT);
+        add(GlobalConfig.ZOOKEEPER_INDEX_SCHEMA_PATH, GlobalConfig.ZOOKEEPER_INDEX_SCHEMA_PATH_DEFAULT);
     }
 
     public Object get(String key) {

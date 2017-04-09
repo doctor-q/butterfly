@@ -5,5 +5,4 @@ package cc.doctor.wiki.common;
  */
 public abstract class Action {
     public void doAction() {}
-    public void callback() {}
 }

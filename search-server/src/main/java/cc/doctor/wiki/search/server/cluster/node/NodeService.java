@@ -1,11 +1,13 @@
 package cc.doctor.wiki.search.server.cluster.node;
 
 import cc.doctor.wiki.ha.zk.ZookeeperClient;
+import cc.doctor.wiki.search.client.index.schema.Schema;
 import cc.doctor.wiki.search.server.cluster.routing.NodeState;
 import cc.doctor.wiki.search.server.cluster.routing.RoutingNode;
 import cc.doctor.wiki.search.server.cluster.vote.MasterNodeListener;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.utils.NetworkUtils;
+import cc.doctor.wiki.utils.SerializeUtils;
 import cc.doctor.wiki.utils.StringUtils;
 
 import static cc.doctor.wiki.search.server.common.config.Settings.settings;

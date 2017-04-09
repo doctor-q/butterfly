@@ -11,6 +11,7 @@ import java.util.Map;
  */
 public class Schema implements Serializable {
     private static final long serialVersionUID = -5358709288352559858L;
+    private long version;
     private String indexName;   //索引名
     private String alias;       //别名,通过索引名别名任意一个均可以访问
     private int replicate = 1;      //副本数目
@@ -21,6 +22,14 @@ public class Schema implements Serializable {
     private List<String> filters = new LinkedList<>();   //自定义前置过滤器
     private List<TypeHandlerNode> typeHandlers = new LinkedList<>();//自定义类型转换器
     private List<String> tokenizers = new LinkedList<>(); //自定义分词器
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
 
     public String getIndexName() {
         return indexName;
