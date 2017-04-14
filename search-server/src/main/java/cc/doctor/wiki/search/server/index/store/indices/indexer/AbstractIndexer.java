@@ -4,6 +4,7 @@ import cc.doctor.wiki.common.Range;
 import cc.doctor.wiki.search.client.index.schema.Schema;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedFile;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedTable;
+import cc.doctor.wiki.search.server.index.store.indices.inverted.MmapInvertedFile;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 import cc.doctor.wiki.utils.CollectionUtils;
 
@@ -18,6 +19,14 @@ import java.util.Set;
 public abstract class AbstractIndexer {
     protected Schema schema;
     protected InvertedFile invertedFile;
+    protected IndexerMediator indexerMediator;
+
+    public AbstractIndexer(IndexerMediator indexerMediator) {
+        this.indexerMediator = indexerMediator;
+        this.schema = indexerMediator.getSchema();
+        this.invertedFile = indexerMediator.getInvertedFile();
+    }
+
     public void insertWord(Long docId, String field, Object value) {
         if (field == null || value == null) {
             return;

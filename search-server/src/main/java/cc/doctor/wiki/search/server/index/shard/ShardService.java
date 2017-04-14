@@ -1,6 +1,7 @@
 package cc.doctor.wiki.search.server.index.shard;
 
 import cc.doctor.wiki.exceptions.query.QueryGrammarException;
+import cc.doctor.wiki.search.client.index.schema.Schema;
 import cc.doctor.wiki.search.client.query.document.Document;
 import cc.doctor.wiki.search.client.query.grammar.Predication;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
@@ -36,7 +37,6 @@ public class ShardService {
     private String shardRoot;
     private IndexManagerInner indexManagerInner;
     private IndexerMediator indexerMediator;
-    private InvertedFile invertedFile;
     private SourceFile sourceFile;
     private static final int writeDocumentThreads = PropertyUtils.getProperty(GlobalConfig.THREAD_NUM_WRITE_DOCUMENT, GlobalConfig.THREAD_NUM_WRITE_DOCUMENT_DEFAULT);
     private ExecutorService shardWriteExecutor = Executors.newFixedThreadPool(writeDocumentThreads);
@@ -66,8 +66,11 @@ public class ShardService {
             FileUtils.createDirectoryRecursion(shardRoot + "/" + GlobalConfig.SOURCE_PATH_NAME);
         }
         this.indexerMediator = new IndexerMediator(this);
-        this.invertedFile = new MmapInvertedFile(this);
         this.sourceFile = new MmapSourceFile(this);
+    }
+
+    public Schema getSchema() {
+        return indexManagerInner.getSchema();
     }
 
     /**
@@ -76,7 +79,8 @@ public class ShardService {
      * @param document 文档
      */
     public boolean writeDocumentInner(Document document) {
-        shardWriteExecutor.submit(new WriteDocumentCallable(indexerMediator, sourceFile, CollectionUtils.list(document), null, indexManagerInner.getSchema()));
+        shardWriteExecutor.submit(new WriteDocumentCallable(indexerMediator, sourceFile,
+                CollectionUtils.list(document), null, indexManagerInner.getSchema()));
         return true;
     }
 
@@ -115,12 +119,19 @@ public class ShardService {
      * 2. 刷新词典
      */
     public void flush() {
-        invertedFile.flushInvertedTable();
+        indexerMediator.flushInvertedDocs();
         indexerMediator.flushIndexer();
     }
 
-    public boolean addInvertedDocs(Map<String, Map<Object, Set<Long>>> fieldValueDocMap, List<Document> documents) {
-        return false;
+    /**
+     * 写入倒排
+     * @param fieldValueDocMap 格式<域，<值，倒排列表>>，已经是合并之后的倒排
+     * @param documents 文档列表
+     */
+    public boolean addMergedInvertedDocs(Map<String, Map<Object, Set<Long>>> fieldValueDocMap, List<Document> documents) {
+        shardWriteExecutor.submit(new WriteDocumentCallable(indexerMediator, sourceFile,
+                documents, fieldValueDocMap, indexManagerInner.getSchema()));
+        return true;
     }
 
     /**

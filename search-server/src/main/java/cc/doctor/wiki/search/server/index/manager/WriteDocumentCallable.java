@@ -32,6 +32,9 @@ public class WriteDocumentCallable implements Callable {
         this.schema = schema;
     }
 
+    /**
+     * 索引，如果倒排事先已经建好，则只循环写source
+     */
     @Override
     public Object call() throws Exception {
         for (Document document : documents) {

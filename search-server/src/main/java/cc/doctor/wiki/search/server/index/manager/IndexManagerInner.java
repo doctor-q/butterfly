@@ -131,7 +131,7 @@ public class IndexManagerInner {
             }
         }
         for (Integer shard : shardInvertedDocMap.keySet()) {
-            shardServiceMap.get(shard).addInvertedDocs(shardInvertedDocMap.get(shard), shardDocuments.get(shard));
+            shardServiceMap.get(shard).addMergedInvertedDocs(shardInvertedDocMap.get(shard), shardDocuments.get(shard));
         }
         return true;
     }

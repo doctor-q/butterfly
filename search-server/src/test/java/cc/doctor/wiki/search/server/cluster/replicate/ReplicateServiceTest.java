@@ -78,10 +78,10 @@ public class ReplicateServiceTest {
         bulkRequest.setBulkData(documents);
         Message message = Message.newMessage().data(bulkRequest);
         replicateService.bulkInsert(message);
+        Thread.sleep(10000);
         IndexRequest indexRequest = new IndexRequest("order_info");
         message = Message.newMessage().data(indexRequest);
         replicateService.flush(message);
-        Thread.sleep(1000);
     }
 
     @Test

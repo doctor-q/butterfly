@@ -77,6 +77,8 @@ public class DictFile {
                 T t = mmapFile.readObject(positionLength.getT1(), positionLength.getT2());
                 fieldDict.put(field, t);
             }
+        } else {    //init dict index
+            fieldPosition = new HashMap<>();
         }
         return fieldDict;
     }

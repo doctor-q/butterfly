@@ -20,11 +20,9 @@ public abstract class InvertedFile {
     public static final int CACHE_INVERTED_TABLE_SIZE = settings.getInt(GlobalConfig.CACHE_INVERTED_TABLE_SIZE);
     protected IndexerMediator indexerMediator;
     protected Cache<Long, InvertedTable> invertedTableCache = new LocalCache<>(CACHE_INVERTED_TABLE_SIZE);
-    protected ShardService shardService;
 
-    public InvertedFile(ShardService shardService) {
-        this.shardService = shardService;
-        indexerMediator = shardService.getIndexerMediator();
+    public InvertedFile(IndexerMediator indexerMediator) {
+        this.indexerMediator = indexerMediator;
     }
 
     /**

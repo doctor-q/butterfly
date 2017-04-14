@@ -3,6 +3,7 @@ package cc.doctor.wiki.search.server.index.store.indices.inverted;
 import cc.doctor.wiki.common.Action;
 import cc.doctor.wiki.search.server.common.config.GlobalConfig;
 import cc.doctor.wiki.search.server.index.shard.ShardService;
+import cc.doctor.wiki.search.server.index.store.indices.indexer.IndexerMediator;
 import cc.doctor.wiki.search.server.index.store.mm.MmapScrollFile;
 import cc.doctor.wiki.search.server.index.store.mm.ScrollFile;
 import cc.doctor.wiki.utils.FileUtils;
@@ -27,9 +28,9 @@ public class MmapInvertedFile extends InvertedFile {
     private static AtomicInteger memInvertedTableNum = new AtomicInteger();
     public static final int flushTableNum = settings.getInt(GlobalConfig.FLUSH_INVERTED_TABLE_NUM);
 
-    public MmapInvertedFile(ShardService shardService) {
-        super(shardService);
-        scrollFile = new MmapScrollFile(shardService.getShardRoot() + "/" + GlobalConfig.INVERTED_FILE_PATH_NAME,
+    public MmapInvertedFile(IndexerMediator indexerMediator) {
+        super(indexerMediator);
+        scrollFile = new MmapScrollFile(indexerMediator.getShardRoot() + "/" + GlobalConfig.INVERTED_FILE_PATH_NAME,
                 settings.getInt(GlobalConfig.INVERTED_FILE_SIZE_NAME), autoIncrementScrollFileNameStrategy);
         scrollFile.onWriteFileCheck(new Action() {
             @Override

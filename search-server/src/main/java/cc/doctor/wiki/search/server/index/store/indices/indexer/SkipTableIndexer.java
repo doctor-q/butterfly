@@ -22,6 +22,10 @@ public class SkipTableIndexer extends AbstractIndexer {
     //数字跳表,每份索引的每个域包含一个
     private Map<String, ConcurrentSkipListMap<Number, WordInfo>> concurrentSkipListMap = new HashMap<>();
 
+    public SkipTableIndexer(IndexerMediator indexerMediator) {
+        super(indexerMediator);
+    }
+
     public void setConcurrentSkipListMap(Map<String, ConcurrentSkipListMap<Number, WordInfo>> concurrentSkipListMap) {
         this.concurrentSkipListMap = concurrentSkipListMap;
     }

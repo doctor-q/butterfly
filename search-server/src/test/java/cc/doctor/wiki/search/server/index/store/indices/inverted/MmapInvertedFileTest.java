@@ -20,7 +20,7 @@ public class MmapInvertedFileTest {
         IndexManagerInner indexManagerInner = new IndexManagerInner(new Schema());
         indexManagerInner.setIndexRoot("/tmp/es/data/order_info");
         ShardService shardService = new ShardService(indexManagerInner, 0);
-        invertedFile = new MmapInvertedFile(shardService);
+        invertedFile = new MmapInvertedFile(shardService.getIndexerMediator());
     }
 
     @Test

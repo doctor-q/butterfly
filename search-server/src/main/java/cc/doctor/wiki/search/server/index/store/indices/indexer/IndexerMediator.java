@@ -11,6 +11,7 @@ import cc.doctor.wiki.search.server.index.store.indices.format.FormatProber;
 import cc.doctor.wiki.search.server.index.store.indices.indexer.datastruct.TrieTree;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.DictFile;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.InvertedFile;
+import cc.doctor.wiki.search.server.index.store.indices.inverted.MmapInvertedFile;
 import cc.doctor.wiki.search.server.index.store.indices.inverted.WordInfo;
 
 import java.io.Serializable;
@@ -24,7 +25,7 @@ import static cc.doctor.wiki.search.server.index.store.indices.format.Format.*;
 
 /**
  * Created by doctor on 2017/3/8.
- * 索引中间者,负责探测数据类型后转交给对应的索引器建立索引,每个索引(分片)拥有一个
+ * 索引中间者,负责探测数据类型后转交给对应的索引器建立索引,每个分片拥有一个
  */
 public class IndexerMediator {
     private SkipTableIndexer skipTableIndexer;
@@ -32,12 +33,15 @@ public class IndexerMediator {
     private ShardService shardService;
     private Schema schema;
     private DictFile dictFile;
+    private InvertedFile invertedFile;
 
     public IndexerMediator(ShardService shardService) {
         this.shardService = shardService;
-        skipTableIndexer = new SkipTableIndexer();
-        trieTreeIndexer = new TrieTreeIndexer();
-        dictFile = new DictFile(this);
+        this.invertedFile = new MmapInvertedFile(this);
+        this.skipTableIndexer = new SkipTableIndexer(this);
+        this.trieTreeIndexer = new TrieTreeIndexer(this);
+        this.dictFile = new DictFile(this);
+        this.schema = shardService.getSchema();
     }
 
     //为文档建索引
@@ -59,8 +63,7 @@ public class IndexerMediator {
     private boolean insertWord(String field, Map<Object, Set<Long>> valueDocMap) {
         Format format = getFormat(field);
         if (format == null) {
-            format = proberFormatAndSetProperty(schema.getPropertyByName(field),
-                    valueDocMap.keySet().iterator().next());
+            format = proberFormatAndSetProperty(schema, field, valueDocMap.keySet().iterator().next());
         }
         switch (format) {
             case STRING:
@@ -78,7 +81,7 @@ public class IndexerMediator {
     private boolean insertWord(Long docId, String field, Object value) {
         Format format = getFormat(field);
         if (format == null) {
-            format = proberFormatAndSetProperty(schema.getPropertyByName(field), value);
+            format = proberFormatAndSetProperty(schema, field, value);
         }
         switch (format) {
             case STRING:
@@ -101,9 +104,15 @@ public class IndexerMediator {
         trieTreeIndexer.writeLock();
         dictFile.writeDict(trieTreeIndexer.getFieldTrieTree());
         trieTreeIndexer.unlock();
+        dictFile.flushFieldPosition();
     }
 
-    private Format proberFormatAndSetProperty(Schema.Property property, Object value) {
+    private Format proberFormatAndSetProperty(Schema schema, String field, Object value) {
+        Schema.Property property = schema.getPropertyByName(field);
+        if (property == null) {
+            property = new Schema.Property(field);
+            schema.addProperty(property);
+        }
         Format format = FormatProber.proberFormat(value);
         property.setType(format.getName());
         if (format.equals(DATE)) {
@@ -258,5 +267,17 @@ public class IndexerMediator {
             }
         }
         return true;
+    }
+
+    public Schema getSchema() {
+        return schema;
+    }
+
+    public void flushInvertedDocs() {
+        invertedFile.flushInvertedTable();
+    }
+
+    public InvertedFile getInvertedFile() {
+        return invertedFile;
     }
 }
