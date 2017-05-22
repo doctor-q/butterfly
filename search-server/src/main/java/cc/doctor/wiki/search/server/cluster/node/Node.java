@@ -13,7 +13,7 @@ import cc.doctor.wiki.search.server.index.store.indices.recovery.RecoveryService
 import cc.doctor.wiki.search.server.rpc.NettyServer;
 import cc.doctor.wiki.search.server.rpc.Server;
 
-import static cc.doctor.wiki.search.server.common.Container.container;
+import static cc.doctor.wiki.utils.Container.container;
 
 /**
  * Created by doctor on 2017/3/13.

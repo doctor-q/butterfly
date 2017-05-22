@@ -9,7 +9,7 @@ import org.apache.zookeeper.WatchedEvent;
 
 import java.util.Map;
 
-import static cc.doctor.wiki.search.server.common.Container.container;
+import static cc.doctor.wiki.utils.Container.container;
 import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 
 /**

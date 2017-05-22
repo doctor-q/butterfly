@@ -1,5 +1,6 @@
-package cc.doctor.wiki.search.server.common;
+package cc.doctor.wiki.utils;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -8,7 +9,20 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Container {
     public static final Container container = new Container();
+    public static Map<String, Container> containerMap = new HashMap<>();
     public Map<String, Object> components = new ConcurrentHashMap<>();
+
+    public static Container getContainer(String namespace) {
+        if (namespace == null) {
+            return container;
+        }
+        Container container = containerMap.get(namespace);
+        if (container == null) {
+            container = new Container();
+            containerMap.put(namespace, container);
+        }
+        return container;
+    }
 
     public void addComponent(Object object) {
         if (object != null) {

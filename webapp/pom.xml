@@ -20,6 +20,10 @@
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
         </dependency>
+        <dependency>
+            <groupId>cc.doctor.wiki</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

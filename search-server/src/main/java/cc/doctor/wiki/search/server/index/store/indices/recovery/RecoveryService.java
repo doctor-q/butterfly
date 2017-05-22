@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import static cc.doctor.wiki.search.server.common.Container.container;
+import static cc.doctor.wiki.utils.Container.container;
 import static cc.doctor.wiki.search.server.common.config.Settings.settings;
 
 /**

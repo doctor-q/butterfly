@@ -5,7 +5,7 @@ import org.apache.zookeeper.WatchedEvent;
 
 import java.util.concurrent.CountDownLatch;
 
-import static cc.doctor.wiki.search.server.common.Container.container;
+import static cc.doctor.wiki.utils.Container.container;
 
 /**
  * Created by doctor on 2017/3/13.

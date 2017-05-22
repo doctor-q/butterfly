@@ -7,7 +7,7 @@ import cc.doctor.wiki.search.client.rpc.result.RpcResult;
 import cc.doctor.wiki.search.server.cluster.node.tolerance.ToleranceService;
 import cc.doctor.wiki.search.server.cluster.replicate.ReplicateService;
 
-import static cc.doctor.wiki.search.server.common.Container.container;
+import static cc.doctor.wiki.utils.Container.container;
 
 /**
  * Created by doctor on 2017/3/14.

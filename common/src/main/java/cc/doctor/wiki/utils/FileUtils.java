@@ -3,8 +3,7 @@ package cc.doctor.wiki.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -127,5 +126,20 @@ public class FileUtils {
         }
         File fileTo = new File(to);
         return fileFrom.renameTo(fileTo);
+    }
+
+    public static String readFile(String filePath) {
+        StringBuilder content = new StringBuilder();
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath));
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                content.append(line);
+            }
+        } catch (IOException e) {
+            log.error("", e);
+            return null;
+        }
+        return content.toString();
     }
 }
