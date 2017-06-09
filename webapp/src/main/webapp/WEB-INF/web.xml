@@ -8,7 +8,7 @@
 
     <servlet>
         <servlet-name>dispatch</servlet-name>
-        <servlet-class>cc.doctor.wiki.web.servlet.DispatchServlet</servlet-class>
+        <servlet-class>cc.doctor.search.webframework.servlet.DispatchServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatch</servlet-name>

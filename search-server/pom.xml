@@ -7,8 +7,8 @@
     <artifactId>search-server</artifactId>
     <version>1.0-SNAPSHOT</version>
     <parent>
-        <groupId>cc.doctor.wiki</groupId>
-        <artifactId>wiki</artifactId>
+        <groupId>cc.doctor.search</groupId>
+        <artifactId>butterfly</artifactId>
         <relativePath>../pom.xml</relativePath>
         <version>1.0.0</version>
     </parent>
@@ -27,7 +27,7 @@
             <artifactId>dom4j</artifactId>
         </dependency>
         <dependency>
-            <groupId>cc.doctor.wiki</groupId>
+            <groupId>cc.doctor.search</groupId>
             <artifactId>common</artifactId>
         </dependency>
         <dependency>
@@ -35,7 +35,7 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>cc.doctor.wiki</groupId>
+            <groupId>cc.doctor.search</groupId>
             <artifactId>search-client</artifactId>
         </dependency>
         <dependency>

@@ -34,5 +34,6 @@
     <orderEntry type="library" name="Maven: io.netty:netty:3.10.5.Final" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.0" level="project" />
     <orderEntry type="library" name="Maven: org.javassist:javassist:3.22.0-CR1" level="project" />
+    <orderEntry type="module" module-name="webframework" />
   </component>
 </module>
