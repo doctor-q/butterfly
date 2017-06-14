@@ -1,4 +1,4 @@
-package cc.doctor.search.webframework;
+package cc.doctor.search.webframework.handler;
 
 import cc.doctor.search.common.utils.Container;
 import cc.doctor.search.common.utils.ReflectUtils;
@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.*;
@@ -21,7 +22,6 @@ public class RequestParser {
     private Container container = Container.getContainer("webapp");
 
     public Object invoke(HttpServletRequest servletRequest, String service, String method) {
-        Map<String, String> parametersFromRequest = new HashMap<>();
         try {
             Class<?> serviceClass = Class.forName(defaultServicePackage + "." + service);
             Object serviceInstance = container.getComponent(serviceClass);
@@ -30,13 +30,10 @@ public class RequestParser {
             List<Object> params = new LinkedList<>();
             for (String paramName : methodParamNameTypes.keySet()) {
                 Class paramClass = methodParamNameTypes.get(paramName);
-                Object instance = paramClass.newInstance();
-                if (instance instanceof Unpack) {
-                    Map<String, Class> objectAttrNameTypes = ReflectUtils.getObjectAttrNameTypes(paramClass);
-                    for (String param : objectAttrNameTypes.keySet()) {
-                        Object value = parseParam(servletRequest.getParameter(param), objectAttrNameTypes.get(param));
-                        ReflectUtils.set(param, value, instance);
-                    }
+                Object instance;
+                if (Unpack.class.isAssignableFrom(paramClass)) {
+                    instance = paramClass.newInstance();
+                    fillObject(servletRequest, instance);
                 } else {
                     instance = parseParam(servletRequest.getParameter(paramName), paramClass);
                 }
@@ -46,6 +43,22 @@ public class RequestParser {
         } catch (ReflectiveOperationException e) {
             log.error("", e);
             return null;
+        }
+    }
+
+    public void fillObject(HttpServletRequest servletRequest, Object object) {
+        Map<String, Class> objectAttrNameTypes = ReflectUtils.getObjectAttrNameTypes(object.getClass());
+        for (String param : objectAttrNameTypes.keySet()) {
+            Class aClass = objectAttrNameTypes.get(param);
+            String parameter = servletRequest.getParameter(param);
+            //do annotation
+            Annotation[] annotations = aClass.getAnnotations();
+            for (Annotation annotation : annotations) {
+                AnnotationHandler annotationHandler = AnnotationHandlerFactory.getAnnotationHandler(annotation.getClass());
+                annotationHandler.handler(parameter, annotation);
+            }
+            Object value = parseParam(parameter, aClass);
+            ReflectUtils.set(param, value, object);
         }
     }
 

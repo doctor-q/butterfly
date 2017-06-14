@@ -5,7 +5,7 @@ import cc.doctor.search.client.rpc.operation.Operation;
 import cc.doctor.search.client.rpc.result.*;
 import cc.doctor.search.common.entity.Tuple;
 import cc.doctor.search.client.query.QueryBuilder;
-import cc.doctor.wiki.search.client.rpc.result.*;
+import cc.doctor.search.client.rpc.result.*;
 
 import java.util.LinkedList;
 

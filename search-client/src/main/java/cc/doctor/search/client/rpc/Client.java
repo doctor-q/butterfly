@@ -3,7 +3,7 @@ package cc.doctor.search.client.rpc;
 import cc.doctor.search.client.query.document.Document;
 import cc.doctor.search.client.rpc.result.*;
 import cc.doctor.search.client.query.QueryBuilder;
-import cc.doctor.wiki.search.client.rpc.result.*;
+import cc.doctor.search.client.rpc.result.*;
 
 /**
  * Created by doctor on 2017/3/14.

@@ -1,5 +1,8 @@
 package cc.doctor.search.common.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -8,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by doctor on 2017/3/23.
  */
 public class Container {
+    private static final Logger log = LoggerFactory.getLogger(Container.class);
     public static final Container container = new Container();
     public static Map<String, Container> containerMap = new HashMap<>();
     public Map<String, Object> components = new ConcurrentHashMap<>();
@@ -43,5 +47,18 @@ public class Container {
             return null;
         }
         return components.get(name);
+    }
+
+    public <T> T getOrCreateComponent(Class<T> tClass) {
+        T component = getComponent(tClass);
+        if (component == null) {
+            try {
+                component = tClass.newInstance();
+                addComponent(component);
+            } catch (InstantiationException | IllegalAccessException e) {
+                log.error("", e);
+            }
+        }
+        return component;
     }
 }
