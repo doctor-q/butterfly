@@ -1,0 +1,23 @@
+{
+  "__exceptionHandlers": {
+  },
+  "__globalExceptionHandler": "",
+  "__routes": {
+    "/indices": {
+      "/list": [
+        "IndicesService",
+        "getIndicesInfo"
+      ]
+    },
+    "/mappings": {
+      "/getMappings": [
+        "MappingsService",
+        "getMappings"
+      ],
+      "/alias": [
+        "MappingsService",
+        "putAlias"
+      ]
+    }
+  }
+}

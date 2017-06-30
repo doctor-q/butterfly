@@ -3,11 +3,14 @@ package cc.doctor.search.webframework.handler;
 import cc.doctor.search.common.utils.Container;
 import cc.doctor.search.common.utils.ReflectUtils;
 import cc.doctor.search.webframework.param.Unpack;
+import cc.doctor.search.webframework.param.annotation.IgnoreEmpty;
+import cc.doctor.search.webframework.param.annotation.IgnoreNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.*;
@@ -47,17 +50,32 @@ public class RequestParser {
     }
 
     public void fillObject(HttpServletRequest servletRequest, Object object) {
-        Map<String, Class> objectAttrNameTypes = ReflectUtils.getObjectAttrNameTypes(object.getClass());
-        for (String param : objectAttrNameTypes.keySet()) {
-            Class aClass = objectAttrNameTypes.get(param);
+        Map<String, Field> objectAttrNameFields = ReflectUtils.getObjectAttrNameFields(object.getClass());
+        for (String param : objectAttrNameFields.keySet()) {
+            Field field = objectAttrNameFields.get(param);
             String parameter = servletRequest.getParameter(param);
             //do annotation
-            Annotation[] annotations = aClass.getAnnotations();
+            if (field.isAnnotationPresent(IgnoreNull.class) && parameter == null) { //ignore null
+                continue;
+            }
+            if (field.isAnnotationPresent(IgnoreEmpty.class)) {     //ignore empty
+                IgnoreEmpty ignoreEmpty = field.getAnnotation(IgnoreEmpty.class);
+                if (ignoreEmpty.trim()) {
+                    if (parameter.trim().isEmpty()) {
+                        continue;
+                    }
+                } else {
+                    if (parameter.isEmpty()) {
+                        continue;
+                    }
+                }
+            }
+            Annotation[] annotations = field.getAnnotations();
             for (Annotation annotation : annotations) {
                 AnnotationHandler annotationHandler = AnnotationHandlerFactory.getAnnotationHandler(annotation.getClass());
                 annotationHandler.handler(parameter, annotation);
             }
-            Object value = parseParam(parameter, aClass);
+            Object value = parseParam(parameter, field.getType());
             ReflectUtils.set(param, value, object);
         }
     }

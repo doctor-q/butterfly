@@ -142,4 +142,16 @@ public class FileUtils {
         }
         return content.toString();
     }
+
+    public static void writeFile(String content, String fileName) throws IOException {
+        try {
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName));
+            bufferedWriter.write(content);
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        } catch (IOException e) {
+            log.error("", e);
+            throw e;
+        }
+    }
 }
