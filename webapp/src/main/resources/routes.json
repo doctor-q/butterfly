@@ -1,9 +1,0 @@
-{
-  "/indices":{
-    "/list":["IndicesService", "getIndicesInfo"]
-  },
-  "/mappings":{
-    "/getMappings":["MappingsService", "getMappings"],
-    "/alias":["MappingsService", "putAlias"]
-  }
-}

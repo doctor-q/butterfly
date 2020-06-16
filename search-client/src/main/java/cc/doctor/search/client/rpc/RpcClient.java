@@ -1,11 +1,10 @@
 package cc.doctor.search.client.rpc;
 
-import cc.doctor.search.client.query.document.Document;
+import cc.doctor.search.client.query.QueryBuilder;
+import cc.doctor.search.common.document.Document;
 import cc.doctor.search.client.rpc.operation.Operation;
 import cc.doctor.search.client.rpc.result.*;
 import cc.doctor.search.common.entity.Tuple;
-import cc.doctor.search.client.query.QueryBuilder;
-import cc.doctor.search.client.rpc.result.*;
 
 import java.util.LinkedList;
 

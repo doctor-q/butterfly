@@ -2,7 +2,7 @@ package cc.doctor.search.server.cluster.node;
 
 import cc.doctor.search.server.cluster.routing.RoutingNode;
 import cc.doctor.search.server.cluster.routing.RoutingService;
-import cc.doctor.search.server.index.store.indices.recovery.RecoveryService;
+import cc.doctor.search.server.recovery.RecoveryService;
 import cc.doctor.search.common.schedule.Scheduler;
 import cc.doctor.search.server.cluster.node.schema.SchemaService;
 import cc.doctor.search.server.cluster.node.tolerance.ToleranceService;

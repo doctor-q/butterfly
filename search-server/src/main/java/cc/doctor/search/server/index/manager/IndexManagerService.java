@@ -4,9 +4,9 @@ import cc.doctor.search.server.common.config.Settings;
 import cc.doctor.search.server.query.SearcherInner;
 import cc.doctor.search.common.entity.Tuple;
 import cc.doctor.search.common.exceptions.index.IndexException;
-import cc.doctor.search.client.index.schema.Schema;
+import cc.doctor.search.common.schema.Schema;
 import cc.doctor.search.client.query.QueryBuilder;
-import cc.doctor.search.client.query.document.Document;
+import cc.doctor.search.common.document.Document;
 import cc.doctor.search.server.cluster.node.schema.SchemaService;
 import cc.doctor.search.server.common.config.GlobalConfig;
 import cc.doctor.search.common.utils.CollectionUtils;
@@ -21,7 +21,7 @@ import java.util.Map;
  * 管控所有的操作
  */
 public class IndexManagerService {
-    public static final String INDEX_PATH_ROOT = Settings.settings.getString(GlobalConfig.DATA_PATH);
+    public static final String INDEX_PATH_ROOT = "";
     private SchemaService schemaService;
     private Map<String, IndexManagerInner> indexManagerInnerMap = new HashMap<>();
     private Map<String, SearcherInner> searcherInnerMap = new HashMap<>();

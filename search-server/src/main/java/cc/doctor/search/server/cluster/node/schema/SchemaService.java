@@ -2,7 +2,7 @@ package cc.doctor.search.server.cluster.node.schema;
 
 import cc.doctor.search.server.common.config.Settings;
 import cc.doctor.search.common.ha.zk.ZookeeperClient;
-import cc.doctor.search.client.index.schema.Schema;
+import cc.doctor.search.common.schema.Schema;
 import cc.doctor.search.server.common.config.GlobalConfig;
 import cc.doctor.search.common.utils.SerializeUtils;
 

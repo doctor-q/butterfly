@@ -2,15 +2,16 @@ package cc.doctor.search.server.index.shard;
 
 import cc.doctor.search.server.common.config.GlobalConfig;
 import cc.doctor.search.server.index.manager.WriteDocumentCallable;
-import cc.doctor.search.server.index.store.indices.indexer.IndexerMediator;
-import cc.doctor.search.server.index.store.indices.inverted.InvertedTable;
-import cc.doctor.search.server.index.store.indices.inverted.WordInfo;
-import cc.doctor.search.server.index.store.mm.source.MmapSourceFile;
-import cc.doctor.search.server.index.store.mm.source.SourceFile;
+import cc.doctor.search.store.StoreConfigs;
+import cc.doctor.search.store.indices.indexer.IndexerMediator;
+import cc.doctor.search.store.indices.inverted.InvertedTable;
+import cc.doctor.search.store.indices.inverted.WordInfo;
+import cc.doctor.search.store.mm.source.MmapSourceFile;
+import cc.doctor.search.store.mm.source.SourceFile;
 import cc.doctor.search.server.query.grammar.GrammarParser;
 import cc.doctor.search.common.exceptions.query.QueryGrammarException;
-import cc.doctor.search.client.index.schema.Schema;
-import cc.doctor.search.client.query.document.Document;
+import cc.doctor.search.common.schema.Schema;
+import cc.doctor.search.common.document.Document;
 import cc.doctor.search.client.query.grammar.Predication;
 import cc.doctor.search.server.index.manager.IndexManagerInner;
 import cc.doctor.search.common.utils.CollectionUtils;
@@ -59,12 +60,12 @@ public class ShardService {
             //分片目录
             FileUtils.createDirectoryRecursion(shardRoot);
         }
-        if (!FileUtils.exists(shardRoot + "/" + GlobalConfig.SOURCE_PATH_NAME)) {
+        if (!FileUtils.exists(shardRoot + "/" + StoreConfigs.SOURCE_PATH_NAME)) {
             //source目录
-            FileUtils.createDirectoryRecursion(shardRoot + "/" + GlobalConfig.SOURCE_PATH_NAME);
+            FileUtils.createDirectoryRecursion(shardRoot + "/" + StoreConfigs.SOURCE_PATH_NAME);
         }
-        this.indexerMediator = new IndexerMediator(this);
-        this.sourceFile = new MmapSourceFile(this);
+        this.indexerMediator = new IndexerMediator();
+        this.sourceFile = new MmapSourceFile();
     }
 
     public Schema getSchema() {

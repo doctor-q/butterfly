@@ -2,8 +2,8 @@ package cc.doctor.search.server.query;
 
 import cc.doctor.search.client.query.QueryBuilder;
 import cc.doctor.search.client.query.grammar.Relation;
-import cc.doctor.search.server.index.store.indices.inverted.InvertedTable;
-import cc.doctor.search.server.index.store.indices.inverted.WordInfo;
+import cc.doctor.search.store.indices.inverted.InvertedTable;
+import cc.doctor.search.store.indices.inverted.WordInfo;
 import cc.doctor.search.server.index.shard.ShardService;
 import cc.doctor.search.server.query.grammar.GrammarParser;
 import cc.doctor.search.common.utils.CollectionUtils;
@@ -11,7 +11,7 @@ import cc.doctor.search.common.utils.CollectionUtils;
 import java.util.*;
 
 import static cc.doctor.search.server.query.grammar.GrammarParser.grammarParser;
-import static cc.doctor.search.server.query.merge.ForkJoinInvertedDocMerger.forkJoinInvertedDocMerger;
+import static cc.doctor.search.store.indices.inverted.merge.ForkJoinInvertedDocMerger.forkJoinInvertedDocMerger;
 
 /**
  * Created by doctor on 2017/3/14.

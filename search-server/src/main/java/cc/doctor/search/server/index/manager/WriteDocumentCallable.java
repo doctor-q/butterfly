@@ -1,9 +1,9 @@
 package cc.doctor.search.server.index.manager;
 
-import cc.doctor.search.server.index.store.indices.indexer.IndexerMediator;
-import cc.doctor.search.server.index.store.mm.source.SourceFile;
-import cc.doctor.search.client.query.document.Document;
-import cc.doctor.search.client.index.schema.Schema;
+import cc.doctor.search.store.indices.indexer.IndexerMediator;
+import cc.doctor.search.store.mm.source.SourceFile;
+import cc.doctor.search.common.document.Document;
+import cc.doctor.search.common.schema.Schema;
 
 import java.util.List;
 import java.util.Map;

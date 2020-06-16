@@ -18,16 +18,16 @@ public class Settings {
         add(GlobalConfig.ZOOKEEPER_CONN_STRING, GlobalConfig.ZOOKEEPER_CONN_STRING_DEFAULT);
         add(GlobalConfig.ZOOKEEPER_MASTER_PATH, GlobalConfig.ZOOKEEPER_MASTER_PATH_DEFAULT);
         add(GlobalConfig.ZOOKEEPER_NODE_PATH, GlobalConfig.ZOOKEEPER_NODE_PATH_DEFAULT);
-        add(GlobalConfig.DATA_PATH, PropertyUtils.getProperty(GlobalConfig.DATA_PATH, GlobalConfig.DATA_PATH_DEFAULT));
+//        add(GlobalConfig.DATA_PATH, PropertyUtils.getProperty(GlobalConfig.DATA_PATH, GlobalConfig.DATA_PATH_DEFAULT));
         add(GlobalConfig.NODE_NAME, PropertyUtils.getProperty(GlobalConfig.NODE_NAME, "node"));
         add(GlobalConfig.NETTY_SERVER_HOST, NetworkUtils.getOneUnLoopHost().getHostAddress());
         add(GlobalConfig.NETTY_SERVER_PORT, GlobalConfig.NETTY_SERVER_PORT_DEFAULT);
         add(GlobalConfig.OPERATION_LOG_QUERY, GlobalConfig.OPERATION_LOG_QUERY_DEFAULT);
-        add(GlobalConfig.DICT_FILE_SIZE, GlobalConfig.DICT_FILE_SIZE_DEFAULT);
-        add(GlobalConfig.DICT_INDEX_FILE_SIZE, GlobalConfig.DICT_INDEX_FILE_SIZE_DEFAULT);
-        add(GlobalConfig.CACHE_INVERTED_TABLE_SIZE, GlobalConfig.CACHE_INVERTED_TABLE_SIZE_DEFAULT);
-        add(GlobalConfig.FLUSH_INVERTED_TABLE_NUM, GlobalConfig.FLUSH_INVERTED_TABLE_NUM_DEFAULT);
-        add(GlobalConfig.INVERTED_FILE_SIZE_NAME, GlobalConfig.INVERTED_FILE_SIZE_DEFAULT);
+//        add(GlobalConfig.DICT_FILE_SIZE, GlobalConfig.DICT_FILE_SIZE_DEFAULT);
+//        add(GlobalConfig.DICT_INDEX_FILE_SIZE, GlobalConfig.DICT_INDEX_FILE_SIZE_DEFAULT);
+//        add(GlobalConfig.CACHE_INVERTED_TABLE_SIZE, GlobalConfig.CACHE_INVERTED_TABLE_SIZE_DEFAULT);
+//        add(GlobalConfig.FLUSH_INVERTED_TABLE_NUM, GlobalConfig.FLUSH_INVERTED_TABLE_NUM_DEFAULT);
+//        add(GlobalConfig.INVERTED_FILE_SIZE_NAME, GlobalConfig.INVERTED_FILE_SIZE_DEFAULT);
         add(GlobalConfig.ZOOKEEPER_INDEX_SCHEMA_PATH, GlobalConfig.ZOOKEEPER_INDEX_SCHEMA_PATH_DEFAULT);
     }
 

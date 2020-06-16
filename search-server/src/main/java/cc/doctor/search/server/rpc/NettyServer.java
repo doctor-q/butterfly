@@ -1,8 +1,8 @@
 package cc.doctor.search.server.rpc;
 
-import cc.doctor.search.server.common.config.Settings;
-import cc.doctor.search.server.common.config.GlobalConfig;
 import cc.doctor.search.common.utils.NetworkUtils;
+import cc.doctor.search.server.common.config.GlobalConfig;
+import cc.doctor.search.server.common.config.Settings;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -29,6 +29,7 @@ public class NettyServer implements Server {
             channelFuture.sync();
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
         }
     }
 

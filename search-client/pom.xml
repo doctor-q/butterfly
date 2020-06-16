@@ -15,7 +15,8 @@
     <dependencies>
         <dependency>
             <groupId>cc.doctor.search</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>search-common</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>

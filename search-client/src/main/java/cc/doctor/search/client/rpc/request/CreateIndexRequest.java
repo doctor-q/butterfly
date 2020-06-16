@@ -1,6 +1,6 @@
 package cc.doctor.search.client.rpc.request;
 
-import cc.doctor.search.client.index.schema.Schema;
+import cc.doctor.search.common.schema.Schema;
 
 /**
  * Created by doctor on 2017/3/15.

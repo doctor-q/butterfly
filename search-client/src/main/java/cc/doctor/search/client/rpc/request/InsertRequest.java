@@ -1,6 +1,6 @@
 package cc.doctor.search.client.rpc.request;
 
-import cc.doctor.search.client.query.document.Document;
+import cc.doctor.search.common.document.Document;
 
 /**
  * Created by doctor on 2017/3/15.

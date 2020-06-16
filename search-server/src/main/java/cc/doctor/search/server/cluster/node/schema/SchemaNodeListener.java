@@ -4,7 +4,7 @@ import cc.doctor.search.server.common.config.GlobalConfig;
 import cc.doctor.search.server.common.config.Settings;
 import cc.doctor.search.common.ha.zk.ZkEventListenerAdapter;
 import cc.doctor.search.common.ha.zk.ZookeeperClient;
-import cc.doctor.search.client.index.schema.Schema;
+import cc.doctor.search.common.schema.Schema;
 import cc.doctor.search.common.utils.SerializeUtils;
 import org.apache.zookeeper.WatchedEvent;
 

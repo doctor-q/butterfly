@@ -10,12 +10,12 @@ import cc.doctor.search.server.cluster.routing.RoutingService;
 import cc.doctor.search.server.common.config.GlobalConfig;
 import cc.doctor.search.server.common.config.Settings;
 import cc.doctor.search.server.index.manager.IndexManagerService;
-import cc.doctor.search.server.index.store.indices.recovery.RecoveryService;
+import cc.doctor.search.server.recovery.RecoveryService;
 import cc.doctor.search.common.entity.Action;
 import cc.doctor.search.common.entity.Tuple;
 import cc.doctor.search.common.ha.zk.ZookeeperClient;
-import cc.doctor.search.client.query.document.Document;
-import cc.doctor.search.client.index.schema.Schema;
+import cc.doctor.search.common.document.Document;
+import cc.doctor.search.common.schema.Schema;
 import cc.doctor.search.client.rpc.Client;
 import cc.doctor.search.client.rpc.Message;
 

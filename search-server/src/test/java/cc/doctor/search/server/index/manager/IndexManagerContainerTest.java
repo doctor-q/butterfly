@@ -1,8 +1,8 @@
 package cc.doctor.search.server.index.manager;
 
-import cc.doctor.search.client.query.document.Document;
-import cc.doctor.search.client.query.document.Field;
-import cc.doctor.search.client.index.schema.Schema;
+import cc.doctor.search.common.document.Document;
+import cc.doctor.search.common.document.Field;
+import cc.doctor.search.common.schema.Schema;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -3,10 +3,10 @@ package cc.doctor.search.server.index.manager;
 import cc.doctor.search.server.common.config.GlobalConfig;
 import cc.doctor.search.server.common.config.Settings;
 import cc.doctor.search.server.index.shard.ShardService;
-import cc.doctor.search.client.query.document.Document;
-import cc.doctor.search.client.query.document.Field;
+import cc.doctor.search.common.document.Document;
+import cc.doctor.search.common.document.Field;
 import cc.doctor.search.common.utils.PropertyUtils;
-import cc.doctor.search.client.index.schema.Schema;
+import cc.doctor.search.common.schema.Schema;
 import cc.doctor.search.common.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class IndexManagerInner {
     private static final Logger log = LoggerFactory.getLogger(IndexManagerInner.class);
-    public static final String dataRoot = (String) Settings.settings.get(GlobalConfig.DATA_PATH);
+    public static final String dataRoot = "";
     public static final int defaultShardsNum = PropertyUtils.getProperty(GlobalConfig.DEFAULT_SHARDS_NUM, GlobalConfig.DEFAULT_SHARDS_NUM_DEFAULT);
 
     private String indexRoot;
