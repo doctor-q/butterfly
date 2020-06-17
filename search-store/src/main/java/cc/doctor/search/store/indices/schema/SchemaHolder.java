@@ -1,4 +1,4 @@
-package cc.doctor.search.store.mm.holder;
+package cc.doctor.search.store.indices.schema;
 
 import cc.doctor.search.common.schema.Schema;
 

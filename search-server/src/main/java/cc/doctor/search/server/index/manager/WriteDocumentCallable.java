@@ -1,7 +1,7 @@
 package cc.doctor.search.server.index.manager;
 
 import cc.doctor.search.store.indices.indexer.IndexerMediator;
-import cc.doctor.search.store.mm.source.SourceFile;
+import cc.doctor.search.store.source.SourceFile;
 import cc.doctor.search.common.document.Document;
 import cc.doctor.search.common.schema.Schema;
 

@@ -1,16 +1,14 @@
 package cc.doctor.search.server.index.manager;
 
-import cc.doctor.search.server.common.config.Settings;
-import cc.doctor.search.server.query.SearcherInner;
+import cc.doctor.search.client.query.QueryBuilder;
+import cc.doctor.search.common.document.Document;
 import cc.doctor.search.common.entity.Tuple;
 import cc.doctor.search.common.exceptions.index.IndexException;
 import cc.doctor.search.common.schema.Schema;
-import cc.doctor.search.client.query.QueryBuilder;
-import cc.doctor.search.common.document.Document;
-import cc.doctor.search.server.cluster.node.schema.SchemaService;
-import cc.doctor.search.server.common.config.GlobalConfig;
 import cc.doctor.search.common.utils.CollectionUtils;
 import cc.doctor.search.common.utils.FileUtils;
+import cc.doctor.search.server.cluster.node.schema.SchemaService;
+import cc.doctor.search.server.query.SearcherInner;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +16,7 @@ import java.util.Map;
 
 /**
  * Created by doctor on 2017/3/9.
- * 管控所有的操作
+ * manage cluster index
  */
 public class IndexManagerService {
     public static final String INDEX_PATH_ROOT = "";
@@ -75,7 +73,6 @@ public class IndexManagerService {
         Schema oldSchema = schemaService.getIndexSchemas().get(schema.getIndexName());
         if (oldSchema != null) {
             //replicate, shards, the exist property can't be update.
-            oldSchema.setAlias(schema.getAlias());
             oldSchema.setDynamic(schema.getDynamic());
             oldSchema.setFilters(schema.getFilters());
             oldSchema.setTypeHandlers(schema.getTypeHandlers());

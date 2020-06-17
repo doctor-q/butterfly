@@ -5,13 +5,13 @@ import cc.doctor.search.common.utils.FileUtils;
 import cc.doctor.search.store.StoreConfigs;
 import cc.doctor.search.store.indices.indexer.IndexerMediator;
 import cc.doctor.search.store.mm.MmapScrollFile;
-import cc.doctor.search.store.mm.ScrollFile;
+import cc.doctor.search.store.mm.ScrollFileNameStrategy;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static cc.doctor.search.store.mm.ScrollFile.AutoIncrementScrollFileNameStrategy.autoIncrementScrollFileNameStrategy;
+import static cc.doctor.search.store.mm.AutoIncrementScrollFileNameStrategy.autoIncrementScrollFileNameStrategy;
 
 /**
  * Created by doctor on 2017/3/7.
@@ -19,8 +19,8 @@ import static cc.doctor.search.store.mm.ScrollFile.AutoIncrementScrollFileNameSt
  */
 @Slf4j
 public class MmapInvertedFile extends InvertedFile {
-    private ScrollFile scrollFile;
-    private ScrollFile.ScrollFileNameStrategy scrollFileNameStrategy = autoIncrementScrollFileNameStrategy;
+    private MmapScrollFile scrollFile;
+    private ScrollFileNameStrategy scrollFileNameStrategy = autoIncrementScrollFileNameStrategy;
     private List<InvertedTable> memInvertedTables = new LinkedList<>();
     private static AtomicInteger memInvertedTableNum = new AtomicInteger();
     public static final int flushTableNum = StoreConfigs.FLUSH_INVERTED_TABLE_NUM_DEFAULT;
@@ -39,7 +39,7 @@ public class MmapInvertedFile extends InvertedFile {
 
     @Override
     public InvertedTable getInvertedTable(WordInfo wordInfo) {
-        return (InvertedTable) scrollFile.readSerializable(wordInfo.getPosition()).getT2();
+        return (InvertedTable) scrollFile.readObject(wordInfo.getPosition(), 0);
     }
 
     /**
@@ -68,7 +68,7 @@ public class MmapInvertedFile extends InvertedFile {
             }
         });
         for (InvertedTable mmInvertedTable : memInvertedTables) {
-            long position = scrollFile.writeSerializable(mmInvertedTable);
+            long position = scrollFile.writeObject(mmInvertedTable);
             WordInfo wordInfo = mmInvertedTable.getWordInfo();
             wordInfo.setPosition(position);
             updateWordInfo(mmInvertedTable.getField(), wordInfo);
@@ -83,7 +83,7 @@ public class MmapInvertedFile extends InvertedFile {
      * todo 字符串前缀相同的倒排链保存在相邻位置
      */
     public void mergeInvertedTables(List<WordInfo> wordInfos) {
-        ScrollFile newScrollFile = new MmapScrollFile(scrollFile.root() + "/new", scrollFile.scrollSize(), scrollFileNameStrategy);
+        MmapScrollFile newScrollFile = new MmapScrollFile(scrollFile.root() + "/new", scrollFile.scrollSize(), scrollFileNameStrategy);
         List<String> files = scrollFile.files();
         int mergeFileNum = files.size() - 1;
         long maxPosition = mergeFileNum * scrollFile.scrollSize();
@@ -95,12 +95,10 @@ public class MmapInvertedFile extends InvertedFile {
         for (WordInfo wordInfo : wordInfoMap.values()) {
             if (wordInfo.getPosition() < maxPosition) {
                 InvertedTable invertedTable = getInvertedTable(wordInfo);
-                long position = newScrollFile.writeSerializable(invertedTable);
+                long position = newScrollFile.writeObject(invertedTable);
                 wordInfo.setPosition(position);
             }
         }
-        //lock
-        scrollFile.readLock();
         //删除合并过的文件
         for (int i = 0; i < files.size() - 1; i++) {
             FileUtils.removeFile(scrollFile.root() + "/" + files.get(i));
@@ -117,7 +115,6 @@ public class MmapInvertedFile extends InvertedFile {
             FileUtils.move(scrollFile.root() + "/" + scrollFile.files().get(i), scrollFile.root() + "/" + next);
             current = next;
         }
-        scrollFile = new MmapScrollFile(scrollFile.root(), scrollFile.scrollSize(), scrollFileNameStrategy,
-                (files.size() - mergeFileNum) * scrollFile.scrollSize() + scrollFile.position() % scrollFile.scrollSize());
+        scrollFile = new MmapScrollFile(scrollFile.root(), scrollFile.scrollSize(), scrollFileNameStrategy);
     }
 }

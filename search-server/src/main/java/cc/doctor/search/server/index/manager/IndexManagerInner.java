@@ -1,15 +1,13 @@
 package cc.doctor.search.server.index.manager;
 
-import cc.doctor.search.server.common.config.GlobalConfig;
-import cc.doctor.search.server.common.config.Settings;
-import cc.doctor.search.server.index.shard.ShardService;
 import cc.doctor.search.common.document.Document;
 import cc.doctor.search.common.document.Field;
-import cc.doctor.search.common.utils.PropertyUtils;
 import cc.doctor.search.common.schema.Schema;
 import cc.doctor.search.common.utils.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import cc.doctor.search.common.utils.PropertyUtils;
+import cc.doctor.search.server.common.config.GlobalConfig;
+import cc.doctor.search.server.index.shard.ShardService;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
@@ -17,8 +15,8 @@ import java.util.*;
  * Created by doctor on 2017/3/8.
  * 索引管理,负责本地创建索引,调用shardService进行索引操作,每个索引配置一个
  */
+@Slf4j
 public class IndexManagerInner {
-    private static final Logger log = LoggerFactory.getLogger(IndexManagerInner.class);
     public static final String dataRoot = "";
     public static final int defaultShardsNum = PropertyUtils.getProperty(GlobalConfig.DEFAULT_SHARDS_NUM, GlobalConfig.DEFAULT_SHARDS_NUM_DEFAULT);
 
@@ -52,6 +50,7 @@ public class IndexManagerInner {
         }
         return true;
     }
+
     /**
      * 创建索引相关的目录
      */
@@ -98,6 +97,7 @@ public class IndexManagerInner {
 
     /**
      * 批量插入,会先将文档的相同列合并,合并后在建索引
+     *
      * @param documents 文档集合
      */
     public boolean bulkInsert(Iterable<Document> documents) {
