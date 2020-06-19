@@ -39,7 +39,7 @@ public class InvertedTable implements Serializable {
         this.invertedDocs = invertedDocs;
     }
 
-    public InvertedDoc getInvertedDoc(Long docId) {
+    public InvertedDoc getInvertedDoc(String docId) {
         return Dichotomy.dichotomySearch(invertedDocs, new InvertedDoc(docId, 0));
     }
 
@@ -50,15 +50,15 @@ public class InvertedTable implements Serializable {
     //文档id
     public static class InvertedDoc implements Comparable<InvertedDoc>, Serializable {
         private static final long serialVersionUID = -1387682032722468702L;
-        long docId;     //文档id
+        String docId;     //文档id
         long docFrequency;   //文档频率
 
-        public InvertedDoc(long docId, long docFrequency) {
+        public InvertedDoc(String docId, long docFrequency) {
             this.docId = docId;
             this.docFrequency = docFrequency;
         }
 
-        public long getDocId() {
+        public String getDocId() {
             return docId;
         }
 
@@ -72,7 +72,7 @@ public class InvertedTable implements Serializable {
 
         @Override
         public int compareTo(InvertedDoc invertedDoc) {
-            return ((Long)docId).compareTo(invertedDoc.getDocId());
+            return docId.compareTo(invertedDoc.getDocId());
         }
     }
 }

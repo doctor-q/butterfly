@@ -1,43 +1,20 @@
 package cc.doctor.search.client.rpc;
 
-import cc.doctor.search.common.document.Document;
-import cc.doctor.search.client.rpc.result.*;
 import cc.doctor.search.client.query.QueryBuilder;
+import cc.doctor.search.client.rpc.result.*;
+import cc.doctor.search.common.document.Document;
 
 /**
  * Created by doctor on 2017/3/14.
  */
-public interface Client {
+public interface Client extends IndexClient {
 
     /**
-     * connect to server
-     * @param address server address
+     * connect to master
+     *
+     * @param address master address
      */
     void connect(String address);
-
-    /**
-     * create an index
-     * @param indexName index name
-     */
-    IndexResult createIndex(String indexName);
-
-    /**
-     * drop an index
-     * @param indexName index name
-     */
-    IndexResult dropIndex(String indexName);
-
-    /**
-     * set index alias index
-     * @param indexName index name
-     */
-    IndexResult putAlias(String indexName, String alias);
-
-    /**
-     * drop alias of an index
-     * @param indexName index name
-     */
-    IndexResult dropAlias(String indexName, String alias);
 
     /**
      * do query
@@ -47,25 +24,26 @@ public interface Client {
     /**
      * insert an document
      */
-    InsertResult insert(Document document);
+    InsertResult insert(String index, Document document);
 
     /**
      * delete an document
      */
-    DeleteResult delete(long docId);
+    DeleteResult delete(String index, String docId);
 
     /**
      * insert documents
      */
-    BulkResult bulkInsert(Iterable<Document> documents);
+    BulkResult bulkInsert(String index, Iterable<Document> documents);
 
     /**
      * delete documents
      */
-    BulkResult bulkDelete(Iterable<Long> ids);
+    BulkResult bulkDelete(String index, Iterable<String> ids);
 
     /**
      * delete by query
+     *
      * @param queryBuilder a query for deleting documents
      */
     BulkResult bulkDeleteByQuery(QueryBuilder queryBuilder);

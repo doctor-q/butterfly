@@ -14,18 +14,35 @@ import java.util.*;
 /**
  * Created by doctor on 2017/3/8.
  * 索引管理,负责本地创建索引,调用shardService进行索引操作,每个索引配置一个
+ * execute on data node
  */
 @Slf4j
-public class IndexManagerInner {
-    public static final String dataRoot = "";
+public class IndexService {
+    public static final String dataRoot = "/tmp/data";
     public static final int defaultShardsNum = PropertyUtils.getProperty(GlobalConfig.DEFAULT_SHARDS_NUM, GlobalConfig.DEFAULT_SHARDS_NUM_DEFAULT);
 
+    /**
+     * index name
+     */
+    private String index;
+    /**
+     * index root dir
+     */
     private String indexRoot;
+    /**
+     * num of shards
+     */
     private int shards;
+    /**
+     * shard service map
+     */
     private Map<Integer, ShardService> shardServiceMap = new HashMap<>();
+    /**
+     * index schema
+     */
     private Schema schema;
 
-    public IndexManagerInner(Schema schema) {
+    public IndexService(Schema schema) {
         this.schema = schema;
         this.shards = schema.getShards();
         this.indexRoot = dataRoot + "/" + schema.getIndexName();
@@ -40,15 +57,15 @@ public class IndexManagerInner {
         return indexRoot;
     }
 
-    public boolean loadShards() {
+    public void loadShards() {
         List<String> shards = FileUtils.list(indexRoot, null);
         for (String shard : shards) {
             int shd = Integer.parseInt(shard);
-            ShardService shardService = new ShardService(this, shd);
+            ShardService shardService = new ShardService(indexRoot + "/" + shard, shd);
+            shardService.setSchema(schema);
             shardService.loadIndex();
             shardServiceMap.put(shd, shardService);
         }
-        return true;
     }
 
     /**
@@ -63,7 +80,7 @@ public class IndexManagerInner {
         FileUtils.createDirectoryRecursion(indexRoot);
         //分片目录,分片设置后不可更改,除非重建索引
         for (int i = 0; i < shards; i++) {
-            ShardService shardService = new ShardService(this, i);
+            ShardService shardService = new ShardService(indexRoot + "/" + i, i);
             shardServiceMap.put(i, shardService);
         }
         return true;
@@ -80,9 +97,10 @@ public class IndexManagerInner {
 
     private int allocateShard(Document document) {
         if (document.getId() == null) {
-            document.setId(DocIdGenerator.docIdGenerator.generateDocId(schema.getIndexName()));
+            String id = UUID.randomUUID().toString();
+            document.setId(id);
         }
-        return (int) (document.getId() % (long) shards);
+        return document.getId().hashCode() % shards;
     }
 
     public Schema getSchema() {
@@ -102,11 +120,11 @@ public class IndexManagerInner {
      */
     public boolean bulkInsert(Iterable<Document> documents) {
         Map<Integer, List<Document>> shardDocuments = new HashMap<>();
-        Map<Integer, Map<String, Map<Object, Set<Long>>>> shardInvertedDocMap = new HashMap<>();
+        Map<Integer, Map<String, Map<Object, Set<String>>>> shardInvertedDocMap = new HashMap<>();
         for (Document document : documents) {
             int shard = allocateShard(document);
             List<Document> documentList = shardDocuments.get(shard);
-            Map<String, Map<Object, Set<Long>>> invertedDocMap = shardInvertedDocMap.get(shard);
+            Map<String, Map<Object, Set<String>>> invertedDocMap = shardInvertedDocMap.get(shard);
             if (invertedDocMap == null) {
                 invertedDocMap = new HashMap<>();
                 shardInvertedDocMap.put(shard, invertedDocMap);
@@ -118,13 +136,13 @@ public class IndexManagerInner {
             for (Field field : fields) {
                 String fieldName = field.getName();
                 Object value = field.getValue();
-                Map<Object, Set<Long>> invertedDocInners = invertedDocMap.get(fieldName);
+                Map<Object, Set<String>> invertedDocInners = invertedDocMap.get(fieldName);
                 if (invertedDocInners == null) {
                     invertedDocInners = new HashMap<>();
                     invertedDocMap.put(fieldName, invertedDocInners);
                 }
                 if (invertedDocInners.get(value) == null) {
-                    invertedDocInners.put(value, new HashSet<Long>());
+                    invertedDocInners.put(value, new HashSet<>());
                 }
                 invertedDocInners.get(value).add(document.getId());
             }

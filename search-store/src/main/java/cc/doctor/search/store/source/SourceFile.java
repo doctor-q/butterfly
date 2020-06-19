@@ -12,14 +12,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class SourceFile {
     protected String sourceRoot;
-    private static Map<Long, Long> idPositionMap = new ConcurrentHashMap<>();    //文档id,对应的Source偏移
+    private static Map<String, Long> idPositionMap = new ConcurrentHashMap<>();    //文档id,对应的Source偏移
     private static MmapFile sourceIndexFile;
 
-    public Long getPositionById(long id) {
+    public Long getPositionById(String id) {
         return idPositionMap.get(id);
     }
 
-    public void setPositionById(long id, long position) {
+    public void setPositionById(String id, long position) {
         idPositionMap.put(id, position);
     }
 
@@ -46,7 +46,7 @@ public abstract class SourceFile {
      */
     public abstract long appendSource(Source source);
 
-    public Source getSourceById(long id) {
+    public Source getSourceById(String id) {
         Long positionById = getPositionById(id);
         if (positionById != null) {
             return getSource(positionById);

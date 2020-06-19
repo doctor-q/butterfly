@@ -1,4 +1,4 @@
-package cc.doctor.search.server.cluster.routing;
+package cc.doctor.search.client;
 
 /**
  * Created by doctor on 2017/3/13.

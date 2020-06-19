@@ -1,8 +1,8 @@
 package cc.doctor.search.server.cluster.node.tolerance;
 
 import cc.doctor.search.server.cluster.node.Node;
-import cc.doctor.search.server.cluster.routing.RoutingNode;
-import cc.doctor.search.server.cluster.routing.RoutingService;
+import cc.doctor.search.client.route.RoutingNode;
+import cc.doctor.search.client.route.RoutingService;
 import cc.doctor.search.client.rpc.Client;
 import cc.doctor.search.client.rpc.Message;
 import cc.doctor.search.client.rpc.operation.Operation;
@@ -60,7 +60,7 @@ public class ToleranceService {
         RoutingNode routingNode = routingService.getNode(nodeName);
         if (routingNode.isMaster()) {
             AtomicInteger nodeLoss = this.nodeLoss.get(nodeName);
-            if (nodeLoss.incrementAndGet() > routingService.getRoutingNodes().size() / 2) {
+            if (nodeLoss.incrementAndGet() > routingService.getDataNodes().size() / 2) {
                 //remove node
                 voteService.doVote();
                 //如果自己是master,删掉这个节点
@@ -78,7 +78,7 @@ public class ToleranceService {
         if (master) {
             String nodeName = (String) message.getData();
             AtomicInteger nodeLoss = this.nodeLoss.get(nodeName);
-            if (nodeLoss.incrementAndGet() > routingService.getRoutingNodes().size() / 2) {
+            if (nodeLoss.incrementAndGet() > routingService.getDataNodes().size() / 2) {
                 //remove node
                 nodeService.removeNode(routingService.getNode(nodeName));
                 this.nodeLoss.remove(nodeName);

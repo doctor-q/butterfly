@@ -3,7 +3,7 @@ package cc.doctor.search.store.indices.inverted;
 import cc.doctor.search.common.entity.Action;
 import cc.doctor.search.common.utils.FileUtils;
 import cc.doctor.search.store.StoreConfigs;
-import cc.doctor.search.store.indices.indexer.IndexerMediator;
+import cc.doctor.search.store.indices.indexer.IndexerService;
 import cc.doctor.search.store.mm.MmapScrollFile;
 import cc.doctor.search.store.mm.ScrollFileNameStrategy;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +25,8 @@ public class MmapInvertedFile extends InvertedFile {
     private static AtomicInteger memInvertedTableNum = new AtomicInteger();
     public static final int flushTableNum = StoreConfigs.FLUSH_INVERTED_TABLE_NUM_DEFAULT;
 
-    public MmapInvertedFile(IndexerMediator indexerMediator) {
-        super(indexerMediator);
+    public MmapInvertedFile(IndexerService indexerService) {
+        super(indexerService);
         scrollFile = new MmapScrollFile(StoreConfigs.INVERTED_FILE_PATH_NAME,
                 StoreConfigs.INVERTED_FILE_SIZE_DEFAULT, autoIncrementScrollFileNameStrategy);
         scrollFile.onWriteFileCheck(new Action() {

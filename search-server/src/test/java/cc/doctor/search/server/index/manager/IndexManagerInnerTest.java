@@ -10,33 +10,33 @@ import org.junit.Test;
  * Created by doctor on 2017/3/30.
  */
 public class IndexManagerInnerTest {
-    IndexManagerInner indexManagerInner;
+    IndexService indexService;
     Schema schema;
 
     @Before
     public void setup() {
         schema = new Schema();
         schema.setIndexName("order_info");
-        indexManagerInner = new IndexManagerInner(schema);
+        indexService = new IndexService(schema);
     }
 
     @Test
     public void createIndexInner() throws Exception {
-        assert indexManagerInner.createIndexInner();
+        assert indexService.createIndexInner();
     }
 
     @Test
     public void dropIndexInner() throws Exception {
-        indexManagerInner.dropIndexInner();
+        indexService.dropIndexInner();
     }
 
     @Test
     public void writeDocumentInner() throws Exception {
         createIndexInner();
-        Document document = new Document().id(1L).field(new Field("name", "chen"));
-        indexManagerInner.insertDocument(document);
+        Document document = new Document().id("").field(new Field("name", "chen"));
+        indexService.insertDocument(document);
         Thread.sleep(1000);
-        indexManagerInner.flush();
+        indexService.flush();
     }
 
     @Test

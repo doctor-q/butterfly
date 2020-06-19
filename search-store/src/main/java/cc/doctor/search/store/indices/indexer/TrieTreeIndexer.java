@@ -19,8 +19,8 @@ import java.util.Map;
 public class TrieTreeIndexer extends AbstractIndexer {
     Map<String, TrieTree<WordInfo>> fieldTrieTree = new HashMap<>();
 
-    public TrieTreeIndexer(IndexerMediator indexerMediator) {
-        super(indexerMediator);
+    public TrieTreeIndexer(IndexerService indexerService) {
+        super(indexerService);
     }
 
     public Map<String, TrieTree<WordInfo>> getFieldTrieTree() {

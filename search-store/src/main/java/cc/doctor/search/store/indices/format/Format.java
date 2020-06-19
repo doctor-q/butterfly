@@ -5,12 +5,15 @@ package cc.doctor.search.store.indices.format;
  */
 public enum Format {
     //// TODO: 2017/3/9 BigDecimal
-    STRING("string"), LONG("long") {
+    STRING("string"),
+    LONG("long") {
         @Override
         public Object format(String value) {
             return Long.parseLong(value);
         }
-    }, DATE("date"), DOUBLE("double") {
+    },
+    DATE("date"),
+    DOUBLE("double") {
         @Override
         public Object format(String value) {
             return Double.parseDouble(value);

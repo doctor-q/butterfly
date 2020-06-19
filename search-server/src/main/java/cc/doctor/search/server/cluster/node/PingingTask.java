@@ -1,8 +1,8 @@
 package cc.doctor.search.server.cluster.node;
 
 import cc.doctor.search.server.cluster.node.tolerance.ToleranceService;
-import cc.doctor.search.server.cluster.routing.RoutingNode;
-import cc.doctor.search.server.cluster.routing.RoutingService;
+import cc.doctor.search.client.route.RoutingNode;
+import cc.doctor.search.client.route.RoutingService;
 import cc.doctor.search.server.common.config.GlobalConfig;
 import cc.doctor.search.server.common.config.Settings;
 import cc.doctor.search.common.exceptions.rpc.TimeoutException;
@@ -49,7 +49,7 @@ public class PingingTask implements Task {
                 nodeFailds.put(nodeName, failds);
             }
         }
-        RoutingNode master = routingService.getMaster();
+        RoutingNode master = null;
         for (String nodeName : nodeFailds.keySet()) {
             //当从属节点被检测到丢失,从属节点向主节点汇报,主节点收到过半的丢失汇报后确认从属节点丢失
             //当主节点检测到丢失后,从属节点向所有从属节点汇报,当从属节点收到过半的汇报后从新选主

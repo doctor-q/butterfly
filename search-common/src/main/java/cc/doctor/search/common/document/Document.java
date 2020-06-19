@@ -3,20 +3,21 @@ package cc.doctor.search.common.document;
 import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by doctor on 2017/3/8.
  */
 public class Document implements Serializable {
     private static final long serialVersionUID = 4175591217810356324L;
-    private Long id;
+    private String id;
     private List<Field> fields = new LinkedList<>();
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -28,7 +29,7 @@ public class Document implements Serializable {
         this.fields = fields;
     }
 
-    public Document id(Long id) {
+    public Document id(String id) {
         if (id != null) {
             this.id = id;
         }
@@ -40,5 +41,11 @@ public class Document implements Serializable {
             this.fields.add(field);
         }
         return this;
+    }
+
+    public void setIdIfAbsent() {
+        if (id == null) {
+            id = UUID.randomUUID().toString();
+        }
     }
 }

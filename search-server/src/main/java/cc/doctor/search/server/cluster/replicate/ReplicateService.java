@@ -5,11 +5,11 @@ import cc.doctor.search.client.rpc.result.*;
 import cc.doctor.search.server.cluster.node.Node;
 import cc.doctor.search.server.cluster.node.NodeClientHolder;
 import cc.doctor.search.server.cluster.node.schema.SchemaService;
-import cc.doctor.search.server.cluster.routing.RoutingNode;
-import cc.doctor.search.server.cluster.routing.RoutingService;
+import cc.doctor.search.client.route.RoutingNode;
+import cc.doctor.search.client.route.RoutingService;
 import cc.doctor.search.server.common.config.GlobalConfig;
 import cc.doctor.search.server.common.config.Settings;
-import cc.doctor.search.server.index.manager.IndexManagerService;
+import cc.doctor.search.server.index.manager.AllIndexService;
 import cc.doctor.search.server.recovery.RecoveryService;
 import cc.doctor.search.common.entity.Action;
 import cc.doctor.search.common.entity.Tuple;
@@ -39,7 +39,7 @@ public class ReplicateService {
     private SchemaService schemaService;
     private RecoveryService recoveryService;
     private NodeClientHolder nodeClientHolder;
-    private IndexManagerService indexManagerService;
+    private AllIndexService allIndexService;
 
     public ReplicateService(Node node) {
         this.node = node;
@@ -48,7 +48,7 @@ public class ReplicateService {
         nodeAllocator = new NodeAllocator(routingService, ZookeeperClient.getClient((String) Settings.settings.get(GlobalConfig.ZOOKEEPER_CONN_STRING)));
         recoveryService = container.getComponent(RecoveryService.class);
         nodeClientHolder = container.getComponent(NodeClientHolder.class);
-        indexManagerService = container.getComponent(IndexManagerService.class);
+        allIndexService = container.getComponent(AllIndexService.class);
     }
 
     private void submitReplicateTasks(String indexName, Message message, Action action) {
@@ -63,6 +63,11 @@ public class ReplicateService {
         }
     }
 
+    /**
+     * 创建索引
+     * 1. 分配shard
+     * 2. 设置schema
+     */
     public IndexResult createIndex(Message message) {
         CreateIndexRequest createIndexRequest = (CreateIndexRequest) message.getData();
         Schema schema = createIndexRequest.getSchema();
@@ -81,13 +86,16 @@ public class ReplicateService {
         submitReplicateTasks(createIndexRequest.getIndexName(), message, new Action() {
             @Override
             public void doAction() {
-                indexManagerService.createIndex(finalSchema);
+                allIndexService.createIndex(finalSchema);
                 routingService.updateRoutingInfo();
             }
         });
         return new IndexResult();
     }
 
+    /**
+     * 删除索引
+     */
     public RpcResult dropIndex(Message message) {
         String indexName = (String) message.getData();
         final Schema schema = new Schema();
@@ -98,7 +106,7 @@ public class ReplicateService {
         submitReplicateTasks(indexName, message, new Action() {
             @Override
             public void doAction() {
-                indexManagerService.dropIndex(schema);
+                allIndexService.dropIndex(schema);
             }
         });
         return new IndexResult();
@@ -112,7 +120,7 @@ public class ReplicateService {
         submitReplicateTasks(schema.getIndexName(), message, new Action() {
             @Override
             public void doAction() {
-                indexManagerService.putSchema(schema);
+                allIndexService.putSchema(schema);
             }
         });
         return new IndexResult();
@@ -126,7 +134,7 @@ public class ReplicateService {
         submitReplicateTasks(alias.getT1(), message, new Action() {
             @Override
             public void doAction() {
-                indexManagerService.putAlias(alias);
+                allIndexService.putAlias(alias);
             }
         });
         return new IndexResult();
@@ -140,7 +148,7 @@ public class ReplicateService {
         submitReplicateTasks(alias.getT1(), message, new Action() {
             @Override
             public void doAction() {
-                indexManagerService.dropAlias(alias);
+                allIndexService.dropAlias(alias);
             }
         });
         return new IndexResult();
@@ -154,7 +162,7 @@ public class ReplicateService {
         submitReplicateTasks(insertRequest.getIndexName(), message, new Action() {
             @Override
             public void doAction() {
-                indexManagerService.insertDocument(insertRequest.getIndexName(), insertRequest.getDocument());
+                allIndexService.insertDocument(insertRequest.getIndexName(), insertRequest.getDocument());
             }
         });
         return new InsertResult();
@@ -166,7 +174,7 @@ public class ReplicateService {
         submitReplicateTasks(bulkRequest.getIndexName(), message, new Action() {
             @Override
             public void doAction() {
-                indexManagerService.bulkInsert(bulkRequest.getIndexName(), bulkRequest.getBulkData());
+                allIndexService.bulkInsert(bulkRequest.getIndexName(), bulkRequest.getBulkData());
             }
         });
         return new BulkResult();
@@ -180,7 +188,7 @@ public class ReplicateService {
         submitReplicateTasks(deleteRequest.getIndexName(), message, new Action() {
             @Override
             public void doAction() {
-                indexManagerService.deleteDocument(deleteRequest.getIndexName(), deleteRequest.getDocId());
+                allIndexService.deleteDocument(deleteRequest.getIndexName(), deleteRequest.getDocId());
             }
         });
         return new DeleteResult();
@@ -194,7 +202,7 @@ public class ReplicateService {
         submitReplicateTasks(bulkRequest.getIndexName(), message, new Action() {
             @Override
             public void doAction() {
-                indexManagerService.bulkDelete(bulkRequest.getIndexName(), bulkRequest.getBulkData());
+                allIndexService.bulkDelete(bulkRequest.getIndexName(), bulkRequest.getBulkData());
             }
         });
         return new BulkResult();
@@ -208,7 +216,7 @@ public class ReplicateService {
         submitReplicateTasks(queryRequest.getIndexName(), message, new Action() {
             @Override
             public void doAction() {
-                indexManagerService.deleteByQuery(queryRequest.getIndexName(), queryRequest.getQueryBuilder());
+                allIndexService.deleteByQuery(queryRequest.getIndexName(), queryRequest.getQueryBuilder());
             }
         });
         return new BulkResult();
@@ -223,7 +231,7 @@ public class ReplicateService {
         submitReplicateTasks(queryRequest.getIndexName(), message, new Action() {
             @Override
             public void doAction() {
-                indexManagerService.query(queryRequest.getIndexName(), queryRequest.getQueryBuilder());
+                allIndexService.query(queryRequest.getIndexName(), queryRequest.getQueryBuilder());
             }
         });
         return new SearchResult();
@@ -235,7 +243,7 @@ public class ReplicateService {
         submitReplicateTasks(indexRequest.getIndexName(), message, new Action() {
             @Override
             public void doAction() {
-                indexManagerService.flush(indexRequest.getIndexName());
+                allIndexService.flush(indexRequest.getIndexName());
             }
         });
         return null;

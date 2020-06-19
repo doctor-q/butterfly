@@ -1,15 +1,15 @@
 package cc.doctor.search.server.cluster.node;
 
-import cc.doctor.search.server.cluster.routing.RoutingNode;
-import cc.doctor.search.server.cluster.routing.RoutingService;
-import cc.doctor.search.server.recovery.RecoveryService;
 import cc.doctor.search.common.schedule.Scheduler;
 import cc.doctor.search.server.cluster.node.schema.SchemaService;
 import cc.doctor.search.server.cluster.node.tolerance.ToleranceService;
 import cc.doctor.search.server.cluster.replicate.ReplicateService;
-import cc.doctor.search.server.cluster.routing.NodeState;
+import cc.doctor.search.client.NodeState;
+import cc.doctor.search.client.route.RoutingNode;
+import cc.doctor.search.client.route.RoutingService;
 import cc.doctor.search.server.cluster.vote.VoteService;
-import cc.doctor.search.server.index.manager.IndexManagerService;
+import cc.doctor.search.server.index.manager.AllIndexService;
+import cc.doctor.search.server.recovery.RecoveryService;
 import cc.doctor.search.server.rpc.NettyServer;
 import cc.doctor.search.server.rpc.Server;
 
@@ -28,10 +28,11 @@ public class Node {
     private ToleranceService toleranceService;
     private NodeClientHolder nodeClientHolder;
     private RecoveryService recoveryService;
-    private IndexManagerService indexManagerService;
+    private AllIndexService allIndexService;
     private SchemaService schemaService;
     private Server server;
     private Scheduler scheduler;
+    private NodeRole role;
 
     public RoutingNode getRoutingNode() {
         return routingNode;
@@ -57,8 +58,8 @@ public class Node {
         return schemaService;
     }
 
-    public IndexManagerService getIndexManagerService() {
-        return indexManagerService;
+    public AllIndexService getAllIndexService() {
+        return allIndexService;
     }
 
     public Server getServer() {
@@ -75,7 +76,7 @@ public class Node {
         toleranceService = new ToleranceService(this);
         recoveryService = new RecoveryService();
         schemaService = new SchemaService();
-        indexManagerService = new IndexManagerService(schemaService);
+        allIndexService = new AllIndexService(schemaService);
         scheduler = new Scheduler();
 
         container.addComponent(nodeClientHolder);
@@ -86,7 +87,7 @@ public class Node {
         container.addComponent(recoveryService);
         container.addComponent(toleranceService);
         container.addComponent(schemaService);
-        container.addComponent(indexManagerService);
+        container.addComponent(allIndexService);
     }
 
     public void start() {
@@ -103,7 +104,7 @@ public class Node {
         //加载schema
         schemaService.loadSchemas();
         //加载索引
-        indexManagerService.loadIndexes();
+        allIndexService.loadIndexes();
         //恢复数据
         //启动定时任务
         scheduler.scanTasks();

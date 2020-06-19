@@ -3,6 +3,7 @@ package cc.doctor.search.client.zookeeper;
 import cc.doctor.search.common.ha.zk.ZkEventListenerAdapter;
 import cc.doctor.search.common.ha.zk.ZookeeperClient;
 import cc.doctor.search.client.rpc.Client;
+import cc.doctor.search.common.ha.zk.ZookeeperPaths;
 import org.apache.zookeeper.WatchedEvent;
 
 /**
@@ -10,12 +11,11 @@ import org.apache.zookeeper.WatchedEvent;
  * 监控主节点信息变化
  */
 public class MasterListener extends ZkEventListenerAdapter {
-    public static final String ZK_NODE_MASTER = "/es/metadata/master";
     private Client client;
     private ZookeeperClient zkClient;
 
     public MasterListener(Client client, ZookeeperClient zkClient) {
-        listenPaths.add(ZK_NODE_MASTER);
+        listenPaths.add(ZookeeperPaths.NODE_MASTER);
         this.client = client;
         this.zkClient = zkClient;
     }
@@ -31,13 +31,14 @@ public class MasterListener extends ZkEventListenerAdapter {
     }
 
     private void reConnectMaster() {
-        boolean masterExist = zkClient.existsNode(ZK_NODE_MASTER);
+        boolean masterExist = zkClient.existsNode(ZookeeperPaths.NODE_MASTER);
         if (masterExist) {
-            String masterInfo = zkClient.readData(ZK_NODE_MASTER);
+            String masterInfo = zkClient.readData(ZookeeperPaths.NODE_MASTER);
             client.connect(getMasterAddress(masterInfo));
         }
     }
 
+    // masterInfo: host=127.0.0.1&port=7070
     private String getMasterAddress(String masterInfo) {
         if (masterInfo == null) {
             return null;

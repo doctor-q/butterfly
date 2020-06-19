@@ -1,9 +1,8 @@
 package cc.doctor.search.store.indices.indexer;
 
-import cc.doctor.search.store.indices.inverted.WordInfo;
-import cc.doctor.search.common.exceptions.schema.SchemaException;
 import cc.doctor.search.common.document.Document;
 import cc.doctor.search.common.document.Field;
+import cc.doctor.search.common.exceptions.schema.SchemaException;
 import cc.doctor.search.common.schema.Schema;
 import cc.doctor.search.store.indices.format.DateFormat;
 import cc.doctor.search.store.indices.format.Format;
@@ -12,6 +11,7 @@ import cc.doctor.search.store.indices.indexer.datastruct.TrieTree;
 import cc.doctor.search.store.indices.inverted.DictFile;
 import cc.doctor.search.store.indices.inverted.InvertedFile;
 import cc.doctor.search.store.indices.inverted.MmapInvertedFile;
+import cc.doctor.search.store.indices.inverted.WordInfo;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -20,20 +20,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
 
-import static cc.doctor.search.store.indices.format.Format.*;
+import static cc.doctor.search.store.indices.format.Format.DATE;
 
 /**
  * Created by doctor on 2017/3/8.
  * 索引中间者,负责探测数据类型后转交给对应的索引器建立索引,每个分片拥有一个
+ * number field use skip list indexer
+ * string field use trie tree indexer
  */
-public class IndexerMediator {
+public class IndexerService {
     private SkipTableIndexer skipTableIndexer;
     private TrieTreeIndexer trieTreeIndexer;
     private Schema schema;
     private DictFile dictFile;
     private InvertedFile invertedFile;
 
-    public IndexerMediator() {
+    public IndexerService() {
         this.invertedFile = new MmapInvertedFile(this);
         this.skipTableIndexer = new SkipTableIndexer(this);
         this.trieTreeIndexer = new TrieTreeIndexer(this);
@@ -41,7 +43,7 @@ public class IndexerMediator {
     }
 
     //为文档建索引
-    public void index(Document document) throws Exception {
+    public void index(Document document) {
         List<Field> fields = document.getFields();
         for (Field field : fields) {
             insertWord(document.getId(), field.getName(), field.getValue());
@@ -49,14 +51,14 @@ public class IndexerMediator {
     }
 
     //建立文档索引,在已有倒排的基础上
-    public boolean index(Map<String, Map<Object, Set<Long>>> fieldValueDocMap) {
+    public boolean index(Map<String, Map<Object, Set<String>>> fieldValueDocMap) {
         for (String field : fieldValueDocMap.keySet()) {
             insertWord(field, fieldValueDocMap.get(field));
         }
         return true;
     }
 
-    private boolean insertWord(String field, Map<Object, Set<Long>> valueDocMap) {
+    private boolean insertWord(String field, Map<Object, Set<String>> valueDocMap) {
         Format format = getFormat(field);
         if (format == null) {
             format = proberFormatAndSetProperty(schema, field, valueDocMap.keySet().iterator().next());
@@ -74,7 +76,7 @@ public class IndexerMediator {
         return true;
     }
 
-    private boolean insertWord(Long docId, String field, Object value) {
+    private boolean insertWord(String docId, String field, Object value) {
         Format format = getFormat(field);
         if (format == null) {
             format = proberFormatAndSetProperty(schema, field, value);

@@ -3,7 +3,7 @@ package cc.doctor.search.store.indices.inverted;
 import cc.doctor.search.store.StoreConfigs;
 import cc.doctor.search.store.cache.Cache;
 import cc.doctor.search.store.cache.LocalCache;
-import cc.doctor.search.store.indices.indexer.IndexerMediator;
+import cc.doctor.search.store.indices.indexer.IndexerService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -13,11 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class InvertedFile {
     public static final int CACHE_INVERTED_TABLE_SIZE = StoreConfigs.CACHE_INVERTED_TABLE_SIZE_DEFAULT;
-    protected IndexerMediator indexerMediator;
+    protected IndexerService indexerService;
     protected Cache<Long, InvertedTable> invertedTableCache = new LocalCache<>(CACHE_INVERTED_TABLE_SIZE);
 
-    public InvertedFile(IndexerMediator indexerMediator) {
-        this.indexerMediator = indexerMediator;
+    public InvertedFile(IndexerService indexerService) {
+        this.indexerService = indexerService;
     }
 
     /**
@@ -47,7 +47,7 @@ public abstract class InvertedFile {
         if (field == null || wordInfo == null || wordInfo.getData() == null) {
             return;
         }
-        Iterable<WordInfo> wordInfos = indexerMediator.equalSearch(field, wordInfo.getData().toString());
+        Iterable<WordInfo> wordInfos = indexerService.equalSearch(field, wordInfo.getData().toString());
         if (wordInfos != null && wordInfos.iterator().hasNext()) {
             wordInfos.iterator().next().setPosition(wordInfo.getPosition());
         }

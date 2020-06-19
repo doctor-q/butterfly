@@ -1,6 +1,6 @@
 package cc.doctor.search.server.cluster.node;
 
-import cc.doctor.search.server.cluster.routing.RoutingNode;
+import cc.doctor.search.client.route.RoutingNode;
 import cc.doctor.search.client.rpc.Client;
 import cc.doctor.search.client.rpc.RpcClient;
 

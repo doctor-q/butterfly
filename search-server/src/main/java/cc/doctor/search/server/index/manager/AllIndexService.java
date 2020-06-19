@@ -16,28 +16,28 @@ import java.util.Map;
 
 /**
  * Created by doctor on 2017/3/9.
- * manage cluster index
+ * manage cluster index of a data node
  */
-public class IndexManagerService {
+public class AllIndexService {
     public static final String INDEX_PATH_ROOT = "";
     private SchemaService schemaService;
-    private Map<String, IndexManagerInner> indexManagerInnerMap = new HashMap<>();
+    private Map<String, IndexService> indexManagerInnerMap = new HashMap<>();
     private Map<String, SearcherInner> searcherInnerMap = new HashMap<>();
 
-    public IndexManagerService(SchemaService schemaService) {
+    public AllIndexService(SchemaService schemaService) {
         this.schemaService = schemaService;
     }
 
     public void loadIndexes() {
         List<String> indexNames = FileUtils.list(INDEX_PATH_ROOT, CollectionUtils.list("operationlog"));
         for (String indexName : indexNames) {
-            indexManagerInnerMap.put(indexName, new IndexManagerInner(schemaService.getSchema(indexName)));
+            indexManagerInnerMap.put(indexName, new IndexService(schemaService.getSchema(indexName)));
             searcherInnerMap.put(indexName, new SearcherInner(indexName));
         }
         //// TODO: 2017/4/9 load index information
     }
 
-    private IndexManagerInner getIndexManager(String indexName) {
+    private IndexService getIndexManager(String indexName) {
         if (indexName == null) {
             throw new IndexException("Null index name.");
         }
@@ -51,9 +51,9 @@ public class IndexManagerService {
         if (indexManagerInnerMap.get(schema.getIndexName()) != null) {
             throw new IndexException("Index exists.");
         }
-        IndexManagerInner indexManagerInner = new IndexManagerInner(schema);
-        indexManagerInnerMap.put(schema.getIndexName(), indexManagerInner);
-        indexManagerInner.createIndexInner();
+        IndexService indexService = new IndexService(schema);
+        indexManagerInnerMap.put(schema.getIndexName(), indexService);
+        indexService.createIndexInner();
     }
 
     public void dropIndex(Schema schema) {
@@ -104,22 +104,22 @@ public class IndexManagerService {
     }
 
     public void insertDocument(String indexName, Document document) {
-        IndexManagerInner indexManager = getIndexManager(indexName);
+        IndexService indexManager = getIndexManager(indexName);
         indexManager.insertDocument(document);
     }
 
     public void bulkInsert(String indexName, Iterable<Document> documents) {
-        IndexManagerInner indexManager = getIndexManager(indexName);
+        IndexService indexManager = getIndexManager(indexName);
         indexManager.bulkInsert(documents);
     }
 
     public void deleteDocument(String indexName, Long docId) {
-        IndexManagerInner indexManager = getIndexManager(indexName);
+        IndexService indexManager = getIndexManager(indexName);
         indexManager.deleteDocument(docId);
     }
 
     public void bulkDelete(String indexName, Iterable<Long> docIds) {
-        IndexManagerInner indexManager = getIndexManager(indexName);
+        IndexService indexManager = getIndexManager(indexName);
         indexManager.bulkDelete(docIds);
     }
 
@@ -133,7 +133,7 @@ public class IndexManagerService {
     }
 
     public void flush(String indexName) {
-        IndexManagerInner indexManager = getIndexManager(indexName);
+        IndexService indexManager = getIndexManager(indexName);
         indexManager.flush();
     }
 }

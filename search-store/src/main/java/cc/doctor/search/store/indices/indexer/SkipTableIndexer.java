@@ -22,8 +22,8 @@ public class SkipTableIndexer extends AbstractIndexer {
     //数字跳表,每份索引的每个域包含一个
     private Map<String, ConcurrentSkipListMap<Number, WordInfo>> concurrentSkipListMap = new HashMap<>();
 
-    public SkipTableIndexer(IndexerMediator indexerMediator) {
-        super(indexerMediator);
+    public SkipTableIndexer(IndexerService indexerService) {
+        super(indexerService);
     }
 
     public void setConcurrentSkipListMap(Map<String, ConcurrentSkipListMap<Number, WordInfo>> concurrentSkipListMap) {
@@ -38,7 +38,7 @@ public class SkipTableIndexer extends AbstractIndexer {
      * 此处的property必须有且完整
      */
     @Override
-    public void insertWordInner(Collection<Long> docIds, String field, Object value) {
+    public void insertWordInner(Collection<String> docIds, String field, Object value) {
         ConcurrentSkipListMap<Number, WordInfo> skipList = concurrentSkipListMap.get(field);
         if (skipList == null) {
             skipList = new ConcurrentSkipListMap<>();

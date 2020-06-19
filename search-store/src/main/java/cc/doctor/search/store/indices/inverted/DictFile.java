@@ -3,7 +3,7 @@ package cc.doctor.search.store.indices.inverted;
 import cc.doctor.search.common.entity.Tuple;
 import cc.doctor.search.common.utils.FileUtils;
 import cc.doctor.search.store.StoreConfigs;
-import cc.doctor.search.store.indices.indexer.IndexerMediator;
+import cc.doctor.search.store.indices.indexer.IndexerService;
 import cc.doctor.search.store.mm.MmapFile;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.util.Map;
  * 词典文件,每个分片一个词典
  */
 public class DictFile {
-    private IndexerMediator indexerMediator;
+    private IndexerService indexerService;
     private MmapFile mmapFile;
     public static final int dictFileSize = StoreConfigs.DICT_FILE_SIZE_DEFAULT;
     private MmapFile fieldPositionFile;
@@ -24,8 +24,8 @@ public class DictFile {
     private HashMap<String, Tuple<Integer, Integer>> fieldPosition = new HashMap<>();
     private int position = 0;
 
-    public DictFile(IndexerMediator indexerMediator) {
-        this.indexerMediator = indexerMediator;
+    public DictFile(IndexerService indexerService) {
+        this.indexerService = indexerService;
         try {
             String dictIndexFilePath = StoreConfigs.DICT_INDEX_FILE_NAME;
             if (!FileUtils.exists(dictIndexFilePath)) {

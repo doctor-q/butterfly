@@ -1,7 +1,7 @@
 package cc.doctor.search.server.cluster.node;
 
-import cc.doctor.search.server.cluster.routing.NodeState;
-import cc.doctor.search.server.cluster.routing.RoutingNode;
+import cc.doctor.search.client.NodeState;
+import cc.doctor.search.client.route.RoutingNode;
 import cc.doctor.search.server.cluster.vote.MasterNodeListener;
 import cc.doctor.search.server.common.config.GlobalConfig;
 import cc.doctor.search.server.common.config.Settings;

@@ -13,7 +13,7 @@ import java.util.List;
  * Created by doctor on 2017/3/9.
  */
 public class IndexManagerContainerTest {
-    IndexManagerService indexManagerService;
+    AllIndexService allIndexService;
     Schema schema;
     @Before
     public void setUp() {
@@ -22,25 +22,25 @@ public class IndexManagerContainerTest {
     }
     @Test
     public void createIndex() throws Exception {
-        indexManagerService.createIndex(schema);
+        allIndexService.createIndex(schema);
     }
 
     @Test
     public void dropIndex() throws Exception {
         createIndex();
-        indexManagerService.dropIndex(schema);
+        allIndexService.dropIndex(schema);
     }
 
     @Test
     public void createDocument() {
         Document document = new Document();
-        indexManagerService.createIndex(schema);
+        allIndexService.createIndex(schema);
         List<Field> fields = new LinkedList<>();
         fields.add(new Field("id", 1));
         fields.add(new Field("name", "chen"));
         fields.add(new Field("date", "2016-10-11 10:20:30"));
         document.setFields(fields);
-        indexManagerService.dropIndex(schema);
+        allIndexService.dropIndex(schema);
     }
 
 }

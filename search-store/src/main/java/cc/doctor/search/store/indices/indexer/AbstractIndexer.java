@@ -18,15 +18,15 @@ import java.util.Set;
 public abstract class AbstractIndexer {
     protected Schema schema;
     protected InvertedFile invertedFile;
-    protected IndexerMediator indexerMediator;
+    protected IndexerService indexerService;
 
-    public AbstractIndexer(IndexerMediator indexerMediator) {
-        this.indexerMediator = indexerMediator;
-        this.schema = indexerMediator.getSchema();
-        this.invertedFile = indexerMediator.getInvertedFile();
+    public AbstractIndexer(IndexerService indexerService) {
+        this.indexerService = indexerService;
+        this.schema = indexerService.getSchema();
+        this.invertedFile = indexerService.getInvertedFile();
     }
 
-    public void insertWord(Long docId, String field, Object value) {
+    public void insertWord(String docId, String field, Object value) {
         if (field == null || value == null) {
             return;
         }
@@ -43,7 +43,7 @@ public abstract class AbstractIndexer {
      * @param field field
      * @param valueDocMap <value,docId> map
      */
-    public boolean insertWord(String field, Map<Object, Set<Long>> valueDocMap) {
+    public boolean insertWord(String field, Map<Object, Set<String>> valueDocMap) {
         for (Object value : valueDocMap.keySet()) {
             WordInfo wordInfoInner = getWordInfoInner(field, value);
             if (wordInfoInner == null) {    //词不存在,则创建新的倒排空间
@@ -55,9 +55,9 @@ public abstract class AbstractIndexer {
         return true;
     }
 
-    protected void updateInvertedDocs(Collection<Long> docIds, WordInfo wordInfo) {
+    protected void updateInvertedDocs(Collection<String> docIds, WordInfo wordInfo) {
         InvertedTable invertedTable = invertedFile.getInvertedTable(wordInfo);
-        for (Long docId : docIds) {
+        for (String docId : docIds) {
 
             InvertedTable.InvertedDoc invertedDoc = invertedTable.getInvertedDoc(docId);
             if (invertedDoc != null) {
@@ -72,7 +72,7 @@ public abstract class AbstractIndexer {
     }
 
     //在索引增加一个词
-    public abstract void insertWordInner(Collection<Long> docIds, String field, Object value);
+    public abstract void insertWordInner(Collection<String> docIds, String field, Object value);
     //从索引删除一个词
     public abstract void deleteWord(Schema schema, String property, Object word);
 

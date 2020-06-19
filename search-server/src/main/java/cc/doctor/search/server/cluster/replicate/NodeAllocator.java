@@ -1,14 +1,12 @@
 package cc.doctor.search.server.cluster.replicate;
 
-import cc.doctor.search.server.cluster.routing.RoutingNode;
-import cc.doctor.search.server.cluster.routing.RoutingService;
-import cc.doctor.search.server.cluster.routing.RoutingShard;
+import cc.doctor.search.client.route.RoutingNode;
+import cc.doctor.search.client.route.RoutingService;
+import cc.doctor.search.client.route.RoutingShard;
 import cc.doctor.search.common.entity.Tuple;
 import cc.doctor.search.common.ha.zk.ZookeeperClient;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by doctor on 2017/3/19.
@@ -31,10 +29,12 @@ public class NodeAllocator {
      */
     public void allocateNodes(int replicate, int shardNum, String indexName) {
         List<RoutingNode> indexRoutingNodes = routingService.getIndexRoutingNodes(indexName);
-        if (indexRoutingNodes != null && indexRoutingNodes.size() > 0) {
+        if (indexRoutingNodes != null && !indexRoutingNodes.isEmpty()) {
             return;
         }
-        List<RoutingNode> routingNodes = routingService.getRoutingNodes();
+
+        List<RoutingNode> routingNodes = new ArrayList<>();
+        routingNodes.addAll(routingService.getDataNodes());
         int nodeNum = routingNodes.size();
         int signedNodeNum = replicate;
         int unsignedNodeNum = 0;

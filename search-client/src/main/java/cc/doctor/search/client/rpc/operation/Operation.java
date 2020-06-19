@@ -1,41 +1,29 @@
 package cc.doctor.search.client.rpc.operation;
 
+import lombok.AllArgsConstructor;
+
 /**
  * Created by doctor on 2017/3/8.
  * 操作
  */
+@AllArgsConstructor
 public enum Operation {
-    PING(0),
-    CREATE_INDEX(1),
-    DROP_INDEX(2),
-    PUT_SCHEMA(0),
-    PUT_ALIAS(0),
-    DROP_ALIAS(0),
-    ADD_DOCUMENT(3),
-    BULK_INSERT(0),
-    DELETE_DOCUMENT(4),
-    BULK_DELETE(0),
-    DELETE_BY_QUERY(0),
-    FLUSH(0),
-    QUERY(5),
-    MASTER_LOSS(0),
-    NODE_LOSS(0);
-    int code;
+    PING(true),
+    CREATE_INDEX(true),
+    DROP_INDEX(true),
+    PUT_SCHEMA(true),
+    PUT_ALIAS(true),
+    DROP_ALIAS(true),
+    ADD_DOCUMENT(false),
+    BULK_INSERT(false),
+    DELETE_DOCUMENT(false),
+    BULK_DELETE(false),
+    DELETE_BY_QUERY(false),
+    FLUSH(false),
+    QUERY(false);
 
-    Operation(int code) {
-        this.code = code;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public static Operation getOperation(int code) {
-        for (Operation operation : Operation.values()) {
-            if (operation.getCode() == code) {
-                return operation;
-            }
-        }
-        return null;
-    }
+    /**
+     * transform with master
+     */
+    private boolean master;
 }

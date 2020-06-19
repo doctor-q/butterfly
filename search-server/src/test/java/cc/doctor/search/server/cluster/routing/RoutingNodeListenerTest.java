@@ -1,5 +1,6 @@
 package cc.doctor.search.server.cluster.routing;
 
+import cc.doctor.search.client.route.RoutingNodeListener;
 import cc.doctor.search.common.ha.zk.ZookeeperClient;
 import org.junit.Test;
 

@@ -1,9 +1,9 @@
 package cc.doctor.search.server.rpc;
 
-import cc.doctor.search.common.exceptions.rpc.UnSupportOperationException;
 import cc.doctor.search.client.rpc.Message;
 import cc.doctor.search.client.rpc.operation.Operation;
 import cc.doctor.search.client.rpc.result.RpcResult;
+import cc.doctor.search.common.exceptions.rpc.UnSupportOperationException;
 import cc.doctor.search.server.cluster.node.tolerance.ToleranceService;
 import cc.doctor.search.server.cluster.replicate.ReplicateService;
 
@@ -52,10 +52,6 @@ public class OperationController {
                 return replicateService.Query(message);
             case PING:
                 return toleranceService.responsePing(message);
-            case MASTER_LOSS:
-                return toleranceService.doMasterLoss(message);
-            case NODE_LOSS:
-                return toleranceService.doNodeLoss(message);
         }
         throw new UnSupportOperationException("UnSupport operation.");
     }
